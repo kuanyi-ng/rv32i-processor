@@ -10,7 +10,7 @@ Design and build a processor able to execute RISC-V (RV32I) instructions as a wa
     - [4. Top Module Implementation (24 hours)](#4-top-module-implementation-24-hours)
     - [5. Testing (168 hours)](#5-testing-168-hours)
     - [6. Logic Synthesis (56 hours ++)](#6-logic-synthesis-56-hours-)
-    - [7. +$\alpha$](#7-alpha)
+    - [7. +α](#7-α)
     - [8. Documentation & Presentation (112 hours)](#8-documentation--presentation-112-hours)
   - [Source](#source)
 
@@ -42,7 +42,7 @@ This diagram will act as a reference when we implement each modules with Verilog
 >
 > -- Wikipedia: https://en.wikipedia.org/wiki/Logic_synthesis
 
-### 7. +$\alpha$
+### 7. +α
 
 ### 8. Documentation & Presentation (112 hours)
 
