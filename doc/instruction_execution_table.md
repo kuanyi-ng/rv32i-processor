@@ -164,7 +164,7 @@
         </tr>
         <tr>
             <!-- instruction -->
-            <td>addi [I]</td>
+            <td>andi [I]</td>
             <!-- IF -->
             <!-- ID -->
             <!-- EX -->
