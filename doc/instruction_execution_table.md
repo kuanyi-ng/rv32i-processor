@@ -25,7 +25,7 @@
             <!-- instruction -->
             <td>lui [U]</td>
             <!-- IF -->
-            <td rowspan=36>
+            <td rowspan=37>
                 IR ← mem[PC]
                 <br />
                 PC ← PC + 4
@@ -227,7 +227,7 @@
             <td>add [R]</td>
             <!-- IF -->
             <!-- ID -->
-            <td rowspan=9>
+            <td rowspan=10>
                 A ← x[rs1]
                 <br />
                 B ← x[rs2]
@@ -310,7 +310,7 @@
             <!-- MEM -->
             <td></td>
             <!-- WB -->
-            <td rowspan=3>
+            <td rowspan=5>
                 x[rd] ← C
             </td>
         </tr>
@@ -348,6 +348,19 @@
             <!-- EX -->
             <td>
                 C ← A | B
+            </td>
+            <!-- MEM -->
+            <td></td>
+            <!-- WB -->
+        </tr>
+        <tr>
+            <!-- instruction -->
+            <td>and [R]</td>
+            <!-- IF -->
+            <!-- ID -->
+            <!-- EX -->
+            <td>
+                C ← A & B
             </td>
             <!-- MEM -->
             <td></td>
