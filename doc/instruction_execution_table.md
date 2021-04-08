@@ -9,6 +9,7 @@
 
 ## Instruction Execution Table
 
+### U-Type
 <table>
     <thead>
         <tr>
@@ -67,6 +68,22 @@
                 x[rd] ← C
             </td>           
         </tr>
+    </tbody>
+</table>
+
+### I-Type
+<table>
+    <thead>
+        <tr>
+            <th>Instruction</th>
+            <th>IF</th>
+            <th>ID</th>
+            <th>EX</th>
+            <th>MEM</th>
+            <th>WB</th>
+        </tr>
+    </thead>
+    <tbody>
         <tr>
             <!-- instruction -->
             <td>addi [I]</td>
@@ -222,6 +239,22 @@
             <td></td>
             <!-- WB -->
         </tr>
+    </tbody>
+</table>
+
+### R-Type
+<table>
+    <thead>
+        <tr>
+            <th>Instruction</th>
+            <th>IF</th>
+            <th>ID</th>
+            <th>EX</th>
+            <th>MEM</th>
+            <th>WB</th>
+        </tr>
+    </thead>
+    <tbody>
         <tr>
             <!-- instruction -->
             <td>add [R]</td>
@@ -366,6 +399,22 @@
             <td></td>
             <!-- WB -->
         </tr>
+    </tbody>
+</table>
+
+### I-Type (Load Instructions)
+<table>
+    <thead>
+        <tr>
+            <th>Instruction</th>
+            <th>IF</th>
+            <th>ID</th>
+            <th>EX</th>
+            <th>MEM</th>
+            <th>WB</th>
+        </tr>
+    </thead>
+    <tbody>
         <tr>
             <!-- instruction -->
             <td>lb [I]</td>
@@ -437,6 +486,22 @@
             </td>
             <!-- WB -->
         </tr>
+    </tbody>
+</table>
+
+### S-Type
+<table>
+    <thead>
+        <tr>
+            <th>Instruction</th>
+            <th>IF</th>
+            <th>ID</th>
+            <th>EX</th>
+            <th>MEM</th>
+            <th>WB</th>
+        </tr>
+    </thead>
+    <tbody>
         <tr>
             <!-- instruction -->
             <td>sb [S]</td>
@@ -482,6 +547,22 @@
                 M[C] ← B[31:0]
             </td>
         </tr>
+    </tbody>
+</table>
+
+### Jump Instructions
+<table>
+    <thead>
+        <tr>
+            <th>Instruction</th>
+            <th>IF</th>
+            <th>ID</th>
+            <th>EX</th>
+            <th>MEM</th>
+            <th>WB</th>
+        </tr>
+    </thead>
+    <tbody>
         <tr>
             <!-- instruction -->
             <td>jal [J]</td>
@@ -527,6 +608,22 @@
                 PC ← C
             </td>
         </tr>
+    </tbody>
+</table>
+
+### B-Type
+<table>
+    <thead>
+        <tr>
+            <th>Instruction</th>
+            <th>IF</th>
+            <th>ID</th>
+            <th>EX</th>
+            <th>MEM</th>
+            <th>WB</th>
+        </tr>
+    </thead>
+    <tbody>
         <tr>
             <!-- instruction -->
             <td>beq [B]</td>
@@ -613,7 +710,7 @@
     </tbody>
 </table>
 
-## Instruction Execution Table (Extra?)
+## Extra?
 <table>
     <thead>
         <tr>
