@@ -1,5 +1,12 @@
 # Execution Phase-related Module
 
+## Block Diagram
+
+<figure>
+    <img src='../assets/ex_phase.png' style='max-width: 100vw; max-height: 30vh;'/>
+    <figcaption></figcaption>
+</figure>
+
 ## A-Multiplexer (A-Mux)
 ### Inputs
 - `pc`: program counter (when the current instruction is fetch)
