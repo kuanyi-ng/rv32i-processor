@@ -18,8 +18,18 @@
 ## Immediate Extractor Module
 ### Inputs
 - `in`: instruction (32-bits)
+
 ### Outputs
 - `out`: sign extended immediate value (32-bits)
+
+### Control Bits
+- ImmType
+  - 000: I_imm
+  - 001: B_imm
+  - 010: S_imm
+  - 011: U_imm
+  - 100: J_imm
+
 ### Calculations
 ```
 I_imm = sext(in[31:20])
