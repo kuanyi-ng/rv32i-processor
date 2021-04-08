@@ -26,13 +26,13 @@
             <!-- instruction -->
             <td>lui [U]</td>
             <!-- IF -->
-            <td rowspan=37>
+            <td rowspan=2>
                 IR ← mem[PC]
                 <br />
                 PC ← PC + 4
             </td>
             <!-- ID -->
-            <td></td>
+            <td rowspan=2></td>
             <!-- EX -->
             <td>
                 U_imm ← sext(IR[31:12] << 12) <!-- sext: sign-extend-->
@@ -42,7 +42,7 @@
             <!-- MEM -->
             <td rowspan=2></td>
             <!-- WB -->
-            <td>
+            <td rowspan=2>
                 rd ← IR[11:7]
                 <br />
                 x[rd] ← C
@@ -53,7 +53,6 @@
             <td>auipc [U]</td>
             <!-- IF -->
             <!-- ID -->
-            <td></td>
             <!-- EX -->
             <td>
                 U_imm ← sext(IR[31:12] << 12)
@@ -62,11 +61,6 @@
             </td>           
             <!-- MEM -->
             <!-- WB -->
-            <td>
-                rd ← IR[11:7]
-                <br />
-                x[rd] ← C
-            </td>           
         </tr>
     </tbody>
 </table>
@@ -88,6 +82,11 @@
             <!-- instruction -->
             <td>addi [I]</td>
             <!-- IF -->
+            <td rowspan=8>
+                IR ← mem[PC]
+                <br />
+                PC ← PC + 4
+            </td>
             <!-- ID -->
             <td rowspan=9>
                 rs1 ← IR[19:15]
@@ -259,6 +258,11 @@
             <!-- instruction -->
             <td>add [R]</td>
             <!-- IF -->
+            <td rowspan=10>
+                IR ← mem[PC]
+                <br />
+                PC ← PC + 4
+            </td>
             <!-- ID -->
             <td rowspan=10>
                 A ← x[rs1]
@@ -419,6 +423,11 @@
             <!-- instruction -->
             <td>lb [I]</td>
             <!-- IF -->
+            <td rowspan=5>
+                IR ← mem[PC]
+                <br />
+                PC ← PC + 4
+            </td>
             <!-- ID -->
             <td rowspan=5>
                 A ← x[rs1]
@@ -506,6 +515,11 @@
             <!-- instruction -->
             <td>sb [S]</td>
             <!-- IF -->
+            <td rowspan=3>
+                IR ← mem[PC]
+                <br />
+                PC ← PC + 4
+            </td>
             <!-- ID -->
             <td rowspan=3>
                 A ← x[rs1]
@@ -567,6 +581,11 @@
             <!-- instruction -->
             <td>jal [J]</td>
             <!-- IF -->
+            <td rowspan=2>
+                IR ← mem[PC]
+                <br />
+                PC ← PC + 4
+            </td>
             <!-- ID -->
             <td>
             </td>
@@ -628,6 +647,11 @@
             <!-- instruction -->
             <td>beq [B]</td>
             <!-- IF -->
+            <td rowspan=6>
+                IR ← mem[PC]
+                <br />
+                PC ← PC + 4
+            </td>
             <!-- ID -->
             <td rowspan=6>
                 A ← x[rs1]
