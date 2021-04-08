@@ -617,7 +617,7 @@
             </td>
             <!-- EX -->
             <td>
-                I_imm ← sext(IR[31:27])
+                I_imm ← sext(IR[31:20])
                 <br />
                 C ← (A + I_imm) & ~1
             </td>
