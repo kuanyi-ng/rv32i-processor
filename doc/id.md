@@ -23,7 +23,7 @@
 - `out`: sign extended immediate value (32-bits)
 
 ### Control Bits
-- ImmType
+- ImmType: determine the way to extract immediate from the instruction
   - 000: I_imm
   - 001: B_imm
   - 010: S_imm
