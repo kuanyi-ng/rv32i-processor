@@ -937,15 +937,3 @@
 
 ## Source
 https://msyksphinz-self.github.io/riscv-isadoc/html/rvi.html
-
-<style>
-table {
-    border: 1px solid black;
-    border-collapse: collapse;
-}
-
-th, td {
-    border: 1px solid black;
-    padding: 0.5rem;
-}
-</style>
