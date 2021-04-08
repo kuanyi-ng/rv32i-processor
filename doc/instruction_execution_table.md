@@ -82,7 +82,7 @@
             <!-- instruction -->
             <td>addi [I]</td>
             <!-- IF -->
-            <td rowspan=8>
+            <td rowspan=9>
                 IR ← mem[PC]
                 <br />
                 PC ← PC + 4
@@ -157,7 +157,7 @@
             <!-- MEM -->
             <td></td>
             <!-- WB -->
-            <td rowspan=9>
+            <td rowspan=6>
                 rd ← IR[11:7]
                 <br />
                 x[rd] ← C
@@ -276,6 +276,9 @@
             <!-- MEM -->
             <td></td>
             <!-- WB -->
+            <td rowspan=3>
+                x[rd] ← C
+            </td>
         </tr>
         <tr>
             <!-- instruction -->
@@ -735,6 +738,8 @@
 </table>
 
 ## Extra?
+> NOTE: Probably don't have to implement these instructions for a basic processor.
+
 <table>
     <thead>
         <tr>
