@@ -2,9 +2,6 @@
 
 from typing import List
 
-def input_files_provided(sys_argv: List[str]) -> bool:
-    return len(sys_argv) > 1
-
 def files_in_path(path: str = './') -> List[str]:
     from os import listdir
     from os.path import isfile, join
@@ -38,7 +35,7 @@ def verilog_files_for_test() -> List[str]:
     import sys
     sys_argv = sys.argv
 
-    if input_files_provided(sys_argv):
+    if len(sys_argv) > 1:
         return verilog_files_for_test_from_module_names(sys_argv[1:])
     else:
         return select_verilog_files(files_in_src_and_test())
