@@ -13,7 +13,6 @@ module test_imm_extractor ();
         // expect: 0000_07ff
         assign ir = 32'h7ffx_xxxx;
         #10
-
         // context: imm starts with 1
         // expect: ffff_ffff
         assign ir = 32'hfffx_xxxx;
@@ -25,10 +24,20 @@ module test_imm_extractor ();
         // expect: 0000_0bee
         assign ir = 32'b0011_111x_xxxx_xxxx_xxxx_0111_1xxx_xxxx;
         #10
-
         // context: imm starts with 1
         // expect: ffff_fbee
         assign ir = 32'b1011_111x_xxxx_xxxx_xxxx_0111_1xxx_xxxx;
+        #10
+
+        // S-Type
+        assign imm_type = 3'b010;
+        // context: imm starts with 0
+        // expect: 0000_07ff
+        assign ir = 32'b0111_111x_xxxx_xxxx_xxxx_1111_1xxx_xxxx;
+        #10
+        // context: imm starts with 1
+        // expect: ffff_ffff
+        assign ir = 32'b1111_111x_xxxx_xxxx_xxxx_1111_1xxx_xxxx;
         #10
 
         $finish;

@@ -13,7 +13,7 @@ module imm_extractor (
             3'b001: out <= b_imm(in);
 
             // S-Type
-            // 3'b010: 
+            3'b010: out <= s_imm(in);
 
             // U-Type
             // 3'b011: 
@@ -43,6 +43,16 @@ module imm_extractor (
         begin
             imm = { in[31], in[7], in[30:25], in[11:8], 1'b0 };
             b_imm = { { 19{imm[12]} }, imm }; // sign extend
+        end
+    endfunction
+
+    // S_imm <= sext({ IR[31:25], IR[11:7] })
+    function [31:0] s_imm(input [31:0] in);
+        reg [11:0] imm;
+
+        begin
+            imm = { in[31:25], in[11:7] };
+            s_imm = { { 20{imm[11]} }, imm }; // sign extend
         end
     endfunction
 endmodule
