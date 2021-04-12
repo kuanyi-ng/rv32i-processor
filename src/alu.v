@@ -54,6 +54,9 @@ module alu (
             // GEU
             4'b1101: out <= (in1 > in2) ? 32'b1 : 32'b0;
 
+            // JALR
+            4'b1110: out <= (in1 + in2) & ~1;
+
             // default: false
             default: out <= 32'b0;
         endcase

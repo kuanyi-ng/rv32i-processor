@@ -91,6 +91,18 @@ module test_alu ();
         assign alu_op = 4'b1101;
         #10
 
+        // JALR
+        assign data2 = 32'd8;
+        assign alu_op = 4'b1110;
+        // context: doesn't switch 0th bit
+        // expect: 0000_0008
+        assign data1 = 32'd1;
+        #10
+        // context: switch 0th bit
+        // expect: 0000_000a
+        assign data1 = 32'd2;
+        #10
+
         $finish;
     end
 endmodule
