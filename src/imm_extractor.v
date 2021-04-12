@@ -6,7 +6,7 @@ module imm_extractor (
 
     always @(in or imm_type) begin
         case (imm_type)
-            // I-Type
+            // I-Type (include jalr)
             3'b000: out <= i_imm(in);
 
             // B-Type
@@ -18,8 +18,8 @@ module imm_extractor (
             // U-Type
             3'b011: out <= u_imm(in);
 
-            // J-Type
-            // 3'b100: 
+            // J-Type (doesn't include jalr)
+            3'b100: out <= j_imm(in);
 
             // default: 0
             default: out <= 32'd0;
@@ -38,11 +38,11 @@ module imm_extractor (
 
     // B_imm <= sext({ IR[31], IR[7], IR[30:25], IR[11:8], 0 })
     function [31:0] b_imm(input [31:0] in);
-        reg [12:0] imm;
+        reg [11:0] imm;
 
         begin
-            imm = { in[31], in[7], in[30:25], in[11:8], 1'b0 };
-            b_imm = { { 19{imm[12]} }, imm }; // sign extend
+            imm = { in[31], in[7], in[30:25], in[11:8] };
+            b_imm = { { 19{imm[11]} }, imm, 1'b0 }; // sign extend
         end
     endfunction
 
@@ -60,6 +60,16 @@ module imm_extractor (
     function [31:0] u_imm(input [31:0] in);
         begin
             u_imm = in[31:12] << 4'd12;
+        end
+    endfunction
+
+    // J_imm <= sext({ IR[31], IR[19:12], IR[20], IR[30:21], 0 })
+    function [31:0] j_imm(input [31:0] in);
+        reg [19:0] imm;
+
+        begin
+            imm = { in[31], in[19:12], in[20], in[30:21] };
+            j_imm = { { 11{imm[19]} }, imm, 1'b0 };
         end
     endfunction
 endmodule
