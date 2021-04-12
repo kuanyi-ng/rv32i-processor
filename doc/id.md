@@ -36,7 +36,7 @@ I_imm = sext(in[31:20])
 B_imm = sext({ IR[31], IR[7], IR[30:25], IR[11:8], 0 })
 S_imm = sext({ IR[31:25], IR[11:7] })
 U_imm = sext(IR[31:12] << 12)
-J_imm = sext({ IR[31], IR[19:12], IR[27], IR[30:28], 0 })
+J_imm = sext({ IR[31], IR[19:12], IR[20], IR[30:21], 0 })
 ```
 
 > NOTE: might need to update Instruction Execution Table based on this block diagram

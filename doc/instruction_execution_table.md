@@ -594,7 +594,7 @@
             </td>
             <!-- EX -->
             <td>
-                J_imm ← sext({ IR[31], IR[19:12], IR[27], IR[30:28], 0 })
+                J_imm ← sext({ IR[31], IR[19:12], IR[20], IR[30:21], 0 })
                 <br />
                 C ← PC + J_imm
             </td>
