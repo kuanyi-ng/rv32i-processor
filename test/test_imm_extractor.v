@@ -40,6 +40,17 @@ module test_imm_extractor ();
         assign ir = 32'b1111_111x_xxxx_xxxx_xxxx_1111_1xxx_xxxx;
         #10
 
+        // U-Type
+        assign imm_type = 3'b011;
+        // context: imm starts with 0
+        // expect: 7fff_f000
+        assign ir = 32'h7fff_fxxx;
+        #10
+        // context: imm starts with 1
+        // expect: ffff_f000
+        assign ir = 32'hffff_fxxx;
+        #10
+
         $finish;
     end
 endmodule

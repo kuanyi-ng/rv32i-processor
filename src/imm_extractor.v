@@ -16,7 +16,7 @@ module imm_extractor (
             3'b010: out <= s_imm(in);
 
             // U-Type
-            // 3'b011: 
+            3'b011: out <= u_imm(in);
 
             // J-Type
             // 3'b100: 
@@ -53,6 +53,13 @@ module imm_extractor (
         begin
             imm = { in[31:25], in[11:7] };
             s_imm = { { 20{imm[11]} }, imm }; // sign extend
+        end
+    endfunction
+
+    // U_imm <= sext(IR[31:12] << 12)
+    function [31:0] u_imm(input [31:0] in);
+        begin
+            u_imm = in[31:12] << 4'd12;
         end
     endfunction
 endmodule
