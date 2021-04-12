@@ -200,9 +200,9 @@
             <!-- ID -->
             <!-- EX -->
             <td>
-                shamt ← IR[24:20]
+                shamt_imm ← IR[24:20]
                 <br />
-                C ← A << shamt
+                C ← A << shamt_imm
             </td>
             <!-- MEM -->
             <td></td>
@@ -215,9 +215,9 @@
             <!-- ID -->
             <!-- EX -->
             <td>
-                shamt ← IR[24:20]
+                shamt_imm ← IR[24:20]
                 <br />
-                C ← A >>u shamt ... unsigned shift
+                C ← A >>u shamt_imm ... unsigned shift
             </td>
             <!-- MEM -->
             <td></td>
@@ -230,9 +230,9 @@
             <!-- ID -->
             <!-- EX -->
             <td>
-                shamt ← IR[24:20]
+                shamt_imm ← IR[24:20]
                 <br />
-                C ← A >>s shamt ... signed shift
+                C ← A >>s shamt_imm ... signed shift
             </td>
             <!-- MEM -->
             <td></td>
@@ -594,7 +594,7 @@
             </td>
             <!-- EX -->
             <td>
-                J_imm ← sext({ IR[31], IR[19:12], IR[27], IR[30:28], 0 })
+                J_imm ← sext({ IR[31], IR[19:12], IR[20], IR[30:21], 0 })
                 <br />
                 C ← PC + J_imm
             </td>
