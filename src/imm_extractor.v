@@ -21,6 +21,9 @@ module imm_extractor (
             // J-Type (doesn't include jalr)
             3'b100: out <= j_imm(in);
 
+            // shamt_imm
+            3'b101: out <= shamt_imm(in);
+
             // default: 0
             default: out <= 32'd0;
         endcase
@@ -70,6 +73,13 @@ module imm_extractor (
         begin
             imm = { in[31], in[19:12], in[20], in[30:21] };
             j_imm = { { 11{imm[19]} }, imm, 1'b0 };
+        end
+    endfunction
+
+    // shamt_imm <= ext({ IR[24:20] })
+    function [31:0] shamt_imm(input [31:0] in);
+        begin
+            shamt_imm = { 27'd0, in[24:20] };
         end
     endfunction
 endmodule

@@ -62,6 +62,17 @@ module test_imm_extractor ();
         assign ir = 32'b1011_1111_1110_0111_1111_xxxx_xxxx_xxxx;
         #10
 
+        // Shamt Imm
+        assign imm_type = 3'b101;
+        // context: imm starts with 0
+        // expect: 0000_000f
+        assign ir = 32'bxxxx_xxx0_1111_xxxx_xxxx_xxxx_xxxx_xxxx;
+        #10
+        // context: imm starts with 1
+        // expect: 0000_001f
+        assign ir = 32'bxxxx_xxx1_1111_xxxx_xxxx_xxxx_xxxx_xxxx;
+        #10
+
         $finish;
     end
 endmodule
