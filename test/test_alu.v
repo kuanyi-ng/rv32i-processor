@@ -10,7 +10,7 @@ module test_alu ();
         assign data1 = 32'd4;
         assign data2 = 32'd6;
 
-        // ADD
+        // ADD, ADDI, Load, Store, Branch, JAL, AUPIC
         // expect: 0000_000a
         assign alu_op = 4'b0000;
         #10
@@ -20,17 +20,17 @@ module test_alu ();
         assign alu_op = 4'b0001;
         #10
 
-        // XOR
+        // XOR, XORI
         // expect: 0000_0002
         assign alu_op = 4'b0010;
         #10
 
-        // OR
+        // OR, ORI
         // expect: 0000_0006
         assign alu_op = 4'b0011;
         #10
 
-        // AND
+        // AND, ANDI
         // expect: 0000_0004
         assign alu_op = 4'b0100;
         #10
@@ -38,24 +38,37 @@ module test_alu ();
         assign data1 = 32'hf000_0004;
         assign data2 = 32'd4;
 
-        // SLL
+        // SLL, SLLI
         // expect: 0000_0040
         assign alu_op = 4'b0101;
         #10
 
-        // SRL
+        // SRL, SRLI
         // expect: 0f00_0000
         assign alu_op = 4'b0110;
         #10
 
-        // SRA
+        // SRA, SRAI
         // expect: ff00_0000
         assign alu_op = 4'b0111;
         #10
 
+        assign data1 = 32'h0000_1000;
+        assign data2 = 32'hf000_1000;
+
+        // SLT, SLTI
+        // expect: 0000_0000
+        assign alu_op = 4'b1000;
+        #10
+
+        // SLTU, SLTIU
+        // expect: 0000_0001
+        assign alu_op = 4'b1001;
+        #10
+
         // JALR
         assign data2 = 32'd8;
-        assign alu_op = 4'b1110;
+        assign alu_op = 4'b1010;
         // context: doesn't switch 0th bit
         // expect: 0000_0008
         assign data1 = 32'd1;
@@ -63,6 +76,11 @@ module test_alu ();
         // context: switch 0th bit
         // expect: 0000_000a
         assign data1 = 32'd2;
+        #10
+
+        // LUI
+        // expect: 0000_0008
+        assign alu_op = 4'b1011;
         #10
 
         $finish;

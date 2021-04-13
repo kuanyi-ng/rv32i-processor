@@ -16,32 +16,41 @@ module alu (
             s_in2 = in2;
 
             case (alu_op)
-                // ADD
+                // ADD, ADDI, Load, Store, Branch, JAL, AUPIC
                 4'b0000: alu_out = s_in1 + s_in2;
 
                 // SUB
                 4'b0001: alu_out = s_in1 - s_in2;
 
-                // XOR
+                // XOR, XORI
                 4'b0010: alu_out = in1 ^ in2;
 
-                // OR
+                // OR, ORI
                 4'b0011: alu_out = in1 | in2;
 
-                // AND
+                // AND, ANDI
                 4'b0100: alu_out = in1 & in2;
 
-                // SLL
+                // SLL, SLLI
                 4'b0101: alu_out = s_in1 << in2;
 
-                // SRL
+                // SRL, SRLI
                 4'b0110: alu_out = s_in1 >> in2;
                 
-                // SRA
+                // SRA, SRAI
                 4'b0111: alu_out = s_in1 >>> in2;
 
+                // SLT, SLTI
+                4'b1000: alu_out = (s_in1 < s_in2) ? 32'd1 : 32'd0;
+
+                // SLTU, SLTIU
+                4'b1001: alu_out = (in1 < in2) ? 32'd1 : 32'd0;
+
                 // JALR
-                4'b1110: alu_out = (in1 + in2) & ~1;
+                4'b1010: alu_out = (in1 + in2) & ~1;
+
+                // LUI
+                4'b1011: alu_out = in2;
 
                 // default: false
                 default: alu_out = 32'b0;
