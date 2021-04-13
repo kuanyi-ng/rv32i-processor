@@ -9,11 +9,9 @@ module test_alu ();
         // initial setup
         assign data1 = 32'd4;
         assign data2 = 32'd6;
-        assign alu_op = 32'b1111;
-        #10
 
         // ADD
-        // expect: 0000_000A
+        // expect: 0000_000a
         assign alu_op = 4'b0000;
         #10
 
@@ -55,41 +53,41 @@ module test_alu ();
         assign alu_op = 4'b0111;
         #10
 
-        assign data1 = 32'd4;
-        assign data2 = 32'd6;
+        // assign data1 = 32'd4;
+        // assign data2 = 32'd6;
 
-        // EQ
-        // expect: 0000_0000
-        assign alu_op = 4'b1000;
-        #10
+        // // EQ
+        // // expect: 0000_0000
+        // assign alu_op = 4'b1000;
+        // #10
 
-        // NE
-        // expect: 0000_0001
-        assign alu_op = 4'b1001;
-        #10
+        // // NE
+        // // expect: 0000_0001
+        // assign alu_op = 4'b1001;
+        // #10
 
-        assign data1 = 32'hf000_0004;
-        assign data2 = 32'h0000_0004;
+        // assign data1 = 32'hf000_0004;
+        // assign data2 = 32'h0000_0004;
 
-        // LT
-        // expect: 0000_0001
-        assign alu_op = 4'b1010;
-        #10
+        // // LT
+        // // expect: 0000_0001
+        // assign alu_op = 4'b1010;
+        // #10
 
-        // LTU
-        // expect: 0000_0000
-        assign alu_op = 4'b1011;
-        #10
+        // // LTU
+        // // expect: 0000_0000
+        // assign alu_op = 4'b1011;
+        // #10
 
-        // GE
-        // expect: 0000_0000
-        assign alu_op = 4'b1100;
-        #10
+        // // GE
+        // // expect: 0000_0000
+        // assign alu_op = 4'b1100;
+        // #10
 
-        // GEU
-        // expect: 0000_0001
-        assign alu_op = 4'b1101;
-        #10
+        // // GEU
+        // // expect: 0000_0001
+        // assign alu_op = 4'b1101;
+        // #10
 
         // JALR
         assign data2 = 32'd8;
