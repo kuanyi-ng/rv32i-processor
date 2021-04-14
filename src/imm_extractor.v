@@ -4,6 +4,7 @@ module imm_extractor (
     output reg [31:0] out
 );
 
+    // TODO: rewrite with function
     always @(in or imm_type) begin
         case (imm_type)
             // I-Type (include jalr)
