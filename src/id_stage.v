@@ -62,4 +62,7 @@ module id_stage (
         .data2_out(data2)
     );
 
+    // direct pc_from_if to pc_to_ex
+    assign pc_to_ex = pc_from_if;
+
 endmodule
