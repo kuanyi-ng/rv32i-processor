@@ -1,34 +1,37 @@
 module imm_extractor (
     input [31:0] in,
     input [2:0] imm_type,
-    output reg [31:0] out
+    output [31:0] out
 );
 
-    // TODO: rewrite with function
-    always @(in or imm_type) begin
+    assign out = imm(in, imm_type);
+
+    function [31:0] imm(input [31:0] in, input [2:0] imm_type);
+       begin
         case (imm_type)
             // I-Type (include jalr)
-            3'b000: out <= i_imm(in);
+            3'b000: imm = i_imm(in);
 
             // B-Type
-            3'b001: out <= b_imm(in);
+            3'b001: imm = b_imm(in);
 
             // S-Type
-            3'b010: out <= s_imm(in);
+            3'b010: imm = s_imm(in);
 
             // U-Type
-            3'b011: out <= u_imm(in);
+            3'b011: imm = u_imm(in);
 
             // J-Type (doesn't include jalr)
-            3'b100: out <= j_imm(in);
+            3'b100: imm = j_imm(in);
 
             // shamt_imm
-            3'b101: out <= shamt_imm(in);
+            3'b101: imm = shamt_imm(in);
 
             // default: 0
-            default: out <= 32'd0;
+            default: imm = 32'd0;
         endcase
-    end
+       end
+    endfunction
 
     // I_imm <= sext(IR[31:20])
     function [31:0] i_imm(input [31:0] in);
