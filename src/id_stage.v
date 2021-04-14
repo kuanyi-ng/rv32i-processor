@@ -63,6 +63,9 @@ module id_stage (
     );
 
     // direct pc_from_if to pc_to_ex
+    // NOTE: might not be a good idea to pass pc directly
+    // pc read at IF stage might overwrite
+    // (old) pc that are passed over other stages.
     assign pc_to_ex = pc_from_if;
 
 endmodule

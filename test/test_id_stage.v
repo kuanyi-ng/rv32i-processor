@@ -66,7 +66,7 @@ module test_id_stage ();
         // Test
         //
 
-        // ADD r1, r2, r3
+        // ADD r3, r1, r2
         assign clk = ~clk;
         assign pc_from_if = 32'd4;  // any multiple of 4 will do
         assign ir = 32'b0000000_00010_00001_000_00011_0110011;
@@ -77,7 +77,22 @@ module test_id_stage ();
         // funct7: 0000000
         // data1: 1
         // data2: 2
-        // imm: 0
+        // imm: X
+        // rd: 3
+        #5
+
+        // ADDI r3, r1, 12'h801
+        assign clk = ~clk;
+        assign pc_from_if = 32'd8;
+        assign ir = 32'b1000_0000_0001_00001_000_00011_0010011;
+        // expect
+        // pc_to_ex: 8
+        // opcode: 0010011
+        // funct3: 000
+        // funct7: X
+        // data1: 1
+        // data2: X
+        // imm: 12'hffff_f801
         // rd: 3
         #5
 
