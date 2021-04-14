@@ -1,9 +1,9 @@
-module test_opcode_to_imm_type ();
+module test_opcode_funct3_to_imm_type ();
     reg [6:0] opcode;
     reg [2:0] funct3;
     wire [2:0] imm_type;
 
-    opcode_to_imm_type subject(.opcode(opcode), .funct3(funct3), .imm_type(imm_type));
+    opcode_funct3_to_imm_type subject(.opcode(opcode), .funct3(funct3), .imm_type(imm_type));
 
     initial begin
         // U (LUI)

@@ -1,4 +1,4 @@
-module opcode_to_imm_type (
+module opcode_funct3_to_imm_type (
     input [6:0] opcode,
     input [2:0] funct3,
     output [2:0] imm_type
