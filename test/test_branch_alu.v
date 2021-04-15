@@ -42,13 +42,13 @@ module test_branch_alu ();
         assign branch_alu_op = 3'b101;
         #10
         
-        // JAL
+        // JAL, JALR
         // expect: 1
         assign branch_alu_op = 3'b110;
         #10
 
-        // JALR
-        // expect: 1
+        // Other instructions
+        // expect: 0
         assign branch_alu_op = 3'b111;
         #10
 

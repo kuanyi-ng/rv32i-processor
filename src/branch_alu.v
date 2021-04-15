@@ -41,11 +41,11 @@ module branch_alu (
                 // GEU
                 3'b101: branch_alu_out = (in1 > in2) ? 1'b1 : 1'b0;
 
-                // JAL
+                // JAL, JALR
                 3'b110: branch_alu_out = 1'b1;
 
-                // JALR
-                3'b111: branch_alu_out = 1'b1;
+                // Other instructions that doesn't need to branch / jump
+                3'b111: branch_alu_out = 1'b0;
 
                 // all cases covered, so no default value is required
                 // default: false (don't branch / jump just in case something went wrong)
