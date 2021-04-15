@@ -56,34 +56,13 @@ module ex_ctrl (
             is_jalr = (opcode == 7'b1100111);
             is_branch = (opcode == 7'b1100011);
 
-            if (is_jal || is_jalr) branch_alu_op_ctrl = 3'b110;
-            // TODO: maybe can make this easier by
-            // branch_alu_op_ctrl = funct3
-            else if (is_branch) begin
-                case (funct3)
-                    // BEQ
-                    3'b000: branch_alu_op_ctrl = 3'b000;
-
-                    // BNE
-                    3'b001: branch_alu_op_ctrl = 3'b001;
-
-                    // BLT
-                    3'b100: branch_alu_op_ctrl = 3'b010;
-
-                    // BGE
-                    3'b101: branch_alu_op_ctrl = 3'b100;
-
-                    // BLTU
-                    3'b110: branch_alu_op_ctrl = 3'b011;
-
-                    // BGEU
-                    3'b111: branch_alu_op_ctrl = 3'b101;
-
-                    // default: 3'b111
-                    default: branch_alu_op_ctrl = 3'b111;
-                endcase
+            if (is_jal || is_jalr) begin
+                branch_alu_op_ctrl = 3'b010;
+            end else if (is_branch) begin
+                branch_alu_op_ctrl = funct3;
+            end else begin
+                branch_alu_op_ctrl = 3'b011;
             end
-            else branch_alu_op_ctrl = 3'b111;
         end
     endfunction
 endmodule

@@ -21,7 +21,7 @@ module test_ex_ctrl ();
         // expect:
         // a_sel: 0
         // b_sel: 1
-        // branch_alu_op: 111
+        // branch_alu_op: 011
         #10
 
         // AUPIC
@@ -29,7 +29,7 @@ module test_ex_ctrl ();
         // expect:
         // a_sel: 1
         // b_sel: 1
-        // branch_alu_op: 111
+        // branch_alu_op: 011
         #10
 
         // JAL
@@ -37,7 +37,7 @@ module test_ex_ctrl ();
         // expect:
         // a_sel: 1
         // b_sel: 1
-        // branch_alu_op: 110
+        // branch_alu_op: 010
         #10
 
         // JALR
@@ -45,7 +45,7 @@ module test_ex_ctrl ();
         // expect:
         // a_sel: 0
         // b_sel: 1
-        // branch_alu_op: 110
+        // branch_alu_op: 010
         #10
 
         // Branch
@@ -62,19 +62,19 @@ module test_ex_ctrl ();
         assign funct3 = 3'b001;
         #10
             //context: BLT
-            // branch_alu_op: 010
+            // branch_alu_op: 100
         assign funct3 = 3'b100;
         #10
             // context: BGE
-            // branch_alu_op: 100
+            // branch_alu_op: 101
         assign funct3 = 3'b101;
         #10
             // context: BLTU
-            // branch_alu_op: 011
+            // branch_alu_op: 110
         assign funct3 = 3'b110;
         #10
             // context: BGEU
-            // branch_alu_op: 101
+            // branch_alu_op: 111
         assign funct3 = 3'b111;
         #10
 
@@ -83,7 +83,7 @@ module test_ex_ctrl ();
         // expect:
         // a_sel: 0
         // b_sel: 1
-        // branch_alu_op: 111
+        // branch_alu_op: 011
         #10
 
         // Store
@@ -91,7 +91,7 @@ module test_ex_ctrl ();
         // expect:
         // a_sel: 0
         // b_sel: 1
-        // branch_alu_op: 111
+        // branch_alu_op: 011
         #10
 
         // I-Type
@@ -99,7 +99,7 @@ module test_ex_ctrl ();
         // expect:
         // a_sel: 0
         // b_sel: 1
-        // branch_alu_op: 111
+        // branch_alu_op: 011
         #10
 
         // R-Type
@@ -107,7 +107,7 @@ module test_ex_ctrl ();
         // expect:
         // a_sel: 0
         // b_sel: 0
-        // branch_alu_op: 111
+        // branch_alu_op: 011
         #10
 
         $finish;
