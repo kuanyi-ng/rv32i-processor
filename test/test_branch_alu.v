@@ -24,32 +24,32 @@ module test_branch_alu ();
 
         // LT
         // expect: 1
-        assign branch_alu_op = 3'b010;
+        assign branch_alu_op = 3'b100;
         #10
 
         // LTU
         // expect: 0
-        assign branch_alu_op = 3'b011;
+        assign branch_alu_op = 3'b110;
         #10
 
         // GE
         // expect: 0
-        assign branch_alu_op = 3'b100;
+        assign branch_alu_op = 3'b101;
         #10
 
         // GEU
         // expect: 1
-        assign branch_alu_op = 3'b101;
+        assign branch_alu_op = 3'b111;
         #10
         
         // JAL, JALR
         // expect: 1
-        assign branch_alu_op = 3'b110;
+        assign branch_alu_op = 3'b010;
         #10
 
         // Other instructions
         // expect: 0
-        assign branch_alu_op = 3'b111;
+        assign branch_alu_op = 3'b011;
         #10
 
         $finish;
