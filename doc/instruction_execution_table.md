@@ -32,19 +32,19 @@
                 PC ← PC + 4
             </td>
             <!-- ID -->
-            <td rowspan=2></td>
-            <!-- EX -->
-            <td>
+            <td rowspan=2>
                 U_imm ← sext(IR[31:12] << 12) <!-- sext: sign-extend-->
                 <br />
+                rd ← IR[11:7]
+            </td>
+            <!-- EX -->
+            <td>
                 C ← U_imm
             </td>
             <!-- MEM -->
             <td rowspan=2></td>
             <!-- WB -->
             <td rowspan=2>
-                rd ← IR[11:7]
-                <br />
                 x[rd] ← C
             </td>
         </tr>
@@ -55,8 +55,6 @@
             <!-- ID -->
             <!-- EX -->
             <td>
-                U_imm ← sext(IR[31:12] << 12)
-                <br />
                 C ← PC + U_imm
             </td>           
             <!-- MEM -->
@@ -88,23 +86,23 @@
                 PC ← PC + 4
             </td>
             <!-- ID -->
-            <td rowspan=9>
+            <td rowspan=6>
                 rs1 ← IR[19:15]
                 <br />
                 A ← x[rs1]
+                <br />
+                I_imm ← sext(IR[31:20])
+                <br />
+                rd ← IR[11:7]
             </td>
             <!-- EX -->
             <td>
-                I_imm ← sext(IR[31:20])
-                <br />
                 C ← A + I_imm
             </td>
             <!-- MEM -->
-            <td></td>
+            <td rowspan=9></td>
             <!-- WB -->
-            <td>
-                rd ← IR[11:7]
-                <br />
+            <td rowspan=9>
                 x[rd] ← C
             </td>
         </tr>
@@ -114,19 +112,11 @@
             <!-- IF -->
             <!-- ID -->
             <!-- EX -->
-            <td rowspan=2>
-                I_imm ← sext(IR[31:20])
-                <br />
-                C ← A - I_imm
+            <td>
+                C ← (A < I_imm) ... signed
             </td>
             <!-- MEM -->
-            <td></td>
             <!-- WB -->
-            <td>
-                rd ← IR[11:7]
-                <br />
-                x[rd] ← (C < 0) ... signed
-            </td>
         </tr>
         <tr>
             <!-- instruction -->
@@ -134,14 +124,11 @@
             <!-- IF -->
             <!-- ID -->
             <!-- EX -->
-            <!-- MEM -->
-            <td></td>
-            <!-- WB -->
             <td>
-                rd ← IR[11:7]
-                <br />
-                x[rd] ← (C < 0) ... unsigned
+                C ← A < I_imm) ... unsigned
             </td>
+            <!-- MEM -->
+            <!-- WB -->
         </tr>
         <tr>
             <!-- instruction -->
@@ -150,18 +137,10 @@
             <!-- ID -->
             <!-- EX -->
             <td>
-                I_imm ← sext(IR[31:20])
-                <br />
                 C ← A ^ I_imm
             </td>
             <!-- MEM -->
-            <td></td>
             <!-- WB -->
-            <td rowspan=6>
-                rd ← IR[11:7]
-                <br />
-                x[rd] ← C
-            </td>
         </tr>
         <tr>
             <!-- instruction -->
@@ -170,12 +149,9 @@
             <!-- ID -->
             <!-- EX -->
             <td>
-                I_imm ← sext(IR[31:20])
-                <br />
                 C ← A | I_imm
             </td>
             <!-- MEM -->
-            <td></td>
             <!-- WB -->
         </tr>
         <tr>
@@ -185,12 +161,9 @@
             <!-- ID -->
             <!-- EX -->
             <td>
-                I_imm ← sext(IR[31:20])
-                <br />
                 C ← A & I_imm
             </td>
             <!-- MEM -->
-            <td></td>
             <!-- WB -->
         </tr>
         <tr>
@@ -198,14 +171,16 @@
             <td>slli [I]</td>
             <!-- IF -->
             <!-- ID -->
+            <td rowspan=3>
+                shamt_imm ← ext(IR[24:20])
+                <br />
+                rd ← IR[11:7]
+            </td>
             <!-- EX -->
             <td>
-                shamt_imm ← IR[24:20]
-                <br />
                 C ← A << shamt_imm
             </td>
             <!-- MEM -->
-            <td></td>
             <!-- WB -->
         </tr>
         <tr>
@@ -215,12 +190,9 @@
             <!-- ID -->
             <!-- EX -->
             <td>
-                shamt_imm ← IR[24:20]
-                <br />
-                C ← A >>u shamt_imm ... unsigned shift
+                C ← A >>u shamt_imm
             </td>
             <!-- MEM -->
-            <td></td>
             <!-- WB -->
         </tr>
         <tr>
@@ -230,12 +202,9 @@
             <!-- ID -->
             <!-- EX -->
             <td>
-                shamt_imm ← IR[24:20]
-                <br />
-                C ← A >>s shamt_imm ... signed shift
+                C ← A >>s shamt_imm
             </td>
             <!-- MEM -->
-            <td></td>
             <!-- WB -->
         </tr>
     </tbody>
@@ -276,7 +245,7 @@
             <!-- MEM -->
             <td></td>
             <!-- WB -->
-            <td rowspan=3>
+            <td rowspan=10>
                 x[rd] ← C
             </td>
         </tr>
@@ -313,14 +282,11 @@
             <!-- ID -->
             <!-- EX -->
             <td>
-                C ← A - B
+                C ← (A < B) ... signed
             </td>
             <!-- MEM -->
             <td></td>
             <!-- WB -->
-            <td>
-                x[rd] ← (C < 0) ... signed
-            </td>
         </tr>
         <tr>
             <!-- instruction -->
@@ -329,14 +295,11 @@
             <!-- ID -->
             <!-- EX -->
             <td>
-                C ← A - B
+                C ← (A < B) ... unsigned
             </td>
             <!-- MEM -->
             <td></td>
             <!-- WB -->
-            <td>
-                x[rd] ← (C < 0) ... unsigned
-            </td>
         </tr>
         <tr>
             <!-- instruction -->
@@ -350,9 +313,6 @@
             <!-- MEM -->
             <td></td>
             <!-- WB -->
-            <td rowspan=5>
-                x[rd] ← C
-            </td>
         </tr>
         <tr>
             <!-- instruction -->
@@ -409,7 +369,7 @@
     </tbody>
 </table>
 
-### I-Type (Load Instructions)
+### Load Instructions
 <table>
     <thead>
         <tr>
@@ -435,11 +395,11 @@
             <td rowspan=5>
                 A ← x[rs1]
                 <br />
-                B ← sext(IR[31:20])
+                imm ← sext(IR[31:20])
             </td>
             <!-- EX -->
             <td rowspan=5>
-                C ← A + B
+                C ← A + imm
             </td>
             <!-- MEM -->
             <td>
@@ -528,10 +488,12 @@
                 A ← x[rs1]
                 <br />
                 B ← x[rs2]
+                <br />
+                S_imm = sext({ IR[31:25], IR[11:7] })
             </td>
             <!-- EX -->
             <td rowspan=3>
-                C ← A + sext({ IR[31:25], IR[11:7] })
+                C ← A + S_imm
             </td>
             <!-- MEM -->
             <td>
@@ -591,11 +553,10 @@
             </td>
             <!-- ID -->
             <td>
+                J_imm ← sext({ IR[31], IR[19:12], IR[20], IR[30:21], 0 })
             </td>
             <!-- EX -->
             <td>
-                J_imm ← sext({ IR[31], IR[19:12], IR[20], IR[30:21], 0 })
-                <br />
                 C ← PC + J_imm
             </td>
             <!-- MEM -->
@@ -614,11 +575,11 @@
             <!-- ID -->
             <td>
                 A ← x[rs1]
+                <br />
+                I_imm ← sext(IR[31:20])
             </td>
             <!-- EX -->
             <td>
-                I_imm ← sext(IR[31:20])
-                <br />
                 C ← (A + I_imm) & ~1
             </td>
             <!-- MEM -->
@@ -660,18 +621,20 @@
                 A ← x[rs1]
                 <br />
                 B ← x[rs2]
+                <br />
+                B_imm ← sext({ IR[31], IR[7], IR[30:25], IR[11:8], 0 })
             </td>
             <!-- EX -->
-            <td rowspan=6>
-                B_imm ← sext({ IR[31], IR[7], IR[30:25], IR[11:8], 0 })
-                <br />
+            <td>
                 C ← PC + B_imm
+                <br />
+                jump_or_branch = (A == B)
             </td>
             <!-- MEM -->
             <td rowspan=6></td>
             <!-- WB -->
-            <td>
-                if (A == B) PC ← C
+            <td rowspan=6>
+                if (jump_or_branch) PC ← C
             </td>
         </tr>
         <tr>
@@ -680,11 +643,13 @@
             <!-- IF -->
             <!-- ID -->
             <!-- EX -->
+            <td>
+                C ← PC + B_imm
+                <br />
+                jump_or_branch = (A != B)
+            </td>
             <!-- MEM -->
             <!-- WB -->
-            <td>
-                if (A != B) PC ← C
-            </td>
         </tr>
         <tr>
             <!-- instruction -->
@@ -692,11 +657,13 @@
             <!-- IF -->
             <!-- ID -->
             <!-- EX -->
+            <td>
+                C ← PC + B_imm
+                <br />
+                jump_or_branch = (A < B) ... signed
+            </td>
             <!-- MEM -->
             <!-- WB -->
-            <td>
-                if (A < B) PC ← C ... signed
-            </td>
         </tr>
         <tr>
             <!-- instruction -->
@@ -704,11 +671,13 @@
             <!-- IF -->
             <!-- ID -->
             <!-- EX -->
+            <td>
+                C ← PC + B_imm
+                <br />
+                jump_or_branch = (A >= B) ... signed
+            </td>
             <!-- MEM -->
             <!-- WB -->
-            <td>
-                if (A >= B) PC ← C ... signed
-            </td>
         </tr>
         <tr>
             <!-- instruction -->
@@ -716,11 +685,13 @@
             <!-- IF -->
             <!-- ID -->
             <!-- EX -->
+            <td>
+                C ← PC + B_imm
+                <br />
+                jump_or_branch = (A < B) ... unsigned
+            </td>
             <!-- MEM -->
             <!-- WB -->
-            <td>
-                if (A < B) PC ← C ... unsigned
-            </td>
         </tr>
         <tr>
             <!-- instruction -->
@@ -728,11 +699,13 @@
             <!-- IF -->
             <!-- ID -->
             <!-- EX -->
+            <td>
+                C ← PC + B_imm
+                <br />
+                jump_or_branch = (A >= B) ... signed
+            </td>
             <!-- MEM -->
             <!-- WB -->
-            <td>
-                if (A >= B) PC ← C ... unsigned
-            </td>
         </tr>
     </tbody>
 </table>
