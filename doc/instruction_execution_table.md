@@ -534,11 +534,11 @@
                 C ← A + sext({ IR[31:25], IR[11:7] })
             </td>
             <!-- MEM -->
-            <td rowspan=3></td>
-            <!-- WB -->
             <td>
                 M[C] ← B[7:0]
             </td>
+            <!-- WB -->
+            <td rowspan=3></td>
         </tr>
         <tr>
             <!-- instruction -->
@@ -547,10 +547,10 @@
             <!-- ID -->
             <!-- EX -->
             <!-- MEM -->
-            <!-- WB -->
             <td>
                 M[C] ← B[15:0]
             </td>
+            <!-- WB -->
         </tr>
         <tr>
             <!-- instruction -->
@@ -559,10 +559,10 @@
             <!-- ID -->
             <!-- EX -->
             <!-- MEM -->
-            <!-- WB -->
             <td>
                 M[C] ← B[31:0]
             </td>
+            <!-- WB -->
         </tr>
     </tbody>
 </table>
