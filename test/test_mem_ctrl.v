@@ -17,7 +17,11 @@ module test_mem_ctrl ();
     );
 
     initial begin
+        // require_mem_access: 1
+        assign data_mem_access_ready_n = 1'b0;
+
         // Load Instructions
+        // write_to_data_mem: 0
         assign opcode = 7'b1100011;
             // context: LB
             // expect
@@ -46,6 +50,7 @@ module test_mem_ctrl ();
         #10
 
         // Store Instructions
+        // write_to_data_mem: 1
         assign opcode = 7'b0100011;
             // context: SB
             // expect
@@ -65,8 +70,14 @@ module test_mem_ctrl ();
 
         // Other Instructions
         // expect
+        // write_to_data_mem: 0
         // access_size: 11
         assign opcode = 7'bxxxxxxx;
+        #10
+
+        // expect
+        // require_mem_access: 0
+        assign data_mem_access_ready_n = 1'b1;
         #10
 
         $finish;

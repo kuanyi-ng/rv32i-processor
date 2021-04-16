@@ -11,6 +11,8 @@ module mem_ctrl (
     // Main
     //
     assign access_size = access_size_ctrl(opcode, funct3);
+    assign write_to_data_mem = write_ctrl(opcode);
+    assign require_mem_access = !data_mem_access_ready_n;
 
     //
     // Functions
@@ -53,6 +55,13 @@ module mem_ctrl (
                 // Other Instructions
                 access_size_ctrl = 2'b11;
             end
+        end
+    endfunction
+
+    function write_ctrl(input [6:0] opcode);
+        begin
+            // only Store Instructions write to mem
+            write_ctrl = (opcode == 7'b0100011);
         end
     endfunction
     
