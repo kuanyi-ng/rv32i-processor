@@ -50,6 +50,8 @@ module id_stage (
         .out(imm)
     );
 
+    // NOTE: not a good idea to have an instance of register file inside ID stage,
+    // as the same instance need to be accessed during WB stage
     rf32x32 regfile32_inst(
         .clk(clk),
         .reset(rst_n),
