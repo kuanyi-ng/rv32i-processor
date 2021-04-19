@@ -21,8 +21,8 @@ module mem_ctrl (
         reg is_load, is_store;
 
         begin
-            assign is_load = (opcode == 7'b1100011) ? 1'b1 : 1'b0;
-            assign is_store = (opcode == 7'b0100011) ? 1'b1 : 1'b0;
+            assign is_load = (opcode == 7'b1100011);
+            assign is_store = (opcode == 7'b0100011);
 
             if (is_load) begin
                 case (funct3[1:0])
@@ -65,9 +65,10 @@ module mem_ctrl (
         reg is_store;
 
         begin
-            assign is_store = (opcode == 7'b0100011) ? 1'b1 : 1'b0;
+            assign is_store = (opcode == 7'b0100011);
             // only Store Instructions write to mem
-            write_ctrl = is_store;
+            if (is_store) write_ctrl = 1'b1;
+            else write_ctrl = 1'b0;
         end
     endfunction
 
@@ -80,8 +81,8 @@ module mem_ctrl (
                 mem_access_ctrl  = 1'b0;
             end else begin
                 // 0: ready
-                assign is_load = (opcode == 7'b1100011) ? 1'b1 : 1'b0;
-                assign is_store = (opcode == 7'b0100011) ? 1'b1 : 1'b0;
+                assign is_load = (opcode == 7'b1100011);
+                assign is_store = (opcode == 7'b0100011);
 
                 // request for memory access only for load/store instructions
                 if (is_load) mem_access_ctrl = 1'b1;
