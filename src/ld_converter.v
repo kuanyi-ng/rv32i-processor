@@ -2,35 +2,45 @@ module ld_converter (
     input [31:0] in, // data read from memory
     input [1:0] offset, // addr[1:0]
     input [2:0] format, // ir[14:12]: funct3
-    output reg [31:0] out
+    output [31:0] out
 );
-    always @(in or offset or format) begin
-        // in: abcd_efgh
-        case (format)
-            // LB
-            // out: sext(xy) where xy is from { ab, cd, ef, gh }
-            3'b000: out <= ld_ext_b(in, offset, 1'b1);
 
-            // LH
-            // out: sext(wxyz) where wxyz is from { abcd, efgh }
-            3'b001: out <= ld_ext_h(in, offset, 1'b1);
+    //
+    // Main
+    //
+    assign out = prep_ld_data(in, offset, format);
 
-            // LW
-            // out: abcd_efgh
-            3'b010: out <= in;
+    //
+    // Functions
+    //
+    function [31:0] prep_ld_data(input [31:0] in, input [1:0] offset, input [2:0] format);
+        begin
+            case (format)
+                // LB
+                // out: sext(xy) where xy is from { ab, cd, ef, gh }
+                3'b000: prep_ld_data = ld_ext_b(in, offset, 1'b1);
 
-            // LBU
-            // out: ext(xy) where xy is from { ab, cd, ef, gh }
-            3'b100: out <= ld_ext_b(in, offset, 1'b0);
+                // LH
+                // out: sext(wxyz) where wxyz is from { abcd, efgh }
+                3'b001: prep_ld_data = ld_ext_h(in, offset, 1'b1);
 
-            // LHU
-            // out: ext(wxyz) where wxyz is from { abcd, efgh }
-            3'b101: out <= ld_ext_h(in, offset, 1'b0);
+                // LW
+                // out: abcd_efgh
+                3'b010: prep_ld_data = in;
 
-            // default: in (doesn't perform any operations)
-            default: out <= in;
-        endcase
-    end
+                // LBU
+                // out: ext(xy) where xy is from { ab, cd, ef, gh }
+                3'b100: prep_ld_data = ld_ext_b(in, offset, 1'b0);
+
+                // LHU
+                // out: ext(wxyz) where wxyz is from { abcd, efgh }
+                3'b101: prep_ld_data = ld_ext_h(in, offset, 1'b0);
+
+                // default: in (doesn't perform any operations)
+                default: prep_ld_data = in;
+            endcase
+        end
+    endfunction
 
     function [31:0] ld_ext_b(input [31:0] in, input [1:0] offset, input s_ext);
         reg [7:0] data;
