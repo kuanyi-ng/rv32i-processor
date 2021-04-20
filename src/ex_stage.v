@@ -12,6 +12,7 @@ module ex_stage (
     // outputs to MEM stage
     output [6:0] opcode_to_mem,
     output [2:0] funct3_to_mem,
+    output [31:0] pc_to_mem,
     output jump_or_branch,
     output [31:0] b,
     output [31:0] c,
@@ -57,6 +58,7 @@ module ex_stage (
     // pass over
     assign opcode_to_mem = opcode;
     assign funct3_to_mem = funct3;
+    assign pc_to_mem = pc_from_id;
     assign b = data2;   // used by store instructions
     assign reg_wr_addr = rd;
 
