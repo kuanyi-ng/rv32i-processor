@@ -15,6 +15,9 @@ module wb_stage (
     output [31:0] next_pc
 );
 
+    //
+    // Main
+    //
     wire [1:0] data_to_reg_sel;
 
     wb_ctrl wb_ctrl_inst(
@@ -23,16 +26,26 @@ module wb_stage (
         .data_to_reg_sel(data_to_reg_sel)
     );
 
-    assign data_to_reg = data_to_reg_prep(data_to_reg_sel, c, d, pc_from_mem);
+    wire [31:0] incremented_pc;
+
+    pc_adder wb_pc_adder(
+        .in(pc_from_mem),
+        .out(incremented_pc)
+    );
+
+    assign data_to_reg = data_to_reg_prep(data_to_reg_sel, c, d, incremented_pc);
 
     assign reg_wr_addr = rd;
     assign next_pc = c;
 
-    function [31:0] data_to_reg_prep(input [1:0] sel, input [31:0] c, input [31:0] d, input [31:0] pc);
+    //
+    // Functions
+    //
+    function [31:0] data_to_reg_prep(input [1:0] sel, input [31:0] c, input [31:0] d, input [31:0] incremented_pc);
         begin
             if (sel == 2'b00) data_to_reg_prep = c;
             else if (sel == 2'b01) data_to_reg_prep = d;
-            else data_to_reg_prep = pc + 32'd4;
+            else data_to_reg_prep = incremented_pc;
         end
     endfunction
 endmodule
