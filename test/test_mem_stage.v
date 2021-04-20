@@ -12,6 +12,7 @@ module test_mem_stage ();
     wire [31:0] pc_to_wb;
     wire [4:0] rd_to_wb;
     wire [6:0] opcode_to_wb;
+    wire [31:0] c_to_wb;
     wire [31:0] d;
     wire [31:0] data_mem_addr;
     wire require_mem_access, write;
@@ -30,6 +31,7 @@ module test_mem_stage ();
         .pc_to_wb(pc_to_wb),
         .rd_to_wb(rd_to_wb),
         .opcode_to_wb(opcode_to_wb),
+        .c_to_wb(c_to_wb),
         .d(d),
         .data_mem_addr(data_mem_addr),
         .require_mem_access(require_mem_access),
@@ -58,6 +60,7 @@ module test_mem_stage ();
             // context: LB
             // expect
             // size: 10
+            // c_to_wb: 2
             // d: ffff_ffb1
         assign c = 32'h0000_0002;
         assign funct3 = 3'b000;
@@ -65,6 +68,7 @@ module test_mem_stage ();
             // context: LH
             // expect
             // size: 01
+            // c_to_wb: 2
             // d: ffff_a0b1
         assign c = 32'h0000_0002;
         assign funct3 = 3'b001;
@@ -72,6 +76,7 @@ module test_mem_stage ();
             // context: LW
             // expect
             // size: 00
+            // c_to_wb: 4
             // d: a0b1_c2d3
         assign c = 32'h0000_0004;
         assign funct3 = 3'b010;
@@ -79,6 +84,7 @@ module test_mem_stage ();
             // context: LBU
             // expect
             // size: 10
+            // c_to_wb: 0
             // d: 0000_00d3
         assign c = 32'h0000_0000;
         assign funct3 = 3'b100;
@@ -86,11 +92,13 @@ module test_mem_stage ();
             // context: LHU
             // expect
             // size: 01
+            // c_to_wb: 0
             // d: 0000_c2d3
         assign c = 32'h0000_0000;
         assign funct3 = 3'b101;
         #10
 
+        // c_to_wb: 0000_1234
         assign c = 32'h0000_1234;
 
         // Store Instructions
