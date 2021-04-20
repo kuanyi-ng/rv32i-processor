@@ -9,10 +9,12 @@ module mem_stage (
     input [31:0] pc_from_ex,
     input [31:0] b,                 // data to store (Store Instructions)
     input [31:0] c,                 // memory address to access
+    input [4:0] rd_from_ex,
 
     // outputs to MEM stage
     output [31:0] pc_to_wb,
     output [31:0] d,                // data loaded (Load Instructions)
+    output [4:0] rd_to_wb,
 
     // outputs to Memory Module
     output [31:0] data_mem_addr,
@@ -47,4 +49,6 @@ module mem_stage (
     );
     
     assign pc_to_wb = pc_from_ex;
+    assign rd_to_wb = rd_from_ex;
+
 endmodule

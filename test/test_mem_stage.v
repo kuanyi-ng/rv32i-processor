@@ -4,10 +4,12 @@ module test_mem_stage ();
     reg [6:0] opcode;
     reg [2:0] funct3;
     reg [31:0] pc_from_ex;
+    reg [4:0] rd_from_ex;
     reg [31:0] b, c;
 
 
     wire [31:0] pc_to_wb;
+    wire [4:0] rd_to_wb;
     wire [31:0] d;
     wire [31:0] data_mem_addr;
     wire require_mem_access, write;
@@ -20,9 +22,11 @@ module test_mem_stage ();
         .opcode(opcode),
         .funct3(funct3),
         .pc_from_ex(pc_from_ex),
+        .rd_from_ex(rd_from_ex),
         .b(b),
         .c(c),
         .pc_to_wb(pc_to_wb),
+        .rd_to_wb(rd_to_wb),
         .d(d),
         .data_mem_addr(data_mem_addr),
         .require_mem_access(require_mem_access),
@@ -35,6 +39,9 @@ module test_mem_stage ();
         // expect: 
         // pc_to_wb: 4
         assign pc_from_ex = 32'd4;
+        // expect
+        // rd_to_wb = 3
+        assign rd_from_ex = 5'd3;
 
         assign data_mem_access_ready_n = 1'b0;
 
