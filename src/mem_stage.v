@@ -9,6 +9,8 @@ module mem_stage (
     input [31:0] pc_from_ex,
     input [31:0] b,                 // data to store (Store Instructions)
     input [31:0] c,                 // memory address to access
+    // NOTE: might want to pass data from EX to WB in higher level module
+    // jump_or_branch is not pass on to WB yet
     input [4:0] rd_from_ex,
 
     // outputs to MEM stage
