@@ -5,11 +5,13 @@ module test_mem_stage ();
     reg [2:0] funct3;
     reg [31:0] pc_from_ex;
     reg [4:0] rd_from_ex;
+    reg [6:0] opcode_from_ex;
     reg [31:0] b, c;
 
 
     wire [31:0] pc_to_wb;
     wire [4:0] rd_to_wb;
+    wire [6:0] opcode_to_wb;
     wire [31:0] d;
     wire [31:0] data_mem_addr;
     wire require_mem_access, write;
@@ -27,6 +29,7 @@ module test_mem_stage ();
         .c(c),
         .pc_to_wb(pc_to_wb),
         .rd_to_wb(rd_to_wb),
+        .opcode_to_wb(opcode_to_wb),
         .d(d),
         .data_mem_addr(data_mem_addr),
         .require_mem_access(require_mem_access),
@@ -49,6 +52,7 @@ module test_mem_stage ();
         // data_mem_addr: 0000_1234
         // require_mem_access: 1
         // write: 0
+        // opcode_to_wb: 1100011
         assign opcode = 7'b1100011;
         assign data_from_mem = 32'ha0b1_c2d3; // better to have diff results for signed and unsigned
             // context: LB
@@ -93,6 +97,7 @@ module test_mem_stage ();
         // data_mem_addr: 0000_1234
         // require_mem_access: 1
         // write: 1
+        // opcode_to_wb: 0100011
         assign opcode = 7'b0100011;
         assign b = 32'h8765_4321;
             // context: SB
@@ -122,6 +127,7 @@ module test_mem_stage ();
         // write: 0
         // size: 11
         // data_to_mem: xxxx_xxxx
+        // opcode_to_wb: xxxxxxx
         assign opcode = 7'bxxxxxxx;
         assign funct3 = 3'bxxx;
         #10

@@ -13,8 +13,9 @@ module mem_stage (
 
     // outputs to MEM stage
     output [31:0] pc_to_wb,
-    output [31:0] d,                // data loaded (Load Instructions)
     output [4:0] rd_to_wb,
+    output [6:0] opcode_to_wb,
+    output [31:0] d,                // data loaded (Load Instructions)
 
     // outputs to Memory Module
     output [31:0] data_mem_addr,
@@ -50,5 +51,6 @@ module mem_stage (
     
     assign pc_to_wb = pc_from_ex;
     assign rd_to_wb = rd_from_ex;
+    assign opcode_to_wb = opcode;
 
 endmodule
