@@ -1,16 +1,16 @@
 // stage-level module
 module id_stage (
-    input clk,              // one clock cycle: 0 -> 1
-    input rst_n,            // reset when 0
-
-    // inputs from higher level module
-    input wr_n,             // regfile write enable: allow write when 0
-    input [4:0] wr_addr,    // write address of regfile
-    input [31:0] data_in,   // data to write into wr_addr
-
     // inputs from IF stage
     input [31:0] pc_from_if,
     input [31:0] ir,
+
+    // outputs to Register File
+    output [4:0] rs1,
+    output [4:0] rs2,
+
+    // inputs from Register File (read)
+    input [31:0] data1_from_regfile,
+    input [31:0] data2_from_regfile,
 
     // outputs to EX stage
     output [31:0] pc_to_ex,
@@ -22,9 +22,6 @@ module id_stage (
     output [31:0] imm,
     output [4:0] rd
 );
-
-    wire [4:0] rs1;
-    wire [4:0] rs2;
 
     ir_splitter ir_splitter_inst(
         .ir(ir),
@@ -50,24 +47,13 @@ module id_stage (
         .out(imm)
     );
 
-    // NOTE: not a good idea to have an instance of register file inside ID stage,
-    // as the same instance need to be accessed during WB stage
-    rf32x32 regfile32_inst(
-        .clk(clk),
-        .reset(rst_n),
-        .wr_n(wr_n),
-        .rd1_addr(rs1),
-        .rd2_addr(rs2),
-        .wr_addr(wr_addr),
-        .data_in(data_in),
-        .data1_out(data1),
-        .data2_out(data2)
-    );
-
     // direct pc_from_if to pc_to_ex
     // NOTE: might not be a good idea to pass pc directly
     // pc read at IF stage might overwrite
     // (old) pc that are passed over other stages.
     assign pc_to_ex = pc_from_if;
+
+    assign data1 = data1_from_regfile;
+    assign data2 = data2_from_regfile;
 
 endmodule
