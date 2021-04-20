@@ -10,6 +10,7 @@ module test_ex_stage ();
 
     wire [6:0] opcode_to_mem;
     wire [2:0] funct3_to_mem;
+    wire [31:0] pc_to_mem;
     wire jump_or_branch;
     wire [31:0] b;
     wire [31:0] c;
@@ -26,6 +27,7 @@ module test_ex_stage ();
         .rd(rd),
         .opcode_to_mem(opcode_to_mem),
         .funct3_to_mem(funct3_to_mem),
+        .pc_to_mem(pc_to_mem),
         .jump_or_branch(jump_or_branch),
         .b(b),
         .c(c),
@@ -41,6 +43,7 @@ module test_ex_stage ();
         // expect
         // opcode_to_mem: 0110111
         // funct3_to_mem: x
+        // pc_to_mem: 4
         // jump_or_branch: 0
         // c: f000_0002
         assign imm = 32'hf000_0002;
@@ -51,6 +54,7 @@ module test_ex_stage ();
         // expect
         // opcode_to_mem: 0010111
         // funct3_to_mem: x
+        // pc_to_mem: 4
         // jump_or_branch: 0
         // c: f0000_0006        
         assign imm = 32'hf000_0002;
@@ -61,6 +65,7 @@ module test_ex_stage ();
         // expect
         // opcode_to_mem: 1101111
         // funct3_to_mem: x
+        // pc_to_mem: 4
         // jump_or_branch: 1
         // c: 0000_0008
         assign imm = 32'd4;
@@ -71,6 +76,7 @@ module test_ex_stage ();
         // expect
         // opcode_to_mem: 1100111
         // funct3_to_mem: 000
+        // pc_to_mem: 4j
         // jump_or_branch: 1
         // c: f000_0002
         assign data1 = 32'hf000_0002;
@@ -88,11 +94,13 @@ module test_ex_stage ();
         assign opcode = 7'b1100011;
         assign funct3 = 3'b000;
             // context: data1 == data2
+            // pc_to_mem: 4
             // jump_or_branch: 1
         assign data1 = 32'd1;
         assign data2= 32'd1;
         #5
             // context: data1 != data2
+            // pc_to_mem: 4
             // jump_or_branch: 0
         assign data1 = 32'd1;
         assign data2 = 32'd2;
@@ -102,6 +110,7 @@ module test_ex_stage ();
         // expect
         // opcode_to_mem: 0000011
         // funct3_to_mem: 000
+        // pc_to_mem: 4
         // jump_or_branch: 0
         // c: 0000_0006
         assign data1 = 32'd2;
@@ -114,6 +123,7 @@ module test_ex_stage ();
         // expect:
         // opcode_to_mem: 0100011
         // funct3_to_mem: 000
+        // pc_to_mem: 4
         // jump_or_branch: 0
         // c: 0000_0006
         // b: 0000_0008
@@ -128,6 +138,7 @@ module test_ex_stage ();
         // expect:
         // opcode_to_mem: 0010011
         // funct3_to_mem: 000
+        // pc_to_mem: 4
         // jump_or_branch: 0
         // c: 0000_0006
         assign data1 = 32'd2;
@@ -140,6 +151,7 @@ module test_ex_stage ();
         // expect:
         // opcode_to_mem: 0110011
         // funct3_to_mem: 000
+        // pc_to_mem: 4
         // jump_or_branch: 0
         // c: 0000_0002
         assign data1 = 32'd4;

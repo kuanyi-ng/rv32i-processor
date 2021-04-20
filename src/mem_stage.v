@@ -6,10 +6,18 @@ module mem_stage (
     // inputs from EX stage
     input [6:0] opcode,
     input [2:0] funct3,
+    input [31:0] pc_from_ex,
     input [31:0] b,                 // data to store (Store Instructions)
     input [31:0] c,                 // memory address to access
+    // NOTE: might want to pass data from EX to WB in higher level module
+    // jump_or_branch is not pass on to WB yet
+    input [4:0] rd_from_ex,
 
     // outputs to MEM stage
+    output [31:0] pc_to_wb,
+    output [4:0] rd_to_wb,
+    output [6:0] opcode_to_wb,
+    output [31:0] c_to_wb,
     output [31:0] d,                // data loaded (Load Instructions)
 
     // outputs to Memory Module
@@ -44,4 +52,9 @@ module mem_stage (
         .out(d)
     );
     
+    assign pc_to_wb = pc_from_ex;
+    assign rd_to_wb = rd_from_ex;
+    assign opcode_to_wb = opcode;
+    assign c_to_wb = c;
+
 endmodule
