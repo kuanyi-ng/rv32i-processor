@@ -157,6 +157,91 @@ module top (
     );
 
     //
+    // EX
+    //
+
+    wire jump_ex;
+    wire [31:0] b_ex, c_ex;
+    ex_stage ex_stage_inst(
+        .opcode(opcode_from_id),
+        .funct3(funct3_from_id),
+        .funct7(funct7_from_id),
+        .data1(data1_from_id),
+        .data2(data2_from_id),
+        .imm(imm_from_id),
+        .jump(jump_ex),
+        .b(b_ex),
+        .c(c_ex)
+    );
+
+    //
+    // EX-MEM
+    //
+
+    wire [31:0] pc_from_ex;
+    reg32 pc_ex_mem_reg(
+        .clk(clk),
+        .rst_n(rst_n),
+        .in(pc_from_id),
+        .default_in(32'hZ),
+        .out(pc_from_ex)
+    );
+
+    wire jump_from_ex;
+    reg1 jump_ex_mem_reg(
+        .clk(clk),
+        .rst_n(rst_n),
+        .in(jump_ex),
+        .default_in(1'b0),
+        .out(jump_from_ex)
+    );
+
+    wire [31:0] b_from_ex;
+    reg32 b_ex_mem_reg(
+        .clk(clk),
+        .rst_n(rst_n),
+        .in(b_ex),
+        .default_in(32'hZ),
+        .out(b_from_ex) 
+    );
+
+    wire [31:0] c_from_ex;
+    reg32 c_ex_mem_reg(
+        .clk(clk),
+        .rst_n(rst_n),
+        .in(c_ex),
+        .default_in(32'hZ),
+        .out(c_from_ex)
+    );
+
+    wire [2:0] funct3_from_ex;
+    reg3 funct3_ex_mem_reg(
+        .clk(clk),
+        .rst_n(rst_n),
+        .in(funct3_from_id),
+        .default_in(3'hZ),
+        .out(funct3_from_ex)
+    );
+
+    wire [6:0] opcode_from_ex;
+    reg7 opcode_ex_mem_reg(
+        .clk(clk),
+        .rst_n(rst_n),
+        .in(opcode_from_id),
+        .default_in(7'hZ),
+        .out(opcode_from_ex)
+    );
+
+    wire [4:0] rd_from_ex;
+    reg5 rd_ex_mem_reg(
+        .clk(clk),
+        .rst_n(rst_n),
+        .in(rd_from_id),
+        .default_in(5'hZ),
+        .out(rd_from_ex)
+    );
+
+    //
     // Register File
     //
 
