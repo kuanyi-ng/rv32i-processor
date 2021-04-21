@@ -19,9 +19,8 @@ module top (
     // IF
     //
 
-    wire [31:0] current_pc;
     wire [31:0] next_pc; 
-
+    wire [31:0] current_pc;
     reg32 pc_reg(
         .clk(clk),
         .rst_n(rst_n),
@@ -35,6 +34,30 @@ module top (
         .c(32'd0),
         .jump_or_branch(1'd0),
         .next_pc(next_pc)
+    );
+
+    assign IAD = (ACKI_n == 1'b0) ? current_pc : 32'hZ;
+
+    //
+    // IF-ID
+    //
+
+    wire [31:0] pc_from_if;
+    reg32 pc_if_id_reg(
+        .clk(clk),
+        .rst_n(rst_n),
+        .in(current_pc),
+        .default_in(32'h0001_0000),
+        .out(pc_from_if)
+    );
+
+    wire [31:0] ir_from_if;
+    reg32 ir_if_id_reg(
+        .clk(clk),
+        .rst_n(rst_n),
+        .in(IDT),
+        .default_in(32'hZ),
+        .out(ir_from_if)
     );
 
 endmodule
