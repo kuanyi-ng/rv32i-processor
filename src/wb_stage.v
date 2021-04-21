@@ -1,18 +1,13 @@
 module wb_stage (
     // inputs from MEM
-    input [4:0] rd,
     input [6:0] opcode,
     input [31:0] c,
     input [31:0] d,
-    input [31:0] pc_from_mem,
+    input [31:0] pc,
 
     // outputs to Register File
-    output [4:0] reg_wr_addr,
     output write,
-    output [31:0] data_to_reg,
-
-    // outputs to IF
-    output [31:0] next_pc
+    output [31:0] data_to_reg
 );
 
     //
@@ -29,14 +24,11 @@ module wb_stage (
     wire [31:0] pc4;
 
     pc_adder wb_pc_adder(
-        .in(pc_from_mem),
+        .in(pc),
         .out(pc4)
     );
 
     assign data_to_reg = data_to_reg_prep(data_to_reg_sel, c, d, pc4);
-
-    assign reg_wr_addr = rd;
-    assign next_pc = c;
 
     //
     // Functions
