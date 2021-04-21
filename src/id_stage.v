@@ -1,26 +1,18 @@
 // stage-level module
 module id_stage (
     // inputs from IF stage
-    input [31:0] pc_from_if,
     input [31:0] ir,
 
     // outputs to Register File
     output [4:0] rs1,
     output [4:0] rs2,
 
-    // inputs from Register File (read)
-    input [31:0] data1_from_regfile,
-    input [31:0] data2_from_regfile,
-
     // outputs to EX stage
-    output [31:0] pc_to_ex,
+    output [4:0] rd,
     output [6:0] opcode,
     output [2:0] funct3,
     output [6:0] funct7,
-    output [31:0] data1,
-    output [31:0] data2,
-    output [31:0] imm,
-    output [4:0] rd
+    output [31:0] imm
 );
 
     ir_splitter ir_splitter_inst(
@@ -46,14 +38,5 @@ module id_stage (
         .imm_type(imm_type),
         .out(imm)
     );
-
-    // direct pc_from_if to pc_to_ex
-    // NOTE: might not be a good idea to pass pc directly
-    // pc read at IF stage might overwrite
-    // (old) pc that are passed over other stages.
-    assign pc_to_ex = pc_from_if;
-
-    assign data1 = data1_from_regfile;
-    assign data2 = data2_from_regfile;
 
 endmodule
