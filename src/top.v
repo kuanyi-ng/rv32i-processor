@@ -7,6 +7,10 @@ module top (
     input [31:0] IDT,   // Instruction Data Bus
     input ACKI_n,       // Acknowledge from Instruction Memory, 0: ready to access, 1: not ready
 
+    // Interuption
+    input [2:0] OINT_n,
+    output IACK_n,
+
     // Data Memory
     output [31:0] DAD,  // Data Address Bus
     inout [31:0] DDT,   // Data Data Bus
@@ -15,6 +19,7 @@ module top (
     output [1:0] SIZE,  // Access Size of Data Memory
     input ACKD_n        // Acknowledge from Data Memory, 0: ready to access, 1: not ready
 );
+
     //
     // IF
     //
@@ -29,10 +34,12 @@ module top (
         .out(current_pc)
     );
 
+    wire [31:0] c_from_mem;
+    wire jump_from_mem;
     if_stage if_stage_inst(
         .current_pc(current_pc),
-        .c(32'd0),
-        .jump_or_branch(1'd0),
+        .c(c_from_mem),
+        .jump_or_branch(jump_from_mem),
         .next_pc(next_pc)
     );
 
@@ -277,7 +284,6 @@ module top (
         .out(pc_from_mem)
     );
 
-    wire jump_from_mem;
     reg1 jump_mem_wb_reg(
         .clk(clk),
         .rst_n(rst_n),
@@ -286,7 +292,6 @@ module top (
         .out(jump_from_mem)
     );
 
-    wire [31:0] c_from_mem;
     reg32 c_mem_wb_reg(
         .clk(clk),
         .rst_n(rst_n),
@@ -323,6 +328,22 @@ module top (
     );
 
     //
+    // WB
+    //
+    
+    // TODO: Implement Regfile Control
+    wire wr_wb_n;
+    wire [31:0] data_in_wb;
+    wb_stage wb_stage_inst(
+        .opcode(opcode_from_mem),
+        .c(c_from_mem),
+        .d(d_from_mem),
+        .pc(pc_from_mem),
+        .write(wr_wb_n),
+        .data_to_reg(data_in_wb)
+    );
+
+    //
     // Register File
     //
 
@@ -340,5 +361,8 @@ module top (
         .data1_out(data1_id),
         .data2_out(data2_id)
     );
+    assign wr_n = wr_wb_n;
+    assign data_in = data_in_wb;
+    assign wr_addr = rd_from_mem;
 
 endmodule
