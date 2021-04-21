@@ -166,6 +166,7 @@ module top (
         .opcode(opcode_from_id),
         .funct3(funct3_from_id),
         .funct7(funct7_from_id),
+        .pc(pc_from_id),
         .data1(data1_from_id),
         .data2(data2_from_id),
         .imm(imm_from_id),
@@ -239,6 +240,86 @@ module top (
         .in(rd_from_id),
         .default_in(5'hZ),
         .out(rd_from_ex)
+    );
+
+    //
+    // MEM
+    //
+
+    wire [31:0] data_from_mem, data_to_mem;
+    wire [31:0] d_mem;
+    mem_stage mem_stage_inst(
+        .data_mem_ready_n(ACKD_n),
+        .data_from_mem(data_from_mem),
+        .opcode(opcode_from_ex),
+        .funct3(funct3_from_ex),
+        .b(b_from_ex),
+        .c(c_from_ex),
+        .d(d_mem),
+        .require_mem_access(MREQ),
+        .write(WRITE),
+        .size(SIZE),
+        .data_to_mem(data_to_mem)
+    );
+    assign data_from_mem = (!WRITE) ? DDT : 32'bz;
+    assign DDT = (WRITE) ? data_to_mem : 32'bz;
+
+    //
+    // MEM-WB
+    //
+
+    wire [31:0] pc_from_mem;
+    reg32 pc_mem_wb_reg(
+        .clk(clk),
+        .rst_n(rst_n),
+        .in(pc_from_ex),
+        .default_in(32'hZ),
+        .out(pc_from_mem)
+    );
+
+    wire jump_from_mem;
+    reg1 jump_mem_wb_reg(
+        .clk(clk),
+        .rst_n(rst_n),
+        .in(jump_from_ex),
+        .default_in(1'b0),
+        .out(jump_from_mem)
+    );
+
+    wire [31:0] c_from_mem;
+    reg32 c_mem_wb_reg(
+        .clk(clk),
+        .rst_n(rst_n),
+        .in(c_from_ex),
+        .default_in(32'hZ),
+        .out(c_from_mem)
+    );
+
+    wire [6:0] opcode_from_mem;
+    reg7 opcode_mem_wb_reg(
+        .clk(clk),
+        .rst_n(rst_n),
+        .in(opcode_from_ex),
+        .default_in(7'hZ),
+        .out(opcode_from_mem)
+    );
+
+    wire [31:0] d_from_mem;
+    reg32 d_mem_wb_reg(
+        .clk(clk),
+        .rst_n(rst_n),
+        .in(d_mem),
+        .default_in(32'hZ),
+        .out(d_from_mem)
+    );
+
+    wire [4:0] rd_from_mem;
+    reg5 rd_mem_wb_reg(
+        .clk(clk),
+        .rst_n(rst_n),
+        .in(rd_from_ex),
+        .default_in(5'hZ),
+        .out(rd_from_mem)
     );
 
     //
