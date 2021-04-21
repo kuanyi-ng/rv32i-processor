@@ -1,7 +1,7 @@
 module test_mem_ctrl ();
     reg [6:0] opcode;
     reg [2:0] funct3;
-    reg data_mem_access_ready_n;
+    reg data_mem_ready_n;
 
     wire [1:0] access_size;
     wire write_to_data_mem;
@@ -10,7 +10,7 @@ module test_mem_ctrl ();
     mem_ctrl subject(
         .opcode(opcode),
         .funct3(funct3),
-        .data_mem_access_ready_n(data_mem_access_ready_n),
+        .data_mem_ready_n(data_mem_ready_n),
         .access_size(access_size),
         .write_to_data_mem(write_to_data_mem),
         .require_mem_access(require_mem_access)
@@ -18,7 +18,7 @@ module test_mem_ctrl ();
 
     initial begin
         // require_mem_access: 1
-        assign data_mem_access_ready_n = 1'b0;
+        assign data_mem_ready_n = 1'b0;
 
         // Load Instructions
         // write_to_data_mem: 0
@@ -77,7 +77,7 @@ module test_mem_ctrl ();
 
         // expect
         // require_mem_access: 0
-        assign data_mem_access_ready_n = 1'b1;
+        assign data_mem_ready_n = 1'b1;
         #10
 
         $finish;

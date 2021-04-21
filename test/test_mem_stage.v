@@ -1,5 +1,5 @@
 module test_mem_stage ();
-    reg data_mem_access_ready_n;
+    reg data_mem_ready_n;
     reg [31:0] data_from_mem;
     reg [6:0] opcode;
     reg [2:0] funct3;
@@ -13,7 +13,7 @@ module test_mem_stage ();
     wire [31:0] data_to_mem;
 
     mem_stage subject(
-        .data_mem_access_ready_n(data_mem_access_ready_n),
+        .data_mem_ready_n(data_mem_ready_n),
         .data_from_mem(data_from_mem),
         .opcode(opcode),
         .funct3(funct3),
@@ -27,7 +27,7 @@ module test_mem_stage ();
     );
 
     initial begin
-        assign data_mem_access_ready_n = 1'b0;
+        assign data_mem_ready_n = 1'b0;
 
         // Load Instructions
         // require_mem_access: 1
@@ -101,7 +101,7 @@ module test_mem_stage ();
 
         // expect
         // require_mem_access: 0
-        assign data_mem_access_ready_n = 1'b1;
+        assign data_mem_ready_n = 1'b1;
         #10
 
         $finish;

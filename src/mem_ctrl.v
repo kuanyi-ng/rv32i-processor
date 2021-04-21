@@ -1,7 +1,7 @@
 module mem_ctrl (
     input [6:0] opcode,
     input [2:0] funct3,
-    input data_mem_access_ready_n,  // 0: ready to access data memory, 1: not ready
+    input data_mem_ready_n,  // 0: ready to access data memory, 1: not ready
     output [1:0] access_size,       // 00: word, 01: half, 10: byte
     output write_to_data_mem,
     output require_mem_access
@@ -12,7 +12,7 @@ module mem_ctrl (
     //
     assign access_size = access_size_ctrl(opcode, funct3);
     assign write_to_data_mem = write_ctrl(opcode);
-    assign require_mem_access = mem_access_ctrl(data_mem_access_ready_n, opcode);
+    assign require_mem_access = mem_access_ctrl(data_mem_ready_n, opcode);
 
     //
     // Functions

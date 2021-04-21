@@ -1,6 +1,6 @@
 module mem_stage (
     // inputs from Memory Module
-    input data_mem_access_ready_n,  // 0: ready to access memory, 1: not ready
+    input data_mem_ready_n,  // 0: ready to access memory, 1: not ready
     input [31:0] data_from_mem,
 
     // inputs from EX stage
@@ -22,7 +22,7 @@ module mem_stage (
     mem_ctrl mem_ctrl_inst(
         .opcode(opcode),
         .funct3(funct3),
-        .data_mem_access_ready_n(data_mem_access_ready_n),
+        .data_mem_ready_n(data_mem_ready_n),
         .access_size(size),
         .write_to_data_mem(write),
         .require_mem_access(require_mem_access)
