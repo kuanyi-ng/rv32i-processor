@@ -164,6 +164,28 @@ module top (
     );
 
     //
+    // Register File
+    //
+
+    wire wr_n;
+    wire [4:0] wr_addr;
+    wire [31:0] data_in;
+    rf32x32 regfile_inst(
+        .clk(clk),
+        .reset(rst_n),
+        .wr_n(wr_n),
+        .rd1_addr(rd1_addr),
+        .rd2_addr(rd2_addr),
+        .wr_addr(wr_addr),
+        .data_in(data_in),
+        .data1_out(data1_id),
+        .data2_out(data2_id)
+    );
+    // assign wr_n = wr_wb_n;
+    // assign data_in = data_in_wb;
+    // assign wr_addr = rd_from_mem;
+
+    //
     // EX
     //
 
@@ -318,13 +340,13 @@ module top (
         .out(d_from_mem)
     );
 
-    wire [4:0] rd_from_mem;
+    // wire [4:0] rd_from_mem;
     reg5 rd_mem_wb_reg(
         .clk(clk),
         .rst_n(rst_n),
         .in(rd_from_ex),
         .default_in(5'hZ),
-        .out(rd_from_mem)
+        .out(wr_addr)
     );
 
     //
@@ -332,37 +354,15 @@ module top (
     //
     
     // TODO: Implement Regfile Control
-    wire wr_wb_n;
-    wire [31:0] data_in_wb;
+    // wire wr_wb_n;
+    // wire [31:0] data_in_wb;
     wb_stage wb_stage_inst(
         .opcode(opcode_from_mem),
         .c(c_from_mem),
         .d(d_from_mem),
         .pc(pc_from_mem),
-        .write(wr_wb_n),
-        .data_to_reg(data_in_wb)
+        .write_n(wr_n),
+        .data_to_reg(data_in)
     );
-
-    //
-    // Register File
-    //
-
-    wire wr_n;
-    wire [4:0] wr_addr;
-    wire [31:0] data_in;
-    rf32x32 regfile_inst(
-        .clk(clk),
-        .reset(rst_n),
-        .wr_n(wr_n),
-        .rd1_addr(rd1_addr),
-        .rd2_addr(rd2_addr),
-        .wr_addr(wr_addr),
-        .data_in(data_in),
-        .data1_out(data1_id),
-        .data2_out(data2_id)
-    );
-    assign wr_n = wr_wb_n;
-    assign data_in = data_in_wb;
-    assign wr_addr = rd_from_mem;
 
 endmodule
