@@ -7,7 +7,15 @@ import subprocess
 
 # List of test_program and their paths
 test_programs_paths = {
-    "bitcnts": "./test_pack/MiBench/bitcnts/test/"
+    "bitcnts": "./test_pack/MiBench/bitcnts/test/",
+    "dijkstra": "./test_pack/MiBench/dijkstra/test/",
+    "stringsearch": "./test_pack/MiBench/stringsearch/test/",
+    "hello": "./test_pack/c/hello/",
+    "napier": "./test_pack/c/napier/",
+    "pi": "./test_pack/c/pi/",
+    "prime": "./test_pack/c/prime/",
+    "skel": "./test_pack/c/skel/",
+    "sort": "./test_pack/c/sort/"
 }
 
 def clean_test_ground():
