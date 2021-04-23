@@ -290,7 +290,7 @@ module top (
         .data_to_mem(data_to_mem)
     );
     assign DAD = c_from_ex;
-    assign data_from_mem = (!WRITE) ? DDT : 32'bz;
+    assign data_from_mem = DDT;
     assign DDT = (WRITE) ? data_to_mem : 32'bz;
 
     //
@@ -340,7 +340,6 @@ module top (
         .out(d_from_mem)
     );
 
-    // wire [4:0] rd_from_mem;
     reg5 rd_mem_wb_reg(
         .clk(clk),
         .rst_n(rst_n),
@@ -353,9 +352,6 @@ module top (
     // WB
     //
     
-    // TODO: Implement Regfile Control
-    // wire wr_wb_n;
-    // wire [31:0] data_in_wb;
     wb_stage wb_stage_inst(
         .opcode(opcode_from_mem),
         .c(c_from_mem),
