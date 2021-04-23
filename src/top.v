@@ -289,6 +289,7 @@ module top (
         .size(SIZE),
         .data_to_mem(data_to_mem)
     );
+    assign DAD = c_from_ex;
     assign data_from_mem = (!WRITE) ? DDT : 32'bz;
     assign DDT = (WRITE) ? data_to_mem : 32'bz;
 
