@@ -42,8 +42,7 @@ module top (
         .jump_or_branch(jump_from_mem),
         .next_pc(next_pc)
     );
-
-    assign IAD = (ACKI_n == 1'b0) ? current_pc : 32'hZ;
+    assign IAD = (ACKI_n == 1'b0) ? current_pc : 32'hx;
 
     //
     // IF-ID
