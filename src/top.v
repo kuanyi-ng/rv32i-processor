@@ -49,21 +49,14 @@ module top (
     //
 
     wire [31:0] pc_from_if;
-    reg32 pc_if_id_reg(
-        .clk(clk),
-        .rst_n(rst_n),
-        .in(current_pc),
-        .default_in(32'h0001_0000),
-        .out(pc_from_if)
-    );
-
     wire [31:0] ir_from_if;
-    reg32 ir_if_id_reg(
+    if_id_regs if_id_regs_inst(
         .clk(clk),
         .rst_n(rst_n),
-        .in(IDT),
-        .default_in(32'hZ),
-        .out(ir_from_if)
+        .pc_in(current_pc),
+        .pc_out(pc_from_if),
+        .ir_in(IDT),
+        .ir_out(ir_from_if)
     );
 
     //
@@ -92,76 +85,34 @@ module top (
     //
 
     wire [31:0] pc_from_id;
-    reg32 pc_id_ex_reg(
-        .clk(clk),
-        .rst_n(rst_n),
-        .in(pc_from_if),
-        .default_in(32'hZ),
-        .out(pc_from_id)
-    );
-
     wire [31:0] data1_id, data2_id;
     wire [31:0] data1_from_id, data2_from_id;
-    reg32 data1_id_ex_reg(
-        .clk(clk),
-        .rst_n(rst_n),
-        .in(data1_id),
-        .default_in(32'h0),
-        .out(data1_from_id)
-    );
-    reg32 data2_id_ex_reg(
-        .clk(clk),
-        .rst_n(rst_n),
-        .in(data2_id),
-        .default_in(32'h0),
-        .out(data2_from_id)
-    );
-
     wire [6:0] funct7_from_id;
-    reg7 funct7_id_ex_reg(
-        .clk(clk),
-        .rst_n(rst_n),
-        .in(funct7_id),
-        .default_in(7'hZ),
-        .out(funct7_from_id)
-    );
-
     wire [2:0] funct3_from_id;
-    reg3 funct3_id_ex_reg(
-        .clk(clk),
-        .rst_n(rst_n),
-        .in(funct3_id),
-        .default_in(3'hZ),
-        .out(funct3_from_id)
-    );
-
     wire [4:0] rd_from_id;
-    reg5 rd_id_ex_reg(
-        .clk(clk),
-        .rst_n(rst_n),
-        .in(rd_id),
-        .default_in(5'hZ),
-        .out(rd_from_id)
-    );
-
     wire [6:0] opcode_from_id;
-    reg7 opcode_id_ex_reg(
-        .clk(clk),
-        .rst_n(rst_n),
-        .in(opcode_id),
-        .default_in(7'hZ),
-        .out(opcode_from_id)
-    );
-
     wire [31:0] imm_from_id;
-    reg32 imm_id_ex_reg(
+    id_ex_regs id_ex_regs_inst(
         .clk(clk),
         .rst_n(rst_n),
-        .in(imm_id),
-        .default_in(32'h0),
-        .out(imm_from_id)
+        .pc_in(pc_from_if),
+        .pc_out(pc_from_id),
+        .data1_in(data1_id),
+        .data1_out(data1_from_id),
+        .data2_in(data2_id),
+        .data2_out(data2_from_id),
+        .funct7_in(funct7_id),
+        .funct7_out(funct7_from_id),
+        .funct3_in(funct3_id),
+        .funct3_out(funct3_from_id),
+        .rd_in(rd_id),
+        .rd_out(rd_from_id),
+        .opcode_in(opcode_id),
+        .opcode_out(opcode_from_id),
+        .imm_in(imm_id),
+        .imm_out(imm_from_id)
     );
-
+    
     //
     // Register File
     //
@@ -180,9 +131,6 @@ module top (
         .data1_out(data1_id),
         .data2_out(data2_id)
     );
-    // assign wr_n = wr_wb_n;
-    // assign data_in = data_in_wb;
-    // assign wr_addr = rd_from_mem;
 
     //
     // EX
@@ -208,66 +156,29 @@ module top (
     //
 
     wire [31:0] pc_from_ex;
-    reg32 pc_ex_mem_reg(
-        .clk(clk),
-        .rst_n(rst_n),
-        .in(pc_from_id),
-        .default_in(32'hZ),
-        .out(pc_from_ex)
-    );
-
     wire jump_from_ex;
-    reg1 jump_ex_mem_reg(
-        .clk(clk),
-        .rst_n(rst_n),
-        .in(jump_ex),
-        .default_in(1'b0),
-        .out(jump_from_ex)
-    );
-
     wire [31:0] b_from_ex;
-    reg32 b_ex_mem_reg(
-        .clk(clk),
-        .rst_n(rst_n),
-        .in(b_ex),
-        .default_in(32'hZ),
-        .out(b_from_ex) 
-    );
-
     wire [31:0] c_from_ex;
-    reg32 c_ex_mem_reg(
-        .clk(clk),
-        .rst_n(rst_n),
-        .in(c_ex),
-        .default_in(32'hZ),
-        .out(c_from_ex)
-    );
-
     wire [2:0] funct3_from_ex;
-    reg3 funct3_ex_mem_reg(
-        .clk(clk),
-        .rst_n(rst_n),
-        .in(funct3_from_id),
-        .default_in(3'hZ),
-        .out(funct3_from_ex)
-    );
-
     wire [6:0] opcode_from_ex;
-    reg7 opcode_ex_mem_reg(
-        .clk(clk),
-        .rst_n(rst_n),
-        .in(opcode_from_id),
-        .default_in(7'hZ),
-        .out(opcode_from_ex)
-    );
-
     wire [4:0] rd_from_ex;
-    reg5 rd_ex_mem_reg(
+    ex_mem_regs ex_mem_regs_inst(
         .clk(clk),
         .rst_n(rst_n),
-        .in(rd_from_id),
-        .default_in(5'hZ),
-        .out(rd_from_ex)
+        .pc_in(pc_from_id),
+        .pc_out(pc_from_ex),
+        .jump_in(jump_ex),
+        .jump_out(jump_from_ex),
+        .b_in(b_ex),
+        .b_out(b_from_ex),
+        .c_in(c_ex),
+        .c_out(c_from_ex),
+        .funct3_in(funct3_from_id),
+        .funct3_out(funct3_from_ex),
+        .rd_in(rd_from_id),
+        .rd_out(rd_from_ex),
+        .opcode_in(opcode_from_id),
+        .opcode_out(opcode_from_ex)
     );
 
     //
@@ -298,54 +209,23 @@ module top (
     //
 
     wire [31:0] pc_from_mem;
-    reg32 pc_mem_wb_reg(
-        .clk(clk),
-        .rst_n(rst_n),
-        .in(pc_from_ex),
-        .default_in(32'hZ),
-        .out(pc_from_mem)
-    );
-
-    reg1 jump_mem_wb_reg(
-        .clk(clk),
-        .rst_n(rst_n),
-        .in(jump_from_ex),
-        .default_in(1'b0),
-        .out(jump_from_mem)
-    );
-
-    reg32 c_mem_wb_reg(
-        .clk(clk),
-        .rst_n(rst_n),
-        .in(c_from_ex),
-        .default_in(32'hZ),
-        .out(c_from_mem)
-    );
-
-    wire [6:0] opcode_from_mem;
-    reg7 opcode_mem_wb_reg(
-        .clk(clk),
-        .rst_n(rst_n),
-        .in(opcode_from_ex),
-        .default_in(7'hZ),
-        .out(opcode_from_mem)
-    );
-
     wire [31:0] d_from_mem;
-    reg32 d_mem_wb_reg(
+    wire [6:0] opcode_from_mem;
+    mem_wb_regs mem_wb_regs_inst(
         .clk(clk),
         .rst_n(rst_n),
-        .in(d_mem),
-        .default_in(32'hZ),
-        .out(d_from_mem)
-    );
-
-    reg5 rd_mem_wb_reg(
-        .clk(clk),
-        .rst_n(rst_n),
-        .in(rd_from_ex),
-        .default_in(5'hZ),
-        .out(wr_addr)
+        .pc_in(pc_from_ex),
+        .pc_out(pc_from_mem),
+        .jump_in(jump_from_ex),
+        .jump_out(jump_from_mem),
+        .c_in(c_from_ex),
+        .c_out(c_from_mem),
+        .d_in(d_mem),
+        .d_out(d_from_mem),
+        .rd_in(rd_from_ex),
+        .rd_out(wr_addr),
+        .opcode_in(opcode_from_ex),
+        .opcode_out(opcode_from_mem)
     );
 
     //
