@@ -19,10 +19,13 @@ module mem_stage (
     output [31:0] data_to_mem
 );
 
+    // NOTE: need to request for memory access first,
+    //  then only we will receive data_mem_ready_n from the memory.
+
+    // NOTE: need to think about how to handle data_mem_ready_n
     mem_ctrl mem_ctrl_inst(
         .opcode(opcode),
         .funct3(funct3),
-        .data_mem_ready_n(data_mem_ready_n),
         .access_size(size),
         .write_to_data_mem(write),
         .require_mem_access(require_mem_access)
