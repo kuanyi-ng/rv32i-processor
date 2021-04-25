@@ -1,4 +1,7 @@
-// stage-level module
+`include "ir_splitter.v"
+`include "opcode_funct3_to_imm_type.v"
+`include "imm_extractor.v"
+
 module id_stage (
     // inputs from IF stage
     input [31:0] ir,

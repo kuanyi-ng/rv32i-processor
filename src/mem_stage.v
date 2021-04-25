@@ -1,3 +1,7 @@
+`include "mem_ctrl.v"
+`include "st_converter.v"
+`include "ld_converter.v"
+
 module mem_stage (
     // inputs from Memory Module
     input data_mem_ready_n,  // 0: ready to access memory, 1: not ready
@@ -39,8 +43,7 @@ module mem_stage (
 
     ld_converter ld_converter_inst(
         .in(data_from_mem),
-        .offset(c[1:0]),
-        .format(funct3),
+        .funct3(funct3),
         .out(d)
     );
 

@@ -1,3 +1,6 @@
+`include "pc_adder.v"
+`include "if_ctrl.v"
+
 module if_stage (
     input [31:0] current_pc,
     input [31:0] c,

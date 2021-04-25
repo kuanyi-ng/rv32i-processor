@@ -1,3 +1,7 @@
+`include "ex_ctrl.v"
+`include "alu.v"
+`include "branch_alu.v"
+
 module ex_stage (
     // inputs from ID stage
     input [6:0] opcode,

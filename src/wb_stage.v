@@ -1,3 +1,6 @@
+`include "wb_ctrl.v"
+`include "pc_adder.v"
+
 module wb_stage (
     // inputs from MEM
     input [6:0] opcode,

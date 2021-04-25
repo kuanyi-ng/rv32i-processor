@@ -1,3 +1,15 @@
+`include "reg32.v"
+`include "if_stage.v"
+`include "if_id_regs.v"
+`include "id_stage.v"
+`include "id_ex_regs.v"
+`include "rf32x32.v"
+`include "ex_stage.v"
+`include "ex_mem_regs.v"
+`include "mem_stage.v"
+`include "mem_wb_regs.v"
+`include "wb_stage.v"
+
 module top (
     input clk,
     input rst_n,

@@ -1,4 +1,5 @@
 // Provided by CPC Lab
+`include "DW_ram_2r_w_s_dff.v"
 
 `define  ZERO           1'b0           // Rename to Zero
 `define  LOW            1'b0           // Rename to Zero
