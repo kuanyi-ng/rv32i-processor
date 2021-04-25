@@ -32,7 +32,7 @@ module test_mem_stage ();
         // Load Instructions
         // require_mem_access: 1
         // write: 0
-        assign opcode = 7'b1100011;
+        assign opcode = 7'b0000011;
         assign data_from_mem = 32'ha0b1_c2d3; // better to have diff results for signed and unsigned
             // context: LB
             // size: 10
