@@ -16,8 +16,8 @@ test_programs_paths = {
     "prime": "./test_pack/c/prime/",
     "skel": "./test_pack/c/skel/",
     "sort": "./test_pack/c/sort/",
-    "load": "./test_pack/asm/load/",
-    "store": "./test_pack/asm/store/"
+    "load": "./test_pack/asm/load/",    # IN_TOTAL: 1000000
+    "store": "./test_pack/asm/store/"   # IN_TOTAL: 1000000
 }
 
 def clean_test_ground():
