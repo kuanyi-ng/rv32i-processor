@@ -14,7 +14,8 @@ module id_stage (
     output [6:0] opcode,
     output [2:0] funct3,
     output [6:0] funct7,
-    output [31:0] imm
+    output [31:0] imm,
+    output wr_reg_n         // 0: write, 1: don't write
 );
 
     //
@@ -38,6 +39,8 @@ module id_stage (
         .imm_type(imm_type),
         .out(imm)
     );
+
+    assign wr_reg_n = wr_reg_n_ctrl(opcode);
 
     //
     // Functions
@@ -91,4 +94,27 @@ module id_stage (
             endcase
         end
    endfunction
+
+   function wr_reg_n_ctrl(input [6:0] opcode);
+        // 0: write, 1: don't write
+
+        // whitelist instead of blacklist to be more secure.
+        reg is_lui, is_aupic, is_i_type, is_r_type, is_load, is_jal, is_jalr;
+
+        begin
+            is_lui = (opcode == 7'b0110111);
+            is_aupic = (opcode == 7'b0010111);
+            is_i_type = (opcode == 7'b0010011);
+            is_r_type = (opcode == 7'b0110011);
+            is_load = (opcode == 7'b0000011);
+            is_jal = (opcode == 7'b1101111);
+            is_jalr = (opcode == 7'b1100111);
+
+            if (is_lui || is_aupic || is_i_type || is_r_type || is_load || is_jal || is_jalr) begin
+                wr_reg_n_ctrl = 1'b0;
+            end else begin
+                wr_reg_n_ctrl = 1'b1;
+            end
+        end
+    endfunction
 endmodule
