@@ -81,6 +81,7 @@ module top (
     wire [2:0] funct3_id;
     wire [6:0] funct7_id;
     wire [31:0] imm_id;
+    wire wr_reg_n_id;
     id_stage id_stage_inst(
         .ir(ir_from_if),
         .rs1(rd1_addr),
@@ -89,7 +90,8 @@ module top (
         .opcode(opcode_id),
         .funct3(funct3_id),
         .funct7(funct7_id),
-        .imm(imm_id)
+        .imm(imm_id),
+        .wr_reg_n(wr_reg_n_id)
     );
 
     //
@@ -104,6 +106,7 @@ module top (
     wire [4:0] rd_from_id;
     wire [6:0] opcode_from_id;
     wire [31:0] imm_from_id;
+    wire wr_reg_n_from_id;
     id_ex_regs id_ex_regs_inst(
         .clk(clk),
         .rst_n(rst_n),
@@ -122,7 +125,9 @@ module top (
         .opcode_in(opcode_id),
         .opcode_out(opcode_from_id),
         .imm_in(imm_id),
-        .imm_out(imm_from_id)
+        .imm_out(imm_from_id),
+        .wr_reg_n_in(wr_reg_n_id),
+        .wr_reg_n_out(wr_reg_n_from_id)
     );
     
     //
@@ -174,6 +179,7 @@ module top (
     wire [2:0] funct3_from_ex;
     wire [6:0] opcode_from_ex;
     wire [4:0] rd_from_ex;
+    wire wr_reg_n_from_ex;
     ex_mem_regs ex_mem_regs_inst(
         .clk(clk),
         .rst_n(rst_n),
@@ -190,7 +196,9 @@ module top (
         .rd_in(rd_from_id),
         .rd_out(rd_from_ex),
         .opcode_in(opcode_from_id),
-        .opcode_out(opcode_from_ex)
+        .opcode_out(opcode_from_ex),
+        .wr_reg_n_in(wr_reg_n_from_id),
+        .wr_reg_n_out(wr_reg_n_from_ex)
     );
 
     //
@@ -237,7 +245,9 @@ module top (
         .rd_in(rd_from_ex),
         .rd_out(wr_addr),
         .opcode_in(opcode_from_ex),
-        .opcode_out(opcode_from_mem)
+        .opcode_out(opcode_from_mem),
+        .wr_reg_n_in(wr_reg_n_from_ex),
+        .wr_reg_n_out(wr_n)
     );
 
     //
@@ -249,7 +259,6 @@ module top (
         .c(c_from_mem),
         .d(d_from_mem),
         .pc(pc_from_mem),
-        .write_n(wr_n),
         .data_to_reg(data_in)
     );
 
