@@ -9,7 +9,6 @@ module wb_stage (
     input [31:0] pc,
 
     // outputs to Register File
-    output write_n,
     output [31:0] data_to_reg
 );
 
@@ -21,11 +20,8 @@ module wb_stage (
 
     wb_ctrl wb_ctrl_inst(
         .opcode(opcode),
-        .write_to_reg(write),
         .data_to_reg_sel(data_to_reg_sel)
     );
-
-    assign write_n = !write;
 
     wire [31:0] pc4;
 

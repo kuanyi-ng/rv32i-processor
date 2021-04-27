@@ -18,7 +18,10 @@ module mem_wb_regs (
     output [4:0] rd_out,
 
     input [6:0] opcode_in,
-    output [6:0] opcode_out
+    output [6:0] opcode_out,
+
+    input wr_reg_n_in,
+    output wr_reg_n_out
 );
 
     reg [31:0] pc;
@@ -27,6 +30,7 @@ module mem_wb_regs (
     reg [31:0] d;
     reg [4:0] rd;
     reg [6:0] opcode;
+    reg wr_reg_n;
 
     always @(posedge clk or negedge rst_n) begin
         if (rst_n) begin
@@ -36,6 +40,7 @@ module mem_wb_regs (
             d <= d_in;
             rd <= rd_in;
             opcode <= opcode_in;
+            wr_reg_n <= wr_reg_n_in;
         end else begin
             pc <= 32'bx;
             jump <= 1'b0;
@@ -43,6 +48,7 @@ module mem_wb_regs (
             d <= 32'bx;
             rd <= 5'bx;
             opcode <= 7'bx;
+            wr_reg_n <= 1'b1; // default not to write
         end
     end
 
@@ -52,5 +58,6 @@ module mem_wb_regs (
     assign d_out = d;
     assign rd_out = rd;
     assign opcode_out = opcode;
+    assign wr_reg_n_out = wr_reg_n;
 
 endmodule

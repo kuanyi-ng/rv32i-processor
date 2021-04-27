@@ -10,7 +10,7 @@ module test_alu ();
         assign data1 = 32'd4;
         assign data2 = 32'd6;
 
-        // ADD, ADDI, Load, Store, Branch, JAL, AUPIC
+        // ADD, ADDI, Load, Store, Branch, JAL, AUIPC
         // expect: 0000_000a
         assign alu_op = 4'b0000;
         #10

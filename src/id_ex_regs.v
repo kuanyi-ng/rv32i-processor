@@ -21,7 +21,10 @@ module id_ex_regs (
     output [6:0] opcode_out,
 
     input [31:0] imm_in,
-    output [31:0] imm_out
+    output [31:0] imm_out,
+
+    input wr_reg_n_in,
+    output wr_reg_n_out
 );
 
     reg [31:0] pc;
@@ -31,6 +34,7 @@ module id_ex_regs (
     reg [4:0] rd;
     reg [6:0] opcode;
     reg [31:0] imm;
+    reg wr_reg_n;
 
     always @(posedge clk or negedge rst_n) begin
         if (rst_n) begin
@@ -42,6 +46,7 @@ module id_ex_regs (
             rd <= rd_in;
             opcode <= opcode_in;
             imm <= imm_in;
+            wr_reg_n <= wr_reg_n_in;
         end else begin
             pc <= 32'bx;
             data1 <= 32'bx;
@@ -51,6 +56,7 @@ module id_ex_regs (
             rd <= 5'bx;
             opcode <= 7'bx;
             imm <= 32'bx;
+            wr_reg_n <= 1'b1; // default not to write
         end
     end
 
@@ -62,5 +68,6 @@ module id_ex_regs (
     assign rd_out = rd;
     assign opcode_out = opcode;
     assign imm_out = imm;
+    assign wr_reg_n_out = wr_reg_n;
     
 endmodule
