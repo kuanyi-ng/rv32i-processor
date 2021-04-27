@@ -1,5 +1,4 @@
 `include "ir_splitter.v"
-`include "opcode_funct3_to_imm_type.v"
 `include "imm_extractor.v"
 
 module id_stage (
@@ -18,6 +17,9 @@ module id_stage (
     output [31:0] imm
 );
 
+    //
+    // Main
+    //
     ir_splitter ir_splitter_inst(
         .ir(ir),
         .opcode(opcode),
@@ -29,12 +31,7 @@ module id_stage (
     );
 
     wire [2:0] imm_type;
-
-    opcode_funct3_to_imm_type opcode_funct3_to_imm_type_inst(
-        .opcode(opcode),
-        .funct3(funct3),
-        .imm_type(imm_type)
-    );
+    assign imm_type = imm_type_from(opcode, funct3);
 
     imm_extractor imm_extractor_inst(
         .in(ir),
@@ -42,4 +39,56 @@ module id_stage (
         .out(imm)
     );
 
+    //
+    // Functions
+    //
+    function [2:0] imm_type_from(input [6:0] opcode, input [2:0] funct3);
+        parameter [2:0] i_type = 3'b000;
+        parameter [2:0] b_type = 3'b001;
+        parameter [2:0] s_type = 3'b010;
+        parameter [2:0] u_type = 3'b011;
+        parameter [2:0] j_type = 3'b100;
+        parameter [2:0] shamt_type = 3'b101;
+        parameter [2:0] default_type = 3'b111;
+
+        begin
+            case (opcode)
+                // U-Type
+                // LUI
+                7'b0110111: imm_type_from = u_type;
+                // AUPIC
+                7'b0010111: imm_type_from = u_type;
+
+                // JAL
+                7'b1101111: imm_type_from = j_type;
+
+                // JALR
+                7'b1100111: imm_type_from = i_type;
+
+                // Branch
+                7'b1100011: imm_type_from = b_type;
+
+                // Load
+                7'b0000011: imm_type_from = i_type;
+
+                // Store
+                7'b0100011: imm_type_from = s_type;
+
+                // I-Type (including shamt)
+                7'b0010011: begin
+                    if (funct3 == 3'b001)
+                        // SLLI
+                        imm_type_from = shamt_type;
+                    else if (funct3 == 3'b101)
+                        // SRLI, SRAI
+                        imm_type_from = shamt_type;
+                    else
+                        imm_type_from = i_type;
+                end
+
+                // default: anything not from above
+                default: imm_type_from = default_type;
+            endcase
+        end
+   endfunction
 endmodule
