@@ -21,15 +21,15 @@ module ex_ctrl (
     function a_sel_ctrl(input [6:0] opcode);
         // since most instructions use data1,
         // we will only check if the instructions need pc
-        reg is_aupic, is_jal, is_branch;
+        reg is_auipc, is_jal, is_branch;
 
         begin
-            // AUPIC, JAL, Branch
-            is_aupic = (opcode == 7'b0010111);
+            // AUIPC, JAL, Branch
+            is_auipc = (opcode == 7'b0010111);
             is_jal = (opcode == 7'b1101111);
             is_branch = (opcode == 7'b1100011);
 
-            a_sel_ctrl = is_aupic || is_jal || is_branch;
+            a_sel_ctrl = is_auipc || is_jal || is_branch;
         end
     endfunction
 
@@ -111,7 +111,7 @@ module ex_ctrl (
                     default: alu_op_ctrl = 4'b0000;
                 endcase
             end else begin
-                // AUPIC, JAL, Branch, Load, Store
+                // AUIPC, JAL, Branch, Load, Store
                 alu_op_ctrl = 4'b0000;
             end
         end 

@@ -16,7 +16,7 @@ module alu (
             s_in2 = in2;
 
             case (alu_op)
-                // ADD, ADDI, Load, Store, Branch, JAL, AUPIC
+                // ADD, ADDI, Load, Store, Branch, JAL, AUIPC
                 4'b0000: alu_out = s_in1 + s_in2;
 
                 // SLL, SLLI

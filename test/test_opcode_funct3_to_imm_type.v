@@ -11,7 +11,7 @@ module test_opcode_funct3_to_imm_type ();
         // expect: 011
         #10
 
-        // U (AUPIC)
+        // U (AUIPC)
         assign opcode = 7'b0010111;
         // expect: 011
         #10

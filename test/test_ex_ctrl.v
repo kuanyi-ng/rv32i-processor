@@ -27,7 +27,7 @@ module test_ex_ctrl ();
         // branch_alu_op: 011
         #10
 
-        // AUPIC
+        // AUIPC
         assign opcode = 7'b0010111;
         // expect:
         // a_sel: 1

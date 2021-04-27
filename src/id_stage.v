@@ -59,7 +59,7 @@ module id_stage (
                 // U-Type
                 // LUI
                 7'b0110111: imm_type_from = u_type;
-                // AUPIC
+                // AUIPC
                 7'b0010111: imm_type_from = u_type;
 
                 // JAL
@@ -99,18 +99,18 @@ module id_stage (
         // 0: write, 1: don't write
 
         // whitelist instead of blacklist to be more secure.
-        reg is_lui, is_aupic, is_i_type, is_r_type, is_load, is_jal, is_jalr;
+        reg is_lui, is_auipc, is_i_type, is_r_type, is_load, is_jal, is_jalr;
 
         begin
             is_lui = (opcode == 7'b0110111);
-            is_aupic = (opcode == 7'b0010111);
+            is_auipc = (opcode == 7'b0010111);
             is_i_type = (opcode == 7'b0010011);
             is_r_type = (opcode == 7'b0110011);
             is_load = (opcode == 7'b0000011);
             is_jal = (opcode == 7'b1101111);
             is_jalr = (opcode == 7'b1100111);
 
-            if (is_lui || is_aupic || is_i_type || is_r_type || is_load || is_jal || is_jalr) begin
+            if (is_lui || is_auipc || is_i_type || is_r_type || is_load || is_jal || is_jalr) begin
                 wr_reg_n_ctrl = 1'b0;
             end else begin
                 wr_reg_n_ctrl = 1'b1;

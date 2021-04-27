@@ -35,7 +35,7 @@ module test_ex_stage ();
         assign opcode = 7'b0110111;
         #5
 
-        // AUPIC
+        // AUIPC
         // expect
         // jump: 0
         // c: f0000_0006        
