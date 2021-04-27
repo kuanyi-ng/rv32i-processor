@@ -1,17 +1,26 @@
 	.text
 main:
-	add	$16,	$0,	$0
-	lui	$16,	1
-	lw	$8,	0x0($16)
-	sw	$8,	0x4($16)
-	sh	$8,	0x8($16)
-	sh	$8,	0xa($16)
-	sb	$8,	0xc($16)
-	sb	$8,	0xd($16)
-	sb	$8,	0xe($16)
-	sb	$8,	0xf($16)
+	li	x16,	0x80010000
+	# delay 2 cycles
+	li	x16,	0x80010000
+	li	x16,	0x80010000
+	# (end) delay 2 cycles
+	lw	x8,	0x0(x16)
+	# delay 2 cycles
+	lw	x8,	0x0(x16)
+	lw	x8,	0x0(x16)
+	# (end) delay 2 cycles
+	sw	x8,	0x4(x16)
+	sh	x8,	0x8(x16)
+	sh	x8,	0xa(x16)
+	sb	x8,	0xc(x16)
+	sb	x8,	0xd(x16)
+	sb	x8,	0xe(x16)
+	sb	x8,	0xf(x16)
 Loop:
-	beq	$0,	$0,	Loop
+	li	x30, 0xff000000
+	sw	x0, 0x0(x30)
+	beq	x0,	x0,	Loop
 
 	.data
 	.word	0x1028182	# @10000
