@@ -1,6 +1,25 @@
-// might need to handle load instructions
-// and instructions where they don't save C to x[rd]
-// => Load, Jump
+// Don't need to care about the instruction executing in ID stage
+// as all it cares is getting the latest value from registers.
+//
+// Need to be careful with the type of instructions currently
+// executing in EX stage and MEM stage.
+// Different type of instructions update the registers' values differently.
+//
+// LUI      : x[rd] <- C (E)
+// AUIPC    : x[rd] <- C (E)
+// I-type   : x[rd] <- C (E)
+// R-type   : x[rd] <- C (E)
+// Load     : x[rd] <- D (M)
+// Store    : doesn't update
+// JAL      : x[rd] <- PC + 4 (F)
+// JALR     : x[rd] <- PC + 4 (F)
+// Branch   : doesn't update
+//
+// Don't forward if rs1 or rs2 is x0
+//
+// Forwarding value from EX stage when Load instruction is executing in  EX stage
+// will be fine as the value will not be used because
+// pipieline stall will happen at the same time (triggered by another module)
 module data_forward_u (
     // Inputs from ID Stage (current cycle)
     input [4:0] rs1,
