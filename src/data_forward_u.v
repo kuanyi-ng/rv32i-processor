@@ -35,15 +35,15 @@ module data_forward_u (
 
     // Outputs to ID stage (current cycle)
     // 00: no forward, 01: forward rd_in_ex, 10: forward rd_in_mem
-    output [1:0] forward_a,
-    output [1:0] forward_b
+    output [1:0] forward_data1,
+    output [1:0] forward_data2
 );
 
     //
     // Main
     //
-    assign forward_a = forward_ctrl(rs1, rd_in_ex, wr_reg_n_in_ex, rd_in_mem, wr_reg_n_in_mem);
-    assign forward_b = forward_ctrl(rs2, rd_in_ex, wr_reg_n_in_ex, rd_in_mem, wr_reg_n_in_mem);
+    assign forward_data1 = forward_ctrl(rs1, rd_in_ex, wr_reg_n_in_ex, rd_in_mem, wr_reg_n_in_mem);
+    assign forward_data2 = forward_ctrl(rs2, rd_in_ex, wr_reg_n_in_ex, rd_in_mem, wr_reg_n_in_mem);
 
     //
     // Functions
