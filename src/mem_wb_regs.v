@@ -5,6 +5,9 @@ module mem_wb_regs (
     input [31:0] pc_in,
     output [31:0] pc_out,
 
+    input [31:0] pc4_in,
+    output [31:0] pc4_out,
+
     input jump_in,
     output jump_out,
 
@@ -25,6 +28,7 @@ module mem_wb_regs (
 );
 
     reg [31:0] pc;
+    reg [31:0] pc4;
     reg jump;
     reg [31:0] c;
     reg [31:0] d;
@@ -35,6 +39,7 @@ module mem_wb_regs (
     always @(posedge clk or negedge rst_n) begin
         if (rst_n) begin
             pc <= pc_in;
+            pc4 <= pc4_in;
             jump <= jump_in;
             c <= c_in;
             d <= d_in;
@@ -43,6 +48,7 @@ module mem_wb_regs (
             wr_reg_n <= wr_reg_n_in;
         end else begin
             pc <= 32'bx;
+            pc4 <= 32'bx;
             jump <= 1'b0;
             c <= 32'bx;
             d <= 32'bx;
@@ -53,6 +59,7 @@ module mem_wb_regs (
     end
 
     assign pc_out = pc;
+    assign pc4_out = pc4;
     assign jump_out = jump;
     assign c_out = c;
     assign d_out = d;
