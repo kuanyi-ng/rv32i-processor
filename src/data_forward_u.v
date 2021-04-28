@@ -55,7 +55,11 @@ module data_forward_u (
             rs_updated_by_prev = (!wr_reg_n_ex) && (rs == rd_in_ex);
             rs_updated_by_prev_prev = (!wr_reg_n_in_mem) && (rs == rd_in_mem);
 
-            if ((!rs_updated_by_prev) && (!rs_updated_by_prev_prev)) begin
+            if (rs == 5'b00000) begin
+                // if data read from x[0], don't forward
+                // as x[0] is always 0
+                forward_ctrl = 2'b00;
+            end else if ((!rs_updated_by_prev) && (!rs_updated_by_prev_prev)) begin
                 // if data in x[rs] is not updated, don't forward
                 forward_ctrl = 2'b00;
             end else if (rs_updated_by_prev) begin

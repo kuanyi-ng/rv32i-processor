@@ -22,6 +22,15 @@ module test_data_forward_u ();
         assign wr_reg_n_in_ex = 1'b0;
         assign wr_reg_n_in_mem = 1'b0;
 
+        // both rs1 and rs2 are x0
+        assign rs1 = 5'b00000;
+        assign rs2 = 5'b00000;
+        assign rd_in_ex = 5'b00000;
+        assign rd_in_mem = 5'b00000;
+        // forward_a: 00
+        // forward_b: 00
+        #5
+
         // both rs1, rs2 are not updated
         assign rs1 = 5'b00001;
         assign rs2 = 5'b00010;
