@@ -48,10 +48,12 @@ module top (
 
     wire [31:0] c_from_mem;
     wire jump_from_mem;
+    wire [31:0] pc4_if;
     if_stage if_stage_inst(
         .current_pc(current_pc),
         .c(c_from_mem),
         .jump_or_branch(jump_from_mem),
+        .pc4(pc4_if),
         .next_pc(next_pc)
     );
     assign IAD = (ACKI_n == 1'b0) ? current_pc : 32'hx;
@@ -61,12 +63,15 @@ module top (
     //
 
     wire [31:0] pc_from_if;
+    wire [31:0] pc4_from_if;
     wire [31:0] ir_from_if;
     if_id_regs if_id_regs_inst(
         .clk(clk),
         .rst_n(rst_n),
         .pc_in(current_pc),
         .pc_out(pc_from_if),
+        .pc4_in(pc4_if),
+        .pc4_out(pc_from_if),
         .ir_in(IDT),
         .ir_out(ir_from_if)
     );
@@ -99,6 +104,7 @@ module top (
     //
 
     wire [31:0] pc_from_id;
+    wire [31:0] pc4_from_id;
     wire [31:0] data1_id, data2_id;
     wire [31:0] data1_from_id, data2_from_id;
     wire [6:0] funct7_from_id;
@@ -112,6 +118,8 @@ module top (
         .rst_n(rst_n),
         .pc_in(pc_from_if),
         .pc_out(pc_from_id),
+        .pc4_in(pc4_from_if),
+        .pc4_out(pc4_from_id),
         .data1_in(data1_id),
         .data1_out(data1_from_id),
         .data2_in(data2_id),
@@ -173,6 +181,7 @@ module top (
     //
 
     wire [31:0] pc_from_ex;
+    wire [31:0] pc4_from_ex;
     wire jump_from_ex;
     wire [31:0] b_from_ex;
     wire [31:0] c_from_ex;
@@ -185,6 +194,8 @@ module top (
         .rst_n(rst_n),
         .pc_in(pc_from_id),
         .pc_out(pc_from_ex),
+        .pc4_in(pc4_from_id),
+        .pc4_out(pc4_from_ex),
         .jump_in(jump_ex),
         .jump_out(jump_from_ex),
         .b_in(b_ex),

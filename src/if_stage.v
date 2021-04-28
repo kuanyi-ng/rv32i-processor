@@ -5,10 +5,9 @@ module if_stage (
     input [31:0] current_pc,
     input [31:0] c,
     input jump_or_branch,
+    output [31:0] pc4,
     output [31:0] next_pc
 );
-
-    wire [31:0] pc4;
 
     pc_adder if_pc_adder(
         .in(current_pc),
