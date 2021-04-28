@@ -239,15 +239,12 @@ module top (
     // MEM-WB
     //
 
-    wire [31:0] pc_from_mem;
     wire [31:0] pc4_from_mem;
     wire [31:0] d_from_mem;
     wire [6:0] opcode_from_mem;
     mem_wb_regs mem_wb_regs_inst(
         .clk(clk),
         .rst_n(rst_n),
-        .pc_in(pc_from_ex),
-        .pc_out(pc_from_mem),
         .pc4_in(pc4_from_ex),
         .pc4_out(pc4_from_mem),
         .jump_in(jump_from_ex),
