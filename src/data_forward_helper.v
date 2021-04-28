@@ -14,6 +14,7 @@ module data_forward_helper (
     input [31:0] main_data,
     input [31:0] sub_data,
     input [6:0] opcode,
+    input is_mem_stage,  // 0: ex, 1: mem
     output [31:0] data_to_forward
 );
 
@@ -21,13 +22,15 @@ module data_forward_helper (
     // Main
     //
     
-    assign data_to_forward = prep_data_to_forward(main_data, sub_data, opcode);
+    assign data_to_forward = prep_data_to_forward(main_data, sub_data, opcode, is_mem_stage);
 
     //
     // Functions
     //
 
-    function [31:0] prep_data_to_forward(input [31:0] main, input [31:0] sub, input [6:0] opcode);
+    function [31:0] prep_data_to_forward(input [31:0] main, input [31:0] sub, input [6:0] opcode, input is_mem_stage);
+        // NOTE: don't forward data from EX stage
+        // if the instruction executing in EX stage is a load instruction.
         reg is_lui, is_auipc, is_i_type, is_r_type, is_load, is_jal, is_jalr;
 
         begin
@@ -41,7 +44,9 @@ module data_forward_helper (
 
             if (is_lui || is_auipc || is_i_type || is_r_type) begin
                 prep_data_to_forward = main;
-            end else if (is_load || is_jal || is_jalr) begin
+            end else if (is_jal || is_jalr) begin
+                prep_data_to_forward = sub;
+            end else if (is_load && is_mem_stage) begin
                 prep_data_to_forward = sub;
             end else begin
                 // includes Store, Branch instructions
