@@ -180,7 +180,6 @@ module top (
     // EX-MEM
     //
 
-    wire [31:0] pc_from_ex;
     wire [31:0] pc4_from_ex;
     wire jump_from_ex;
     wire [31:0] b_from_ex;
@@ -192,8 +191,6 @@ module top (
     ex_mem_regs ex_mem_regs_inst(
         .clk(clk),
         .rst_n(rst_n),
-        .pc_in(pc_from_id),
-        .pc_out(pc_from_ex),
         .pc4_in(pc4_from_id),
         .pc4_out(pc4_from_ex),
         .jump_in(jump_ex),
