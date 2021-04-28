@@ -272,7 +272,7 @@ module top (
         .opcode(opcode_from_mem),
         .c(c_from_mem),
         .d(d_from_mem),
-        .pc(pc_from_mem),
+        .pc4(pc4_from_mem),
         .data_to_reg(data_in)
     );
 
