@@ -1,13 +1,16 @@
-`include "reg32.v"
-`include "if_stage.v"
-`include "if_id_regs.v"
-`include "id_stage.v"
-`include "id_ex_regs.v"
-`include "rf32x32.v"
-`include "ex_stage.v"
+`include "data_forward_helper.v"
+`include "data_forward_u.v"
 `include "ex_mem_regs.v"
+`include "ex_stage.v"
+`include "id_data_picker.v"
+`include "id_ex_regs.v"
+`include "id_stage.v"
+`include "if_id_regs.v"
+`include "if_stage.v"
 `include "mem_stage.v"
 `include "mem_wb_regs.v"
+`include "reg32.v"
+`include "rf32x32.v"
 `include "wb_stage.v"
 
 module top (
@@ -71,7 +74,7 @@ module top (
         .pc_in(current_pc),
         .pc_out(pc_from_if),
         .pc4_in(pc4_if),
-        .pc4_out(pc_from_if),
+        .pc4_out(pc4_from_if),
         .ir_in(IDT),
         .ir_out(ir_from_if)
     );
@@ -100,12 +103,30 @@ module top (
     );
 
     //
+    // (ID Data Picker) Data Forwarding
+    //
+
+    wire [31:0] data1_regfile, data2_regfile;
+    wire [31:0] data_forwarded_from_ex, data_forwarded_from_mem;
+    wire [1:0] forward_data1, forward_data2;
+    wire [31:0] data1_id, data2_id;
+    id_data_picker id_data_picker_inst(
+        .data1_from_regfile(data1_regfile),
+        .data2_from_regfile(data2_regfile),
+        .data_forwarded_from_ex(data_forwarded_from_ex),
+        .data_forwarded_from_mem(data_forwarded_from_mem),
+        .forward_data1(forward_data1),
+        .forward_data2(forward_data2),
+        .data1_id(data1_id),
+        .data2_id(data2_id)
+    );
+
+    //
     // ID-EX
     //
 
     wire [31:0] pc_from_id;
     wire [31:0] pc4_from_id;
-    wire [31:0] data1_id, data2_id;
     wire [31:0] data1_from_id, data2_from_id;
     wire [6:0] funct7_from_id;
     wire [2:0] funct3_from_id;
@@ -153,8 +174,8 @@ module top (
         .rd2_addr(rd2_addr),
         .wr_addr(wr_addr),
         .data_in(data_in),
-        .data1_out(data1_id),
-        .data2_out(data2_id)
+        .data1_out(data1_regfile),
+        .data2_out(data2_regfile)
     );
 
     //
@@ -174,6 +195,18 @@ module top (
         .jump(jump_ex),
         .b(b_ex),
         .c(c_ex)
+    );
+
+    //
+    // Data Forward Helper EX
+    //
+
+    data_forward_helper data_forward_helper_ex(
+        .main_data(c_ex),
+        .sub_data(pc4_from_id),
+        .opcode(opcode_from_id),
+        .is_mem_stage(1'b0),
+        .data_to_forward(data_forwarded_from_ex)
     );
 
     //
@@ -210,6 +243,22 @@ module top (
     );
 
     //
+    // Data Forwarding Unit
+    //
+
+    data_forward_u data_forward_u_inst(
+        .rs1(rd1_addr),
+        .rs2(rd2_addr),
+        .wr_reg_n_in_ex(wr_reg_n_from_id),
+        .rd_in_ex(rd_from_id),
+        .opcode_in_ex(opcode_from_id),
+        .wr_reg_n_in_mem(wr_reg_n_from_ex),
+        .rd_in_mem(rd_from_ex),
+        .forward_data1(forward_data1),
+        .forward_data2(forward_data2)
+    );
+
+    //
     // MEM
     //
 
@@ -231,6 +280,18 @@ module top (
     assign DAD = c_from_ex;
     assign data_from_mem = DDT;
     assign DDT = (WRITE) ? data_to_mem : 32'bz;
+
+    //
+    // Data Forward Helper MEM
+    //
+
+    data_forward_helper data_forward_helper_mem(
+        .main_data(c_from_ex),
+        .sub_data(d_mem),
+        .opcode(opcode_from_ex),
+        .is_mem_stage(1'b1),
+        .data_to_forward(data_forwarded_from_mem)
+    );
 
     //
     // MEM-WB
