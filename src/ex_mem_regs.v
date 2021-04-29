@@ -2,8 +2,8 @@ module ex_mem_regs (
     input clk,
     input rst_n,
 
-    input [31:0] pc_in,
-    output [31:0] pc_out,
+    input [31:0] pc4_in,
+    output [31:0] pc4_out,
 
     input jump_in,
     output jump_out,
@@ -27,7 +27,7 @@ module ex_mem_regs (
     output wr_reg_n_out
 );
 
-    reg [31:0] pc;
+    reg [31:0] pc4;
     reg jump;
     reg [31:0] b;
     reg [31:0] c;
@@ -38,7 +38,7 @@ module ex_mem_regs (
 
     always @(posedge clk or negedge rst_n) begin
         if (rst_n) begin
-            pc <= pc_in;
+            pc4 <= pc4_in;
             jump <= jump_in;
             b <= b_in;
             c <= c_in;
@@ -47,7 +47,7 @@ module ex_mem_regs (
             opcode <= opcode_in;
             wr_reg_n <= wr_reg_n_in;
         end else begin
-            pc <= 32'bx;
+            pc4 <= 32'bx;
             jump <= 1'b0;
             b <= 32'bx;
             c <= 32'bx;
@@ -58,7 +58,7 @@ module ex_mem_regs (
         end
     end
 
-    assign pc_out = pc;
+    assign pc4_out = pc4;
     assign jump_out = jump;
     assign b_out = b;
     assign c_out = c;

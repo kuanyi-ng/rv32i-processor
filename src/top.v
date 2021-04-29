@@ -1,13 +1,17 @@
-`include "reg32.v"
-`include "if_stage.v"
-`include "if_id_regs.v"
-`include "id_stage.v"
-`include "id_ex_regs.v"
-`include "rf32x32.v"
-`include "ex_stage.v"
+`include "data_forward_helper.v"
+`include "data_forward_u.v"
+`include "ex_data_picker.v"
 `include "ex_mem_regs.v"
+`include "ex_stage.v"
+`include "id_data_picker.v"
+`include "id_ex_regs.v"
+`include "id_stage.v"
+`include "if_id_regs.v"
+`include "if_stage.v"
 `include "mem_stage.v"
 `include "mem_wb_regs.v"
+`include "reg32.v"
+`include "rf32x32.v"
 `include "wb_stage.v"
 
 module top (
@@ -48,10 +52,12 @@ module top (
 
     wire [31:0] c_from_mem;
     wire jump_from_mem;
+    wire [31:0] pc4_if;
     if_stage if_stage_inst(
         .current_pc(current_pc),
         .c(c_from_mem),
         .jump_or_branch(jump_from_mem),
+        .pc4(pc4_if),
         .next_pc(next_pc)
     );
     assign IAD = (ACKI_n == 1'b0) ? current_pc : 32'hx;
@@ -61,12 +67,15 @@ module top (
     //
 
     wire [31:0] pc_from_if;
+    wire [31:0] pc4_from_if;
     wire [31:0] ir_from_if;
     if_id_regs if_id_regs_inst(
         .clk(clk),
         .rst_n(rst_n),
         .pc_in(current_pc),
         .pc_out(pc_from_if),
+        .pc4_in(pc4_if),
+        .pc4_out(pc4_from_if),
         .ir_in(IDT),
         .ir_out(ir_from_if)
     );
@@ -95,11 +104,30 @@ module top (
     );
 
     //
+    // (ID Data Picker) Data Forwarding
+    //
+
+    wire [31:0] data1_regfile, data2_regfile;
+    wire [31:0] data_forwarded_from_ex, data_forwarded_from_mem;
+    wire [1:0] forward_data1, forward_data2;
+    wire [31:0] data1_id, data2_id;
+    id_data_picker id_data_picker_inst(
+        .data1_from_regfile(data1_regfile),
+        .data2_from_regfile(data2_regfile),
+        .data_forwarded_from_ex(data_forwarded_from_ex),
+        .data_forwarded_from_mem(data_forwarded_from_mem),
+        .forward_data1(forward_data1),
+        .forward_data2(forward_data2),
+        .data1_id(data1_id),
+        .data2_id(data2_id)
+    );
+
+    //
     // ID-EX
     //
 
     wire [31:0] pc_from_id;
-    wire [31:0] data1_id, data2_id;
+    wire [31:0] pc4_from_id;
     wire [31:0] data1_from_id, data2_from_id;
     wire [6:0] funct7_from_id;
     wire [2:0] funct3_from_id;
@@ -112,6 +140,8 @@ module top (
         .rst_n(rst_n),
         .pc_in(pc_from_if),
         .pc_out(pc_from_id),
+        .pc4_in(pc4_from_if),
+        .pc4_out(pc4_from_id),
         .data1_in(data1_id),
         .data1_out(data1_from_id),
         .data2_in(data2_id),
@@ -145,8 +175,8 @@ module top (
         .rd2_addr(rd2_addr),
         .wr_addr(wr_addr),
         .data_in(data_in),
-        .data1_out(data1_id),
-        .data2_out(data2_id)
+        .data1_out(data1_regfile),
+        .data2_out(data2_regfile)
     );
 
     //
@@ -154,7 +184,7 @@ module top (
     //
 
     wire jump_ex;
-    wire [31:0] b_ex, c_ex;
+    wire [31:0] c_ex;
     ex_stage ex_stage_inst(
         .opcode(opcode_from_id),
         .funct3(funct3_from_id),
@@ -164,15 +194,39 @@ module top (
         .data2(data2_from_id),
         .imm(imm_from_id),
         .jump(jump_ex),
-        .b(b_ex),
         .c(c_ex)
+    );
+
+    //
+    // (EX Data Picker) Data Forwarding
+    //
+    wire forward_b;
+    wire [31:0] d_mem;
+    wire [31:0] b_ex;
+    ex_data_picker ex_data_picker_inst(
+        .data2_from_id(data2_from_id),
+        .d_mem(d_mem),
+        .forward_b(forward_b),
+        .b_ex(b_ex)
+    );
+
+    //
+    // Data Forward Helper EX
+    //
+
+    data_forward_helper data_forward_helper_ex(
+        .main_data(c_ex),
+        .sub_data(pc4_from_id),
+        .opcode(opcode_from_id),
+        .is_mem_stage(1'b0),
+        .data_to_forward(data_forwarded_from_ex)
     );
 
     //
     // EX-MEM
     //
 
-    wire [31:0] pc_from_ex;
+    wire [31:0] pc4_from_ex;
     wire jump_from_ex;
     wire [31:0] b_from_ex;
     wire [31:0] c_from_ex;
@@ -183,8 +237,8 @@ module top (
     ex_mem_regs ex_mem_regs_inst(
         .clk(clk),
         .rst_n(rst_n),
-        .pc_in(pc_from_id),
-        .pc_out(pc_from_ex),
+        .pc4_in(pc4_from_id),
+        .pc4_out(pc4_from_ex),
         .jump_in(jump_ex),
         .jump_out(jump_from_ex),
         .b_in(b_ex),
@@ -202,11 +256,28 @@ module top (
     );
 
     //
+    // Data Forwarding Unit
+    //
+
+    data_forward_u data_forward_u_inst(
+        .rs1(rd1_addr),
+        .rs2(rd2_addr),
+        .wr_reg_n_in_ex(wr_reg_n_from_id),
+        .rd_in_ex(rd_from_id),
+        .opcode_in_ex(opcode_from_id),
+        .wr_reg_n_in_mem(wr_reg_n_from_ex),
+        .rd_in_mem(rd_from_ex),
+        .opcode_in_mem(opcode_from_ex),
+        .forward_data1(forward_data1),
+        .forward_data2(forward_data2),
+        .forward_b(forward_b)
+    );
+
+    //
     // MEM
     //
 
     wire [31:0] data_from_mem, data_to_mem;
-    wire [31:0] d_mem;
     mem_stage mem_stage_inst(
         .data_mem_ready_n(ACKD_n),
         .data_from_mem(data_from_mem),
@@ -225,17 +296,29 @@ module top (
     assign DDT = (WRITE) ? data_to_mem : 32'bz;
 
     //
+    // Data Forward Helper MEM
+    //
+
+    data_forward_helper data_forward_helper_mem(
+        .main_data(c_from_ex),
+        .sub_data(d_mem),
+        .opcode(opcode_from_ex),
+        .is_mem_stage(1'b1),
+        .data_to_forward(data_forwarded_from_mem)
+    );
+
+    //
     // MEM-WB
     //
 
-    wire [31:0] pc_from_mem;
+    wire [31:0] pc4_from_mem;
     wire [31:0] d_from_mem;
     wire [6:0] opcode_from_mem;
     mem_wb_regs mem_wb_regs_inst(
         .clk(clk),
         .rst_n(rst_n),
-        .pc_in(pc_from_ex),
-        .pc_out(pc_from_mem),
+        .pc4_in(pc4_from_ex),
+        .pc4_out(pc4_from_mem),
         .jump_in(jump_from_ex),
         .jump_out(jump_from_mem),
         .c_in(c_from_ex),
@@ -258,7 +341,7 @@ module top (
         .opcode(opcode_from_mem),
         .c(c_from_mem),
         .d(d_from_mem),
-        .pc(pc_from_mem),
+        .pc4(pc4_from_mem),
         .data_to_reg(data_in)
     );
 

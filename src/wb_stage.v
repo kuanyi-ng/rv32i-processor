@@ -1,12 +1,11 @@
 `include "wb_ctrl.v"
-`include "pc_adder.v"
 
 module wb_stage (
     // inputs from MEM
     input [6:0] opcode,
     input [31:0] c,
     input [31:0] d,
-    input [31:0] pc,
+    input [31:0] pc4,
 
     // outputs to Register File
     output [31:0] data_to_reg
@@ -21,13 +20,6 @@ module wb_stage (
     wb_ctrl wb_ctrl_inst(
         .opcode(opcode),
         .data_to_reg_sel(data_to_reg_sel)
-    );
-
-    wire [31:0] pc4;
-
-    pc_adder wb_pc_adder(
-        .in(pc),
-        .out(pc4)
     );
 
     assign data_to_reg = data_to_reg_prep(data_to_reg_sel, c, d, pc4);

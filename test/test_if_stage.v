@@ -4,11 +4,13 @@ module test_if_stage ();
     reg jump_or_branch;
 
     wire [31:0] next_pc;
+    wire [31:0] pc4;
 
     if_stage subject(
         .current_pc(current_pc),
         .c(c),
         .jump_or_branch(jump_or_branch),
+        .pc4(pc4),
         .next_pc(next_pc)
     );
 
@@ -17,12 +19,14 @@ module test_if_stage ();
         assign c = 32'd4;
 
         // no jump
-        // expect: next_pc = 12
+        // next_pc = c
+        // pc4 = c
         assign jump_or_branch = 1'b0;
         #10
 
         // jump
         // expect: next_pc = 4
+        // pc4 = c
         assign jump_or_branch = 1'b1;
         #10
 
