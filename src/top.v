@@ -1,5 +1,6 @@
 `include "data_forward_helper.v"
 `include "data_forward_u.v"
+`include "ex_data_picker.v"
 `include "ex_mem_regs.v"
 `include "ex_stage.v"
 `include "id_data_picker.v"
@@ -183,7 +184,7 @@ module top (
     //
 
     wire jump_ex;
-    wire [31:0] b_ex, c_ex;
+    wire [31:0] c_ex;
     ex_stage ex_stage_inst(
         .opcode(opcode_from_id),
         .funct3(funct3_from_id),
@@ -195,7 +196,19 @@ module top (
         .jump(jump_ex),
         .c(c_ex)
     );
-    assign b_ex = data2_from_id;
+
+    //
+    // (EX Data Picker) Data Forwarding
+    //
+    wire forward_b;
+    wire [31:0] d_mem;
+    wire [31:0] b_ex;
+    ex_data_picker ex_data_picker_inst(
+        .data2_from_id(data2_from_id),
+        .d_mem(d_mem),
+        .forward_b(forward_b),
+        .b_ex(b_ex)
+    );
 
     //
     // Data Forward Helper EX
@@ -254,8 +267,10 @@ module top (
         .opcode_in_ex(opcode_from_id),
         .wr_reg_n_in_mem(wr_reg_n_from_ex),
         .rd_in_mem(rd_from_ex),
+        .opcode_in_mem(opcode_from_ex),
         .forward_data1(forward_data1),
-        .forward_data2(forward_data2)
+        .forward_data2(forward_data2),
+        .forward_b(forward_b)
     );
 
     //
@@ -263,7 +278,6 @@ module top (
     //
 
     wire [31:0] data_from_mem, data_to_mem;
-    wire [31:0] d_mem;
     mem_stage mem_stage_inst(
         .data_mem_ready_n(ACKD_n),
         .data_from_mem(data_from_mem),
