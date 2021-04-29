@@ -14,7 +14,6 @@ module ex_stage (
 
     // outputs to MEM stage
     output jump,
-    output [31:0] b,
     output [31:0] c
 );
 
@@ -53,7 +52,5 @@ module ex_stage (
         .branch_alu_op(branch_alu_op),
         .out(jump)
     );
-
-    assign b = data2;   // used by store instructions
 
 endmodule

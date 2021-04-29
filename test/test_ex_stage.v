@@ -8,7 +8,6 @@ module test_ex_stage ();
     reg [31:0] imm;
 
     wire jump;
-    wire [31:0] b;
     wire [31:0] c;
 
     ex_stage subject(
@@ -20,7 +19,6 @@ module test_ex_stage ();
         .data2(data2),
         .imm(imm),
         .jump(jump),
-        .b(b),
         .c(c)
     );
 

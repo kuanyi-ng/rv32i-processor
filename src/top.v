@@ -193,9 +193,9 @@ module top (
         .data2(data2_from_id),
         .imm(imm_from_id),
         .jump(jump_ex),
-        .b(b_ex),
         .c(c_ex)
     );
+    assign b_ex = data2_from_id;
 
     //
     // Data Forward Helper EX
