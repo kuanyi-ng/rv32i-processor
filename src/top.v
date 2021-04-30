@@ -10,7 +10,7 @@
 `include "if_stage.v"
 `include "mem_stage.v"
 `include "mem_wb_regs.v"
-`include "reg32.v"
+`include "pc_reg.v"
 `include "rf32x32.v"
 `include "stall_detector.v"
 `include "wb_stage.v"
@@ -38,17 +38,23 @@ module top (
 );
 
     //
+    // Pipeline Stalling
+    //
+
+    wire stall;
+
+    //
     // IF
     //
 
     wire [31:0] next_pc; 
     wire [31:0] current_pc;
-    reg32 pc_reg(
+    pc_reg pc_reg_inst(
         .clk(clk),
         .rst_n(rst_n),
-        .in(next_pc),
-        .default_in(32'h0001_0000),
-        .out(current_pc)
+        .stall(stall),
+        .pc_in(next_pc),
+        .pc_out(current_pc)
     );
 
     wire [31:0] c_from_mem;
@@ -62,12 +68,6 @@ module top (
         .next_pc(next_pc)
     );
     assign IAD = (ACKI_n == 1'b0) ? current_pc : 32'hx;
-
-    //
-    // Pipeline Stalling
-    //
-
-    wire stall;
 
     //
     // IF-ID
