@@ -1,5 +1,5 @@
 `timescale 1ns/1ps
-`define IN_TOTAL 10000000
+`define IN_TOTAL 1000000000
 `include "top.v"
 
 module top_test;
@@ -165,12 +165,12 @@ module top_test;
                      end
                    else if(SIZE == 2'b01)
                      begin
-                        force DDT[BIT_WIDTH-1:0] = {{16{1'b0}}, DATA_Dmem[{Daddr[BIT_WIDTH-1:2],2'b00} + 3 - Daddr[1:0]], 
-													DATA_Dmem[{Daddr[BIT_WIDTH-1:2],2'b00} + 3 - Daddr[1:0] + 1]};
+                        force DDT[BIT_WIDTH-1:0] = {{16{1'b0}}, DATA_Dmem[{Daddr[BIT_WIDTH-1:2],2'b10} - Daddr[1:0]], 
+													DATA_Dmem[{Daddr[BIT_WIDTH-1:2],2'b10} - Daddr[1:0] + 1]};
                      end
                    else
                      begin
-                        force DDT[BIT_WIDTH-1:0] = {{24{1'b0}}, DATA_Dmem[{Daddr[BIT_WIDTH-1:2],2'b00} + 3 - Daddr[1:0]]};
+                        force DDT[BIT_WIDTH-1:0] = {{24{1'b0}}, DATA_Dmem[{Daddr[BIT_WIDTH-1:2],2'b11} - Daddr[1:0]]};
                      end // else: !if(SIZE == 2'b01)
 
                    ACKD_n = 1'b0;
@@ -218,8 +218,8 @@ module top_test;
                      end
                    else if(SIZE == 2'b01)
                      begin
-                        DATA_Dmem[{Daddr[BIT_WIDTH-1:2],2'b00} + 3 - Daddr[1:0]] = DDT[BIT_WIDTH-25:BIT_WIDTH-32];
-                        DATA_Dmem[{Daddr[BIT_WIDTH-1:2],2'b00} + 3 - Daddr[1:0] + 1] = DDT[BIT_WIDTH-17:BIT_WIDTH-24];
+                        DATA_Dmem[{Daddr[BIT_WIDTH-1:2],2'b10} - Daddr[1:0]] = DDT[BIT_WIDTH-25:BIT_WIDTH-32];
+                        DATA_Dmem[{Daddr[BIT_WIDTH-1:2],2'b10} - Daddr[1:0] + 1] = DDT[BIT_WIDTH-17:BIT_WIDTH-24];
                      end
                    else
                      begin
@@ -229,7 +229,7 @@ module top_test;
                           end
                         else
                           begin
-                             DATA_Dmem[{Daddr[BIT_WIDTH-1:2],2'b00} + 3 - Daddr[1:0]] = DDT[BIT_WIDTH-25:BIT_WIDTH-32];
+                             DATA_Dmem[{Daddr[BIT_WIDTH-1:2],2'b11} - Daddr[1:0]] = DDT[BIT_WIDTH-25:BIT_WIDTH-32];
                           end
                      end // else: !if(SIZE == 2'b01)
                    
@@ -248,13 +248,13 @@ module top_test;
    task dump_task1;
       begin
         Imem_data = $fopen("./Imem_out.dat");
-        for (i = IMEM_START; i < IMEM_START + IMEM_SIZE; i = i+4)  // output data memory to Dmem_data (Dmem_out.dat)
+        for (i = IMEM_START; i <= IMEM_START + IMEM_SIZE; i = i+4)  // output data memory to Dmem_data (Dmem_out.dat)
           begin
              $fwrite(Imem_data, "%h :%h %h %h %h\n", i, DATA_Imem[i], DATA_Imem[i+1], DATA_Imem[i+2], DATA_Imem[i+3]);
           end
         $fclose(Imem_data);
         Dmem_data = $fopen("./Dmem_out.dat");
-        for (i = DMEM_START; i < DMEM_START + DMEM_SIZE; i = i+4)  // output data memory to Dmem_data (Dmem_out.dat)
+        for (i = DMEM_START; i <= DMEM_START + DMEM_SIZE; i = i+4)  // output data memory to Dmem_data (Dmem_out.dat)
           begin
              $fwrite(Dmem_data, "%h :%h %h %h %h\n", i, DATA_Dmem[i], DATA_Dmem[i+1], DATA_Dmem[i+2], DATA_Dmem[i+3]);
           end

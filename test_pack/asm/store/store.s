@@ -1,15 +1,7 @@
 	.text
 main:
 	li	x16,	0x80010000
-	# delay 2 cycles
-	li	x16,	0x80010000
-	li	x16,	0x80010000
-	# (end) delay 2 cycles
 	lw	x8,	0x0(x16)
-	# delay 2 cycles
-	lw	x8,	0x0(x16)
-	lw	x8,	0x0(x16)
-	# (end) delay 2 cycles
 	sw	x8,	0x4(x16)
 	sh	x8,	0x8(x16)
 	sh	x8,	0xa(x16)
