@@ -1,6 +1,7 @@
 module id_ex_regs (
     input clk,
     input rst_n,
+    input stall,
 
     input [31:0] pc_in,
     output [31:0] pc_out,
@@ -41,18 +42,9 @@ module id_ex_regs (
     reg wr_reg_n;
 
     always @(posedge clk or negedge rst_n) begin
-        if (rst_n) begin
-            pc <= pc_in;
-            pc4 <= pc4_in;
-            data1 <= data1_in;
-            data2 <= data2_in;
-            funct7 <= funct7_in;
-            funct3 <= funct3_in;
-            rd <= rd_in;
-            opcode <= opcode_in;
-            imm <= imm_in;
-            wr_reg_n <= wr_reg_n_in;
-        end else begin
+        if (!rst_n || stall) begin
+            // reset
+            // same behavior as reset when stall
             pc <= 32'bx;
             pc4 <= 32'bx;
             data1 <= 32'bx;
@@ -63,6 +55,17 @@ module id_ex_regs (
             opcode <= 7'bx;
             imm <= 32'bx;
             wr_reg_n <= 1'b1; // default not to write
+        end else begin
+            pc <= pc_in;
+            pc4 <= pc4_in;
+            data1 <= data1_in;
+            data2 <= data2_in;
+            funct7 <= funct7_in;
+            funct3 <= funct3_in;
+            rd <= rd_in;
+            opcode <= opcode_in;
+            imm <= imm_in;
+            wr_reg_n <= wr_reg_n_in;
         end
     end
 
