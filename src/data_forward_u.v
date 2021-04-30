@@ -55,7 +55,7 @@ module data_forward_u (
     function [1:0] forward_ctrl(
         input [4:0] rs,
         input [4:0] rd_in_ex,
-        input wr_reg_n_ex,
+        input wr_reg_n_in_ex,
         input [6:0] opcode_in_ex,
         input [4:0] rd_in_mem,
         input wr_reg_n_in_mem
@@ -65,7 +65,7 @@ module data_forward_u (
 
         begin
             is_load_in_ex = (opcode_in_ex == 7'b0000011);
-            rs_updated_by_prev = (!wr_reg_n_ex) && (rs == rd_in_ex);
+            rs_updated_by_prev = (!wr_reg_n_in_ex) && (rs == rd_in_ex);
             rs_updated_by_prev_prev = (!wr_reg_n_in_mem) && (rs == rd_in_mem);
 
             if (rs == 5'b00000) begin
