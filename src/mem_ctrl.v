@@ -1,6 +1,8 @@
 module mem_ctrl (
     input [6:0] opcode,
     input [2:0] funct3,
+    input flush,
+
     output [1:0] access_size,       // 00: word, 01: half, 10: byte
     output write_to_data_mem,
     output require_mem_access
@@ -10,7 +12,7 @@ module mem_ctrl (
     // Main
     //
     assign access_size = access_size_ctrl(opcode, funct3);
-    assign write_to_data_mem = write_ctrl(opcode);
+    assign write_to_data_mem = write_ctrl(opcode, flush);
     assign require_mem_access = mem_access_ctrl(opcode);
 
     //
@@ -60,13 +62,16 @@ module mem_ctrl (
         end
     endfunction
 
-    function write_ctrl(input [6:0] opcode);
+    function write_ctrl(input [6:0] opcode, input flush);
         reg is_store;
 
         begin
             assign is_store = (opcode == 7'b0100011);
+
+            // don't write when flush
+            if (flush) write_ctrl = 1'b0;
             // only Store Instructions write to mem
-            if (is_store) write_ctrl = 1'b1;
+            else if (is_store) write_ctrl = 1'b1;
             else write_ctrl = 1'b0;
         end
     endfunction
