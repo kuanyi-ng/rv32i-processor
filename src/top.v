@@ -1,11 +1,15 @@
 `include "data_forward_helper.v"
 `include "data_forward_u.v"
 `include "ex_data_picker.v"
+`include "ex_jump_picker.v"
 `include "ex_mem_regs.v"
 `include "ex_stage.v"
+`include "flush_u.v"
 `include "id_data_picker.v"
 `include "id_ex_regs.v"
+`include "id_flush_picker.v"
 `include "id_stage.v"
+`include "id_wr_reg_n_picker.v"
 `include "if_id_regs.v"
 `include "if_stage.v"
 `include "mem_stage.v"
@@ -44,6 +48,12 @@ module top (
     wire stall;
 
     //
+    // Pipeline Flush
+    //
+
+    wire flush;
+
+    //
     // IF
     //
 
@@ -58,12 +68,12 @@ module top (
     );
 
     wire [31:0] c_from_mem;
-    wire jump_from_mem;
+    wire jump_ex;
     wire [31:0] pc4_if;
     if_stage if_stage_inst(
         .current_pc(current_pc),
         .c(c_from_mem),
-        .jump_or_branch(jump_from_mem),
+        .jump(jump_ex),
         .pc4(pc4_if),
         .next_pc(next_pc)
     );
@@ -76,6 +86,7 @@ module top (
     wire [31:0] pc_from_if;
     wire [31:0] pc4_from_if;
     wire [31:0] ir_from_if;
+    wire flush_from_if;
     if_id_regs if_id_regs_inst(
         .clk(clk),
         .rst_n(rst_n),
@@ -85,7 +96,9 @@ module top (
         .pc4_in(pc4_if),
         .pc4_out(pc4_from_if),
         .ir_in(IDT),
-        .ir_out(ir_from_if)
+        .ir_out(ir_from_if),
+        .flush_in(flush),
+        .flush_out(flush_from_if)
     );
 
     //
@@ -98,7 +111,7 @@ module top (
     wire [2:0] funct3_id;
     wire [6:0] funct7_id;
     wire [31:0] imm_id;
-    wire wr_reg_n_id;
+    wire wr_reg_n_id_stage;
     id_stage id_stage_inst(
         .ir(ir_from_if),
         .rs1(rd1_addr),
@@ -108,7 +121,7 @@ module top (
         .funct3(funct3_id),
         .funct7(funct7_id),
         .imm(imm_id),
-        .wr_reg_n(wr_reg_n_id)
+        .wr_reg_n(wr_reg_n_id_stage)
     );
 
     //
@@ -131,6 +144,26 @@ module top (
     );
 
     //
+    // ID Flush Picker
+    //
+    wire flush_id;
+    id_flush_picker id_flush_picker_inst(
+        .flush_from_if(flush_from_if),
+        .flush_from_flush_u(flush),
+        .flush_out(flush_id)
+    );
+
+    //
+    // ID wr_reg_n_picker
+    //
+    wire wr_reg_n_id;
+    id_wr_reg_n_picker id_wr_reg_n_picker_inst(
+        .wr_reg_n_in(wr_reg_n_id_stage),
+        .flush_id(flush_id),
+        .wr_reg_n_out(wr_reg_n_id)
+    );
+
+    //
     // ID-EX
     //
 
@@ -143,6 +176,7 @@ module top (
     wire [6:0] opcode_from_id;
     wire [31:0] imm_from_id;
     wire wr_reg_n_from_id;
+    wire flush_from_id;
     id_ex_regs id_ex_regs_inst(
         .clk(clk),
         .rst_n(rst_n),
@@ -166,7 +200,9 @@ module top (
         .imm_in(imm_id),
         .imm_out(imm_from_id),
         .wr_reg_n_in(wr_reg_n_id),
-        .wr_reg_n_out(wr_reg_n_from_id)
+        .wr_reg_n_out(wr_reg_n_from_id),
+        .flush_in(flush_id),
+        .flush_out(flush_from_id)
     );
     
     //
@@ -206,7 +242,7 @@ module top (
     // EX
     //
 
-    wire jump_ex;
+    wire jump_from_branch_alu;
     wire [31:0] c_ex;
     ex_stage ex_stage_inst(
         .opcode(opcode_from_id),
@@ -216,7 +252,7 @@ module top (
         .data1(data1_from_id),
         .data2(data2_from_id),
         .imm(imm_from_id),
-        .jump(jump_ex),
+        .jump(jump_from_branch_alu),
         .c(c_ex)
     );
 
@@ -234,6 +270,16 @@ module top (
     );
 
     //
+    // EX Jump Picker
+    //
+
+    ex_jump_picker ex_jump_picker_inst(
+        .jump_from_branch_alu(jump_from_branch_alu),
+        .flush_from_if(flush_from_if),
+        .jump(jump_ex)
+    );
+
+    //
     // Data Forward Helper EX
     //
 
@@ -246,24 +292,30 @@ module top (
     );
 
     //
+    // Flush Unit
+    //
+    flush_u flush_u_inst(
+        .jump(jump_ex),
+        .flush(flush)
+    );
+
+    //
     // EX-MEM
     //
 
     wire [31:0] pc4_from_ex;
-    wire jump_from_ex;
     wire [31:0] b_from_ex;
     wire [31:0] c_from_ex;
     wire [2:0] funct3_from_ex;
     wire [6:0] opcode_from_ex;
     wire [4:0] rd_from_ex;
     wire wr_reg_n_from_ex;
+    wire flush_from_ex;
     ex_mem_regs ex_mem_regs_inst(
         .clk(clk),
         .rst_n(rst_n),
         .pc4_in(pc4_from_id),
         .pc4_out(pc4_from_ex),
-        .jump_in(jump_ex),
-        .jump_out(jump_from_ex),
         .b_in(b_ex),
         .b_out(b_from_ex),
         .c_in(c_ex),
@@ -275,7 +327,9 @@ module top (
         .opcode_in(opcode_from_id),
         .opcode_out(opcode_from_ex),
         .wr_reg_n_in(wr_reg_n_from_id),
-        .wr_reg_n_out(wr_reg_n_from_ex)
+        .wr_reg_n_out(wr_reg_n_from_ex),
+        .flush_in(flush_from_id),
+        .flush_out(flush_from_ex)
     );
 
     //
@@ -308,6 +362,7 @@ module top (
         .funct3(funct3_from_ex),
         .b(b_from_ex),
         .c(c_from_ex),
+        .flush(flush_from_ex),
         .d(d_mem),
         .require_mem_access(MREQ),
         .write(WRITE),
@@ -342,8 +397,6 @@ module top (
         .rst_n(rst_n),
         .pc4_in(pc4_from_ex),
         .pc4_out(pc4_from_mem),
-        .jump_in(jump_from_ex),
-        .jump_out(jump_from_mem),
         .c_in(c_from_ex),
         .c_out(c_from_mem),
         .d_in(d_mem),
