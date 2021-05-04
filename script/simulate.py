@@ -1,4 +1,5 @@
 # python3
+from sys import argv
 from utils import (
     files_in_path,
     select_verilog_files
@@ -48,8 +49,8 @@ def copy_test_program_to_test_ground(test_program: str):
     print("copying Imem and Dmem of test program to test_ground/")
     subprocess.run(copy_command)
 
-def run_simulation():
-    simulation_command = f"sh script/run_simulation.sh".split()
+def run_simulation(with_gui: bool = False):
+    simulation_command = f"sh script/run_simulation.sh ${with_gui}".split()
     print("running simulation")
     subprocess.run(simulation_command)
 
@@ -61,6 +62,8 @@ if __name__ == "__main__":
         sys.exit(1)
 
     test_program = sys.argv[1]
+    with_gui = (sys.argv[2] == 'gui') if (len(sys.argv) >= 3) else False
+    print(with_gui)
 
     # clean up test_ground/ (except tcl file)
     clean_test_ground()
@@ -75,4 +78,4 @@ if __name__ == "__main__":
     copy_test_program_to_test_ground(test_program=test_program)
 
     # run simulation
-    run_simulation()
+    run_simulation(with_gui=with_gui)
