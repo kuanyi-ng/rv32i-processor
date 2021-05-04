@@ -18,6 +18,7 @@ test_programs_paths = {
     "sort": "./test_pack/c/sort/",
     "load": "./test_pack/asm/load/",    # IN_TOTAL: 1000000
     "store": "./test_pack/asm/store/",  # IN_TOTAL: 1000000
+    "load_use": "./test_pack/asm/load_use/",
     "p2": "./test_pack/asm/p2/",
 }
 
