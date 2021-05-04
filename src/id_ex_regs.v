@@ -28,7 +28,10 @@ module id_ex_regs (
     output [31:0] imm_out,
 
     input wr_reg_n_in,
-    output wr_reg_n_out
+    output wr_reg_n_out,
+
+    input flush_in,
+    input flush_out
 );
 
     reg [31:0] pc;
@@ -40,6 +43,7 @@ module id_ex_regs (
     reg [6:0] opcode;
     reg [31:0] imm;
     reg wr_reg_n;
+    reg flush;
 
     always @(posedge clk or negedge rst_n) begin
         if (!rst_n || stall) begin
@@ -54,7 +58,8 @@ module id_ex_regs (
             rd <= 5'bx;
             opcode <= 7'bx;
             imm <= 32'bx;
-            wr_reg_n <= 1'b1; // default not to write
+            wr_reg_n <= 1'b1;   // default not to write
+            flush <= 1'b0;      // default not to flush
         end else begin
             pc <= pc_in;
             pc4 <= pc4_in;
@@ -66,6 +71,7 @@ module id_ex_regs (
             opcode <= opcode_in;
             imm <= imm_in;
             wr_reg_n <= wr_reg_n_in;
+            flush <= flush_in;
         end
     end
 
@@ -79,5 +85,6 @@ module id_ex_regs (
     assign opcode_out = opcode;
     assign imm_out = imm;
     assign wr_reg_n_out = wr_reg_n;
+    assign flush_out = flush;
     
 endmodule
