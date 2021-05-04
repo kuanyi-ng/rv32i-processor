@@ -5,9 +5,6 @@ module ex_mem_regs (
     input [31:0] pc4_in,
     output [31:0] pc4_out,
 
-    input jump_in,
-    output jump_out,
-
     input [31:0] b_in,
     output [31:0] b_out,
 
@@ -28,7 +25,6 @@ module ex_mem_regs (
 );
 
     reg [31:0] pc4;
-    reg jump;
     reg [31:0] b;
     reg [31:0] c;
     reg [2:0] funct3;
@@ -39,7 +35,6 @@ module ex_mem_regs (
     always @(posedge clk or negedge rst_n) begin
         if (rst_n) begin
             pc4 <= pc4_in;
-            jump <= jump_in;
             b <= b_in;
             c <= c_in;
             funct3 <= funct3_in;
@@ -48,7 +43,6 @@ module ex_mem_regs (
             wr_reg_n <= wr_reg_n_in;
         end else begin
             pc4 <= 32'bx;
-            jump <= 1'b0;
             b <= 32'bx;
             c <= 32'bx;
             funct3 <= 3'bx;
@@ -59,7 +53,6 @@ module ex_mem_regs (
     end
 
     assign pc4_out = pc4;
-    assign jump_out = jump;
     assign b_out = b;
     assign c_out = c;
     assign funct3_out = funct3;
