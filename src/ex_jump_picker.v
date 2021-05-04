@@ -1,7 +1,7 @@
 module ex_jump_picker (
     // Inputs
     input jump_from_branch_alu,
-    input flush,
+    input flush_from_id,
 
     // Outputs
     output jump
@@ -11,6 +11,6 @@ module ex_jump_picker (
     // and the branch result is 1 (jump),
     // need to set jump as 0 if flush.
     // (came from previous branhc instruction)
-    assign jump = (flush) ? 1'b0 : jump_from_branch_alu;
+    assign jump = (flush_from_id) ? 1'b0 : jump_from_branch_alu;
     
 endmodule
