@@ -5,6 +5,7 @@ module test_mem_stage ();
     reg [2:0] funct3;
     reg [6:0] opcode_from_ex;
     reg [31:0] b, c;
+    reg flush;
 
 
     wire [31:0] d;
@@ -19,6 +20,7 @@ module test_mem_stage ();
         .funct3(funct3),
         .b(b),
         .c(c),
+        .flush(flush),
         .d(d),
         .require_mem_access(require_mem_access),
         .write(write),
@@ -28,6 +30,7 @@ module test_mem_stage ();
 
     initial begin
         assign data_mem_ready_n = 1'b0;
+        assign flush = 1'b0;
 
         // Load Instructions
         // require_mem_access: 1
@@ -69,23 +72,31 @@ module test_mem_stage ();
 
         // Store Instructions
         // require_mem_access: 1
-        // write: 1
         assign opcode = 7'b0100011;
         assign b = 32'h8765_4321;
             // context: SB
             // size: 10
             // data_to_mem: 2121_2121
+            // write: 1
         assign funct3 = 3'b000;
         #10
             // context: SH
             // size: 01
             // data_to_mem: 4321_4321
+            // write: 1
         assign funct3 = 3'b001;
         #10
             // context: SW
             // size: 00
             // data_to_mem: 8765_4321
+            // write: 1
         assign funct3 = 3'b010;
+        #10
+            // context: SW
+            // size: 00
+            // data_to_mem: 8765_4321
+            // write: 0
+        assign flush = 1'b1;
         #10
 
         // Other Instructions
@@ -95,6 +106,7 @@ module test_mem_stage ();
         // write: 0
         // size: 11
         // data_to_mem: xxxx_xxxx
+        assign flush = 1'b0;
         assign opcode = 7'bxxxxxxx;
         assign funct3 = 3'bxxx;
         #10
