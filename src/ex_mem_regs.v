@@ -21,7 +21,10 @@ module ex_mem_regs (
     output [6:0] opcode_out,
 
     input wr_reg_n_in,
-    output wr_reg_n_out
+    output wr_reg_n_out,
+
+    input flush_in,
+    output flush_out
 );
 
     reg [31:0] pc4;
@@ -31,6 +34,7 @@ module ex_mem_regs (
     reg [4:0] rd;
     reg [6:0] opcode;
     reg wr_reg_n;
+    reg flush;
 
     always @(posedge clk or negedge rst_n) begin
         if (rst_n) begin
@@ -41,6 +45,7 @@ module ex_mem_regs (
             rd <= rd_in;
             opcode <= opcode_in;
             wr_reg_n <= wr_reg_n_in;
+            flush <= flush_in;
         end else begin
             pc4 <= 32'bx;
             b <= 32'bx;
@@ -48,7 +53,8 @@ module ex_mem_regs (
             funct3 <= 3'bx;
             rd <= 5'bx;
             opcode <= 7'bx;
-            wr_reg_n <= 1'b1; // default not to write
+            wr_reg_n <= 1'b1;   // default not to write
+            flush <= 1'b0;      // default not to flush
         end
     end
 
@@ -59,5 +65,6 @@ module ex_mem_regs (
     assign rd_out = rd;
     assign opcode_out = opcode;
     assign wr_reg_n_out = wr_reg_n;
+    assign flush_out = flush;
 
 endmodule
