@@ -1,6 +1,6 @@
 module id_wr_reg_n_picker (
     input wr_reg_n_in,
-    input flush,
+    input flush_id,
 
     output wr_reg_n_out
 );
@@ -10,6 +10,6 @@ module id_wr_reg_n_picker (
     // 0            1       1
     // 1            0       1
     // 1            1       1
-    assign wr_reg_n_out = (wr_reg_n_in || flush);
+assign wr_reg_n_out = (wr_reg_n_in || flush_id);
     
 endmodule
