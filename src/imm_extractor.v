@@ -25,6 +25,9 @@ module imm_extractor (
             3'b100: imm = j_imm(in);
 
             // shamt_imm
+            // NOTE: maybe can pass it on as it is
+            // imm = in;
+            // as the lower 5 bits will be extracted within alu
             3'b101: imm = shamt_imm(in);
 
             // default: 0

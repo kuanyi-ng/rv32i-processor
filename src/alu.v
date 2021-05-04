@@ -20,7 +20,7 @@ module alu (
                 4'b0000: alu_out = s_in1 + s_in2;
 
                 // SLL, SLLI
-                4'b0001: alu_out = s_in1 << in2;
+                4'b0001: alu_out = s_in1 << { 27'b0, in2[4:0] };
 
                 // SLT, SLTI
                 4'b0010: alu_out = (s_in1 < s_in2) ? 32'd1 : 32'd0;
@@ -32,7 +32,7 @@ module alu (
                 4'b0100: alu_out = in1 ^ in2;
 
                 // SRL, SRLI
-                4'b0101: alu_out = s_in1 >> in2;
+                4'b0101: alu_out = s_in1 >> { 27'b0, in2[4:0] };
 
                 // OR, ORI
                 4'b0110: alu_out = in1 | in2;
@@ -50,7 +50,7 @@ module alu (
                 4'b1010: alu_out = (in1 + in2) & ~1;
 
                 // SRA, SRAI
-                4'b1101: alu_out = s_in1 >>> in2;
+                4'b1101: alu_out = s_in1 >>> { 27'b0, in2[4:0] };
 
                 // default: false
                 default: alu_out = 32'b0;

@@ -10,8 +10,9 @@
 `include "if_stage.v"
 `include "mem_stage.v"
 `include "mem_wb_regs.v"
-`include "reg32.v"
+`include "pc_reg.v"
 `include "rf32x32.v"
+`include "stall_detector.v"
 `include "wb_stage.v"
 
 module top (
@@ -37,17 +38,23 @@ module top (
 );
 
     //
+    // Pipeline Stalling
+    //
+
+    wire stall;
+
+    //
     // IF
     //
 
     wire [31:0] next_pc; 
     wire [31:0] current_pc;
-    reg32 pc_reg(
+    pc_reg pc_reg_inst(
         .clk(clk),
         .rst_n(rst_n),
-        .in(next_pc),
-        .default_in(32'h0001_0000),
-        .out(current_pc)
+        .stall(stall),
+        .pc_in(next_pc),
+        .pc_out(current_pc)
     );
 
     wire [31:0] c_from_mem;
@@ -72,6 +79,7 @@ module top (
     if_id_regs if_id_regs_inst(
         .clk(clk),
         .rst_n(rst_n),
+        .stall(stall),
         .pc_in(current_pc),
         .pc_out(pc_from_if),
         .pc4_in(pc4_if),
@@ -138,6 +146,7 @@ module top (
     id_ex_regs id_ex_regs_inst(
         .clk(clk),
         .rst_n(rst_n),
+        .stall(stall),
         .pc_in(pc_from_if),
         .pc_out(pc_from_id),
         .pc4_in(pc4_from_if),
@@ -177,6 +186,20 @@ module top (
         .data_in(data_in),
         .data1_out(data1_regfile),
         .data2_out(data2_regfile)
+    );
+
+    //
+    // Stall Detector
+    //
+
+    stall_detector stall_detector_inst(
+        .rs1(rd1_addr),
+        .rs2(rd2_addr),
+        .opcode_in_id(opcode_id),
+        .wr_reg_n_in_ex(wr_reg_n_from_id),
+        .rd_in_ex(rd_from_id),
+        .opcode_in_ex(opcode_from_id),
+        .stall(stall)
     );
 
     //
