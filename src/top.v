@@ -67,12 +67,12 @@ module top (
         .pc_out(current_pc)
     );
 
-    wire [31:0] c_from_mem;
+    wire [31:0] c_ex;
     wire jump_ex;
     wire [31:0] pc4_if;
     if_stage if_stage_inst(
         .current_pc(current_pc),
-        .c(c_from_mem),
+        .c(c_ex),
         .jump(jump_ex),
         .pc4(pc4_if),
         .next_pc(next_pc)
@@ -243,7 +243,6 @@ module top (
     //
 
     wire jump_from_branch_alu;
-    wire [31:0] c_ex;
     ex_stage ex_stage_inst(
         .opcode(opcode_from_id),
         .funct3(funct3_from_id),
@@ -390,6 +389,7 @@ module top (
     //
 
     wire [31:0] pc4_from_mem;
+    wire [31:0] c_from_mem;
     wire [31:0] d_from_mem;
     wire [6:0] opcode_from_mem;
     mem_wb_regs mem_wb_regs_inst(
