@@ -52,6 +52,19 @@ module test_branch_alu ();
         assign branch_alu_op = 3'b011;
         #10
 
+        assign data1 = 32'd4;
+        assign data2 = 32'd4;
+
+        // GE
+        // expect: 1
+        assign branch_alu_op = 3'b101;
+        #10
+
+        // GEU
+        // expect: 1
+        assign branch_alu_op = 3'b111;
+        #10
+
         $finish;
     end
 endmodule

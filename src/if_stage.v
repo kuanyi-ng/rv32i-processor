@@ -4,7 +4,7 @@
 module if_stage (
     input [31:0] current_pc,
     input [31:0] c,
-    input jump_or_branch,
+    input jump,
     output [31:0] pc4,
     output [31:0] next_pc
 );
@@ -17,7 +17,7 @@ module if_stage (
     if_ctrl if_ctrl_inst(
         .pc4(pc4),
         .c(c),
-        .jump_or_branch(jump_or_branch),
+        .jump(jump),
         .next_pc(next_pc)
     );
     

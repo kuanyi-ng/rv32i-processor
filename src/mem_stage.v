@@ -12,6 +12,7 @@ module mem_stage (
     input [2:0] funct3,
     input [31:0] b,                 // data to store (Store Instructions)
     input [31:0] c,                 // memory address to access
+    input flush,
 
     // outputs to MEM stage
     output [31:0] d,                // data loaded (Load Instructions)
@@ -24,12 +25,13 @@ module mem_stage (
 );
 
     // NOTE: need to request for memory access first,
-    //  then only we will receive data_mem_ready_n from the memory.
+    // then only we will receive data_mem_ready_n from the memory.
 
     // NOTE: need to think about how to handle data_mem_ready_n
     mem_ctrl mem_ctrl_inst(
         .opcode(opcode),
         .funct3(funct3),
+        .flush(flush),
         .access_size(size),
         .write_to_data_mem(write),
         .require_mem_access(require_mem_access)

@@ -39,13 +39,13 @@ module branch_alu (
                 3'b100: branch_alu_out = (s_in1 < s_in2) ? 1'b1 : 1'b0;
 
                 // GE
-                3'b101: branch_alu_out = (s_in1 > s_in2) ? 1'b1 : 1'b0;
+                3'b101: branch_alu_out = (s_in1 >= s_in2) ? 1'b1 : 1'b0;
 
                 // LTU
                 3'b110: branch_alu_out = (in1 < in2) ? 1'b1 : 1'b0;
 
                 // GEU
-                3'b111: branch_alu_out = (in1 > in2) ? 1'b1 : 1'b0;
+                3'b111: branch_alu_out = (in1 >= in2) ? 1'b1 : 1'b0;
 
                 // all cases covered, so no default value is required
                 // default: false (don't branch / jump just in case something went wrong)

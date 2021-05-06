@@ -40,7 +40,7 @@ module id_stage (
         .out(imm)
     );
 
-    assign wr_reg_n = wr_reg_n_ctrl(opcode);
+    assign wr_reg_n = wr_reg_n_ctrl(opcode, rd);
 
     //
     // Functions
@@ -95,7 +95,7 @@ module id_stage (
         end
    endfunction
 
-   function wr_reg_n_ctrl(input [6:0] opcode);
+   function wr_reg_n_ctrl(input [6:0] opcode, input [4:0] rd);
         // 0: write, 1: don't write
 
         // whitelist instead of blacklist to be more secure.
@@ -110,7 +110,10 @@ module id_stage (
             is_jal = (opcode == 7'b1101111);
             is_jalr = (opcode == 7'b1100111);
 
-            if (is_lui || is_auipc || is_i_type || is_r_type || is_load || is_jal || is_jalr) begin
+            if (rd == 5'b00000) begin
+                // don't allow write to x0 (always 0)
+                wr_reg_n_ctrl = 1'b1;
+            end else if (is_lui || is_auipc || is_i_type || is_r_type || is_load || is_jal || is_jalr) begin
                 wr_reg_n_ctrl = 1'b0;
             end else begin
                 wr_reg_n_ctrl = 1'b1;

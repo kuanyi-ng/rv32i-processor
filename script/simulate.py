@@ -1,8 +1,5 @@
 # python3
-from utils import (
-    files_in_path,
-    select_verilog_files
-)
+
 import subprocess
 
 # List of test_program and their paths
@@ -20,14 +17,11 @@ test_programs_paths = {
     "store": "./test_pack/asm/store/",  # IN_TOTAL: 1000000
     "load_use": "./test_pack/asm/load_use/",
     "p2": "./test_pack/asm/p2/",
+    "p2_part": "./test_pack/asm/p2_part/",
 }
 
 def clean_test_ground():
-    files_in_test_ground = files_in_path(path='./test_ground')
-    files_to_delete = select_verilog_files(filenames=files_in_test_ground)
-    print(f"files to delete in test_ground/: {files_to_delete}")
-
-    clean_command = f"rm {' '.join(files_to_delete)}".split()
+    clean_command = f"sh script/clean_test_ground.sh".split()
     print("removing verilog files from test_ground/")
     subprocess.run(clean_command)
 
@@ -48,8 +42,8 @@ def copy_test_program_to_test_ground(test_program: str):
     print("copying Imem and Dmem of test program to test_ground/")
     subprocess.run(copy_command)
 
-def run_simulation():
-    simulation_command = f"sh script/run_simulation.sh".split()
+def run_simulation(with_gui: bool = False):
+    simulation_command = f"sh script/run_simulation.sh ${with_gui}".split()
     print("running simulation")
     subprocess.run(simulation_command)
 
@@ -61,6 +55,7 @@ if __name__ == "__main__":
         sys.exit(1)
 
     test_program = sys.argv[1]
+    with_gui = (sys.argv[2] == 'gui') if (len(sys.argv) >= 3) else False
 
     # clean up test_ground/ (except tcl file)
     clean_test_ground()
@@ -75,4 +70,4 @@ if __name__ == "__main__":
     copy_test_program_to_test_ground(test_program=test_program)
 
     # run simulation
-    run_simulation()
+    run_simulation(with_gui=with_gui)

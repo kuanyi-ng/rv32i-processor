@@ -48,6 +48,14 @@ module test_id_stage ();
         // wr_reg_n: 0
         #5
 
+        // JAL with rd: 0
+        assign ir = 32'b0_0000000001_0_00000000_00000_1101111;
+        // opcode: 1101111
+        // imm: 2
+        // rd: 0
+        // wr_reg_n: 1
+        #5
+
         // JALR
         assign ir = 32'b0000_0000_0010_00001_000_00011_1100111;
         // opcode: 1100111

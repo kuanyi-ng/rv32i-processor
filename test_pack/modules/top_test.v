@@ -218,8 +218,8 @@ module top_test;
                      end
                    else if(SIZE == 2'b01)
                      begin
-                        DATA_Dmem[{Daddr[BIT_WIDTH-1:2],2'b10} - Daddr[1:0]] = DDT[BIT_WIDTH-25:BIT_WIDTH-32];
-                        DATA_Dmem[{Daddr[BIT_WIDTH-1:2],2'b10} - Daddr[1:0] + 1] = DDT[BIT_WIDTH-17:BIT_WIDTH-24];
+                        DATA_Dmem[{Daddr[BIT_WIDTH-1:2],2'b10} - Daddr[1:0]] = DDT[BIT_WIDTH-17:BIT_WIDTH-24];
+                        DATA_Dmem[{Daddr[BIT_WIDTH-1:2],2'b10} - Daddr[1:0] + 1] = DDT[BIT_WIDTH-25:BIT_WIDTH-32];
                      end
                    else
                      begin
