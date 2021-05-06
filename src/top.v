@@ -275,7 +275,7 @@ module top (
 
     ex_jump_picker ex_jump_picker_inst(
         .jump_from_branch_alu(jump_from_branch_alu),
-        .flush_from_if(flush_from_if),
+        .flush_from_id(flush_from_id),
         .jump(jump_ex)
     );
 
