@@ -14,20 +14,22 @@ main:
     # x10: 0000_0001
     # =====
 
-	j	L32
+	j	L1
+    # jump to L1
+    # x1: addr [sb x10, 0x6c(x16) ]
 	sb	x10,	0x6c(x16)
 L1:
 	jal	L2
     # jump to L2
-    # x31: addr [ sb x10, 0x6d(x16) ]
+    # x1: addr [ sb x10, 0x6d(x16) ]
 	sb	x10,	0x6d(x16)
-	jr	x31
-    # jump to addr [ xor x8, x8, x8 ]
+	ret
+    # return to addr [ xor x8, x8, x8 ]
 L2:
 	ori	x10,	x10,	0x3
-	jalr	x31
+	jalr	x1
     # jump to addr [ sb x10, 0x6d(x16) ]
-    # x31: addr [ xor x8, x8, x8 ]
+    # x1: addr [ xor x8, x8, x8 ]
 
     # =====
     # x10: 0000_0003
@@ -180,6 +182,7 @@ M3:
 L19:
 	bltz	x0,	M4
 	jal L20
+    # x1: addr [ sb x10, 0x7e(x16) ]
 
     # =====
     # doesn't branch to M4
@@ -189,9 +192,14 @@ L19:
 M4:
 	sb	x10,	0x7e(x16)
 	j	L21
+
+    # =====
+    # jump to L21
+    # =====
+
 L20:
 	ori	x10,	x10,	0x7
-	jr	x31
+	ret
 
     # =====
     # x10: 0000_0007
@@ -200,44 +208,101 @@ L20:
 L21:
 	bltz	x8,	L22
 	sb	x10,	0x7f(x16)
+
+    # =====
+    # doesn't branch to L22
+    # =====
+
 L22:
 	bltz	x0,	L23
 	sb	x10,	0x80(x16)
+
+    # =====
+    # doesn't branch to L23
+    # =====
+
 L23:
 	bltz	x9,	L24
 	sb	x10,	0x81(x16)
+
+    # =====
+    # branch to L24
+    # =====
+
 L24:
+    # branch >= 0
 	bgez	x8,	M5
 	jal L25
+
+    # =====
+    # branch to M5
+    # =====
+
 M5:
 	sb	x10,	0x82(x16)
 L25:
 	bgez	x0,	M6
 	jal L26
+
+    # =====
+    # branch to M6
+    # =====
+
 M6:
 	sb	x10,	0x83(x16)
 L26:
 	bgez	x9,	M7
 	jal L27
+
+    # ======
+    # doesn't branch to M7
+    # jump to L27
+    # ======
+
 M7:
 	sb	x10,	0x84(x16)
 L27:
 	bgez	x9,	M8
 	jal L28
+    # x1: addr [ sb x10, 0x85(x16) ]
+
+    # ======
+    # doesn't branch to M8
+    # jump to L28
+    # ======
+
 M8:
 	sb	x10,	0x85(x16)
 	j	L29
+
+    # =====
+    # jump to L29
+    # =====
+
 L28:
 	ori	x10,	x10,	0xf
-	jr	x31
+    # x10: 0000_0000f
+	ret
 L29:
 	jal	L30
 	j	L31
 L30:
-	jr	x31
+	ret
 L31:
 	ori	x10,	x10,	0x1f
+    # x10: 00000_001f
 	sb	x10,	0x86(x16)
+
+    # =====
+    # 8001006c: 03 xx 03 xx
+    # 80010070: xx 03 xx 03
+    # 80010074: 03 03 xx xx
+    # 80010078: xx 03 xx xx
+    # 8001007c: 07 07 03 xx
+    # 80010080: 07 07 xx 07
+    # 80010084: xx 1f 0f xx
+    # =====
+
 L32:
 	li	x30, 0xFF000000
 	sw	x0, 0x0(x30)
