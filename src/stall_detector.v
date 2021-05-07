@@ -47,19 +47,18 @@ module stall_detector (
         // but not for the other case, so pipeline stall is needed.
         // 
         reg is_store_in_id, is_load_in_ex;
+        reg rs1_is_zero, rs2_is_zero;
         reg rs1_updated, rs2_updated;
 
         begin
             assign is_store_in_id = (opcode_in_id == 7'b0100011);
             assign is_load_in_ex = (opcode_in_ex == 7'b0000011);
+            assign rs1_is_zero = (rs1 == 5'b00000);
+            assign rs2_is_zero = (rs2 == 5'b00000);
             assign rs1_updated = (!wr_reg_n_in_ex) && (rs1 == rd_in_ex);
             assign rs2_updated = (!wr_reg_n_in_ex) && (rs2 == rd_in_ex);
 
-            // X: not okay to not stall if either of rs1 or rs2 is 0
-            // might need to stall when only one of rs1 or rs2 is 0
-            if ((rs1 == 5'b00000) || (rs2 == 5'b00000)) begin
-                stall_ctrl = 1'b0;
-            end else if ((!rs1_updated) && (!rs2_updated)) begin
+            if ((!rs1_updated) && (!rs2_updated)) begin
                 stall_ctrl = 1'b0;
             end else if ((is_load_in_ex) && (is_store_in_id)) begin
                 // latest value for rs2 (in EX stage) of Store instruction
@@ -72,8 +71,10 @@ module stall_detector (
                 // (1, 1): stall
                 stall_ctrl = rs1_updated;
             end else if ((is_load_in_ex) && (!is_store_in_id)) begin
-                // either one of rs1 or rs2 is updated
-                stall_ctrl = 1'b1;
+                // condition for stall:
+                // - rs1 is not zero and rs1 is updated
+                // - rs2 is not zero and rs2 is updated
+                stall_ctrl = (!rs1_is_zero && rs1_updated) || (!rs2_is_zero && rs2_updated);
             end else begin
                 // don't need to stall if it's not load instruction in EX stage
                 // (probably) all cases can be handled by data forwarding.
