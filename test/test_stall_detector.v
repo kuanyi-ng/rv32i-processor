@@ -93,16 +93,18 @@ module test_data_forward_u ();
         #5
 
         // rs1 is updated
+        // rs2 is 0
         assign rs1 = 5'b00001;
-        assign rs2 = 5'b00010;
+        assign rs2 = 5'b00000;
         assign rd_in_ex = 5'b00001;
         assign opcode_in_id = 7'b0110011;   // R-Type
         assign opcode_in_ex = 7'b0000011;   // Load
         // stall: 1
         #5
 
+        // rs1 is 0
         // rs2 is updated
-        assign rs1 = 5'b00001;
+        assign rs1 = 5'b00000;
         assign rs2 = 5'b00010;
         assign rd_in_ex = 5'b00010;
         assign opcode_in_id = 7'b0110011;   // R-Type

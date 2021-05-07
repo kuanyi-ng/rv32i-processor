@@ -55,6 +55,8 @@ module stall_detector (
             assign rs1_updated = (!wr_reg_n_in_ex) && (rs1 == rd_in_ex);
             assign rs2_updated = (!wr_reg_n_in_ex) && (rs2 == rd_in_ex);
 
+            // X: not okay to not stall if either of rs1 or rs2 is 0
+            // might need to stall when only one of rs1 or rs2 is 0
             if ((rs1 == 5'b00000) || (rs2 == 5'b00000)) begin
                 stall_ctrl = 1'b0;
             end else if ((!rs1_updated) && (!rs2_updated)) begin
