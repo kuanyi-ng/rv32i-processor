@@ -18,6 +18,9 @@ module id_ex_regs (
     input [2:0] funct3_in,
     output [2:0] funct3_out,
 
+    input [4:0] rs2_in,
+    output [4:0] rs2_out,
+
     input [4:0] rd_in,
     output [4:0] rd_out,
 
@@ -39,7 +42,7 @@ module id_ex_regs (
     reg [31:0] data1, data2;
     reg [6:0] funct7;
     reg [2:0] funct3;
-    reg [4:0] rd;
+    reg [4:0] rs2, rd;
     reg [6:0] opcode;
     reg [31:0] imm;
     reg wr_reg_n;
@@ -55,6 +58,7 @@ module id_ex_regs (
             data2 <= 32'bx;
             funct7 <= 7'bx;
             funct3 <= 3'bx;
+            rs2 <= 5'bx;
             rd <= 5'bx;
             opcode <= 7'bx;
             imm <= 32'bx;
@@ -67,6 +71,7 @@ module id_ex_regs (
             data2 <= data2_in;
             funct7 <= funct7_in;
             funct3 <= funct3_in;
+            rs2 <= rs2_in;
             rd <= rd_in;
             opcode <= opcode_in;
             imm <= imm_in;
@@ -81,6 +86,7 @@ module id_ex_regs (
     assign data2_out = data2;
     assign funct7_out = funct7;
     assign funct3_out = funct3;
+    assign rs2_out = rs2;
     assign rd_out = rd;
     assign opcode_out = opcode;
     assign imm_out = imm;
