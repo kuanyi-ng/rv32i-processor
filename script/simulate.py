@@ -6,6 +6,7 @@ import subprocess
 test_programs_paths = {
     "bitcnts": "./test_pack/MiBench/bitcnts/test/",
     "dijkstra": "./test_pack/MiBench/dijkstra/test/",
+    "dijkstra_2": "./test_pack/MiBench/dijkstra/test2/",
     "stringsearch": "./test_pack/MiBench/stringsearch/test/",
     "hello": "./test_pack/c/hello/",
     "napier": "./test_pack/c/napier/",
