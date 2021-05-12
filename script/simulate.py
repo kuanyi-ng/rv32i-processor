@@ -9,11 +9,13 @@ test_programs_paths = {
     "dijkstra_2": "./test_pack/MiBench/dijkstra/test2/",
     "stringsearch": "./test_pack/MiBench/stringsearch/test/",
     "hello": "./test_pack/c/hello/",
-    "napier": "./test_pack/c/napier/",
-    "pi": "./test_pack/c/pi/",
-    "prime": "./test_pack/c/prime/",
+    "napier": "./test_pack/c/napier/test/",
+    "pi": "./test_pack/c/pi/test/",
+    "prime": "./test_pack/c/prime/test/",
     "skel": "./test_pack/c/skel/",
-    "sort": "./test_pack/c/sort/",
+    "babblesort": "./test_pack/c/sort/babble/test/",
+    "insertsort": "./test_pack/c/sort/insert/test/",
+    "quicksort": "./test_pack/c/sort/quick/test/",
     "load": "./test_pack/asm/load/",    # IN_TOTAL: 1000000
     "store": "./test_pack/asm/store/",  # IN_TOTAL: 1000000
     "load_use": "./test_pack/asm/load_use/",
