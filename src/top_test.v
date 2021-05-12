@@ -1,5 +1,6 @@
 `timescale 1ns/1ps
-`define IN_TOTAL 1000000    // load, store
+// `define IN_TOTAL 1000000    // load, store, p2, hello
+`define IN_TOTAL 1000000000     // bitcnts
 `include "top.v"
 
 module top_test;
