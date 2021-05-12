@@ -172,7 +172,7 @@ module top (
     wire [31:0] data1_from_id, data2_from_id;
     wire [6:0] funct7_from_id;
     wire [2:0] funct3_from_id;
-    wire [4:0] rd_from_id;
+    wire [4:0] rs2_from_id, rd_from_id;
     wire [6:0] opcode_from_id;
     wire [31:0] imm_from_id;
     wire wr_reg_n_from_id;
@@ -193,6 +193,8 @@ module top (
         .funct7_out(funct7_from_id),
         .funct3_in(funct3_id),
         .funct3_out(funct3_from_id),
+        .rs2_in(rd2_addr),
+        .rs2_out(rs2_from_id),
         .rd_in(rd_id),
         .rd_out(rd_from_id),
         .opcode_in(opcode_id),
@@ -339,6 +341,7 @@ module top (
         .rs1(rd1_addr),
         .rs2(rd2_addr),
         .wr_reg_n_in_ex(wr_reg_n_from_id),
+        .rs2_in_ex(rs2_from_id),
         .rd_in_ex(rd_from_id),
         .opcode_in_ex(opcode_from_id),
         .wr_reg_n_in_mem(wr_reg_n_from_ex),
