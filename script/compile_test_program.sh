@@ -4,7 +4,7 @@
 cd $1
 
 # compile
-make
+make OPTIMIZE=3
 
 # move back to start directory
 cd ~/sandbox/
