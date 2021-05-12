@@ -27,6 +27,7 @@ module data_forward_u (
 
     // Inputs from EX Stage (current cycle)
     input wr_reg_n_in_ex,
+    input [4:0] rs2_in_ex,
     input [4:0] rd_in_ex,
     input [6:0] opcode_in_ex,
 
@@ -47,7 +48,7 @@ module data_forward_u (
     //
     assign forward_data1 = forward_ctrl(rs1, rd_in_ex, wr_reg_n_in_ex, opcode_in_ex, rd_in_mem, wr_reg_n_in_mem);
     assign forward_data2 = forward_ctrl(rs2, rd_in_ex, wr_reg_n_in_ex, opcode_in_ex, rd_in_mem, wr_reg_n_in_mem);
-    assign forward_b = forward_b_ctrl(rs2, rd_in_mem, wr_reg_n_in_mem, opcode_in_mem);
+    assign forward_b = forward_b_ctrl(rs2_in_ex, rd_in_mem, wr_reg_n_in_mem, opcode_in_mem);
 
     //
     // Functions
@@ -95,7 +96,7 @@ module data_forward_u (
         end
     endfunction
 
-    function forward_b_ctrl(input [4:0] rs2, input [4:0] rd_in_mem, input wr_reg_n_in_mem, input [6:0] opcode_in_mem);
+    function forward_b_ctrl(input [4:0] rs2_in_ex, input [4:0] rd_in_mem, input wr_reg_n_in_mem, input [6:0] opcode_in_mem);
         // Only forward d_mem from MEM stage to EX stage in the following situation
         //
         // lw   x8, 0x0(x16)    d_mem from MEM stage of this instruction
@@ -105,9 +106,9 @@ module data_forward_u (
 
         begin
             is_load_in_mem = (opcode_in_mem == 7'b0000011);
-            rs2_updated_by_prev = (!wr_reg_n_in_mem) && (rs2 == rd_in_mem);
+            rs2_updated_by_prev = (!wr_reg_n_in_mem) && (rs2_in_ex == rd_in_mem);
 
-            if (rs2 == 5'b00000) forward_b_ctrl = 1'b0;
+            if (rs2_in_ex == 5'b00000) forward_b_ctrl = 1'b0;
             else if (rs2_updated_by_prev && is_load_in_mem) forward_b_ctrl = 1'b1;
             else forward_b_ctrl = 1'b0;
         end

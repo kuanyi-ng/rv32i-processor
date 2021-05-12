@@ -1,5 +1,5 @@
 module test_data_forward_u ();
-    reg [4:0] rs1, rs2, rd_in_ex, rd_in_mem;
+    reg [4:0] rs1, rs2, rs2_in_ex, rd_in_ex, rd_in_mem;
 
     reg wr_reg_n_in_ex, wr_reg_n_in_mem;
     reg [6:0] opcode_in_ex, opcode_in_mem;
@@ -11,6 +11,7 @@ module test_data_forward_u ();
         .rs1(rs1),
         .rs2(rs2),
         .wr_reg_n_in_ex(wr_reg_n_in_ex),
+        .rs2_in_ex(rs2_in_ex),
         .rd_in_ex(rd_in_ex),
         .opcode_in_ex(opcode_in_ex),
         .wr_reg_n_in_mem(wr_reg_n_in_mem),
@@ -116,8 +117,40 @@ module test_data_forward_u ();
 
         // the current instruction is a store instruction
         // rs2 are updated by previous load instruction
+        // context: rs2_in_ex == rd_in_mem && rs2 != rs2_in_ex
+        assign rs1 = 5'b00001;
+        assign rs2 = 5'b10010;
+        assign rs2_in_ex = 5'b00010;
+        assign rd_in_ex = 5'b10001;
+        assign rd_in_mem = 5'b00010;
+        assign opcode_in_ex = 7'b0100011;   // Store
+        assign opcode_in_mem = 7'b0000011;  // Load
+        // forward_b: 1
+        #5
+        // context: rs2_in_ex == rd_in_mem && rs2 == rs2_in_ex
         assign rs1 = 5'b00001;
         assign rs2 = 5'b00010;
+        assign rs2_in_ex = 5'b00010;
+        assign rd_in_ex = 5'b10001;
+        assign rd_in_mem = 5'b00010;
+        assign opcode_in_ex = 7'b0100011;   // Store
+        assign opcode_in_mem = 7'b0000011;  // Load
+        // forward_b: 1
+        #5
+        // context: rs2_in_ex != rd_in_mem && rs2 != rs2_in_ex (&& rs2 == rd_in_mem)
+        assign rs1 = 5'b00001;
+        assign rs2 = 5'b00010;
+        assign rs2_in_ex = 5'b10010;
+        assign rd_in_ex = 5'b10001;
+        assign rd_in_mem = 5'b00010;
+        assign opcode_in_ex = 7'b0100011;   // Store
+        assign opcode_in_mem = 7'b0000011;  // Load
+        // forward_b: 0
+        #5
+        // context: rs2_in_ex != rd_in_mem && rs2 == rs2_in_ex
+        assign rs1 = 5'b00001;
+        assign rs2 = 5'b10010;
+        assign rs2_in_ex = 5'b10010;
         assign rd_in_ex = 5'b10001;
         assign rd_in_mem = 5'b00010;
         assign opcode_in_ex = 7'b0100011;   // Store
