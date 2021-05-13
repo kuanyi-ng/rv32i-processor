@@ -12,7 +12,6 @@ test_programs_paths = {
     "napier": "./test_pack/c/napier/test/",
     "pi": "./test_pack/c/pi/test/",
     "prime": "./test_pack/c/prime/test/",
-    "skel": "./test_pack/c/skel/",
     "babblesort": "./test_pack/c/sort/babble/test/",
     "insertsort": "./test_pack/c/sort/insert/test/",
     "quicksort": "./test_pack/c/sort/quick/test/",
