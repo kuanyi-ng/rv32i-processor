@@ -67,7 +67,12 @@ def copy_test_program_to_test_ground(test_program: str):
 def run_simulation(with_gui: bool = False):
     simulation_command = f"sh script/run_simulation.sh ${with_gui}".split()
     print("running simulation")
+
+    import time
+    start = time.time()
     subprocess.run(simulation_command)
+    end = time.time()
+    print(f"Time taken in real life: {end - start} [s]")
 
 if __name__ == "__main__":
     import sys
