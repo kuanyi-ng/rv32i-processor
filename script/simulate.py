@@ -9,6 +9,8 @@ test_programs_paths = {
     "bitcnts_large": "./test_pack/MiBench/bitcnts/large/",
     "dijkstra": "./test_pack/MiBench/dijkstra/test/",
     "dijkstra_2": "./test_pack/MiBench/dijkstra/test2/",
+    "dijkstra_small": "./test_pack/MiBench/dijkstra/small/",
+    "dijkstra_large": "./test_pack/MiBench/dijkstra/large/",
     "stringsearch": "./test_pack/MiBench/stringsearch/test/",
     "stringsearch_small": "./test_pack/MiBench/stringsearch/small/",
     "stringsearch_large": "./test_pack/MiBench/stringsearch/large/",
