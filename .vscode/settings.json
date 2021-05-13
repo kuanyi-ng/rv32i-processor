@@ -1,3 +1,4 @@
 {
-    "verilog.linting.linter": "iverilog"
+    "verilog.linting.linter": "iverilog",
+    "python.pythonPath": "/Users/kuanyi/.anyenv/envs/pyenv/versions/3.9.0/bin/python"
 }
