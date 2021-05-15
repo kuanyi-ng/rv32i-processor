@@ -6,6 +6,6 @@ cd test_ground/
 rm -r waves.shm/ xcelium.d/
 
 # rm Verilog files, Dat files
-ls | grep -v "shm.tcl" | xargs rm
+ls | grep -v "shm.tcl\|shm_gui.tcl" | xargs rm
 
 cd ../
