@@ -1,3 +1,3 @@
-DOCKER_IMAGE=ubuntu
+DOCKER_IMAGE=ubuntu-riscv-env
 
 docker run -it --rm --name rv32-env $DOCKER_IMAGE /bin/bash
