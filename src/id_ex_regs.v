@@ -34,7 +34,7 @@ module id_ex_regs (
     output wr_reg_n_out,
 
     input flush_in,
-    input flush_out
+    output flush_out
 );
 
     reg [31:0] pc;
