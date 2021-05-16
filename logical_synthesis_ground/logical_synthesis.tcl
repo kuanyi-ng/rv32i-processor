@@ -51,7 +51,7 @@ read_verilog mem_wb_regs.v
 read_verilog pc_reg.v
 read_verilog rf32x32.v
 read_verilog stall_detector.v
-read_verilog wb_stage.
+read_verilog wb_stage.v
 
 # Top Module
 read_verilog top.v
