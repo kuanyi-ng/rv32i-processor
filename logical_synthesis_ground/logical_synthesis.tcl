@@ -77,7 +77,7 @@ set_input_delay 0.0 -clock clk [remove_from_collection [all_inputs] clk]
 set_output_delay 0.0 -clock clk [remove_from_collection [all_outputs] clk]
 
 # Start Logical Synthesis
-compile -map_effort mediium -area_effort high -incremental_mapping
+compile -map_effort medium -area_effort high -incremental_mapping
 
 # Show results
 report_timing -max_paths 1
