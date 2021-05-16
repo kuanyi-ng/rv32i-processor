@@ -51,12 +51,12 @@ module stall_detector (
         reg rs1_updated, rs2_updated;
 
         begin
-            assign is_store_in_id = (opcode_in_id == 7'b0100011);
-            assign is_load_in_ex = (opcode_in_ex == 7'b0000011);
-            assign rs1_is_zero = (rs1 == 5'b00000);
-            assign rs2_is_zero = (rs2 == 5'b00000);
-            assign rs1_updated = (!wr_reg_n_in_ex) && (rs1 == rd_in_ex);
-            assign rs2_updated = (!wr_reg_n_in_ex) && (rs2 == rd_in_ex);
+            is_store_in_id = (opcode_in_id == 7'b0100011);
+            is_load_in_ex = (opcode_in_ex == 7'b0000011);
+            rs1_is_zero = (rs1 == 5'b00000);
+            rs2_is_zero = (rs2 == 5'b00000);
+            rs1_updated = (!wr_reg_n_in_ex) && (rs1 == rd_in_ex);
+            rs2_updated = (!wr_reg_n_in_ex) && (rs2 == rd_in_ex);
 
             if ((!rs1_updated) && (!rs2_updated)) begin
                 stall_ctrl = 1'b0;
