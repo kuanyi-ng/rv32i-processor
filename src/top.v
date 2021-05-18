@@ -77,6 +77,11 @@ module top (
         .pc4(pc4_if),
         .next_pc(next_pc)
     );
+    // CHECK: ACKI_n will be 0 after data is read successfully from Imem
+    // assign IAD = current_pc
+    // if my hypothesis is correct then this will also work! (confirmed)
+    // then the problem is how do I interlock the pipeline when IAD != 0
+    // after read/write of Memory
     assign IAD = (ACKI_n == 1'b0) ? current_pc : 32'hx;
 
     //
@@ -356,6 +361,9 @@ module top (
     //
 
     wire [31:0] data_from_mem, data_to_mem;
+    // CHECK: ACKD_n will only be 0 after data is successfully
+    // read or write to Dmem
+    // => don't have to wait for ACKD_n to be 0 before write
     mem_stage mem_stage_inst(
         .data_mem_ready_n(ACKD_n),
         .data_from_mem(data_from_mem),
