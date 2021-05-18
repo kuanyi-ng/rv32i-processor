@@ -362,7 +362,6 @@ module top (
         .opcode(opcode_from_ex),
         .funct3(funct3_from_ex),
         .b(b_from_ex),
-        .c(c_from_ex),
         .flush(flush_from_ex),
         .d(d_mem),
         .require_mem_access(MREQ),

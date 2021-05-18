@@ -11,7 +11,6 @@ module mem_stage (
     input [6:0] opcode,
     input [2:0] funct3,
     input [31:0] b,                 // data to store (Store Instructions)
-    input [31:0] c,                 // memory address to access
     input flush,
 
     // outputs to MEM stage
@@ -27,7 +26,7 @@ module mem_stage (
     // NOTE: need to request for memory access first,
     // then only we will receive data_mem_ready_n from the memory.
 
-    // NOTE: need to think about how to handle data_mem_ready_n
+    // TODO: need to think about how to handle data_mem_ready_n
     mem_ctrl mem_ctrl_inst(
         .opcode(opcode),
         .funct3(funct3),
