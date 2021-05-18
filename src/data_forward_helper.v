@@ -10,19 +10,20 @@
 // JALR     : x[rd] <- PC + 4 => sub_data
 // Branch   : doesn't update => X
 //
-module data_forward_helper (
+module data_forward_helper
+#(
+    parameter IS_MEM_STAGE = 1  // 0: ex, 1: mem
+) (
     input [31:0] main_data,
     input [31:0] sub_data,
     input [6:0] opcode,
-    input is_mem_stage,  // 0: ex, 1: mem
     output [31:0] data_to_forward
 );
-
     //
     // Main
     //
     
-    assign data_to_forward = prep_data_to_forward(main_data, sub_data, opcode, is_mem_stage);
+    assign data_to_forward = prep_data_to_forward(main_data, sub_data, opcode, IS_MEM_STAGE);
 
     //
     // Functions
