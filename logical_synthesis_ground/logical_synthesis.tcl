@@ -6,7 +6,12 @@ set target_library $LIB_MAX_FILE
 
 # Read Verilog Modules
 # Top Module
-read_verilog top.v
+read_verilog ./top.v
+# Analyze and Elaborate Parameterized Modules
+analyze -format verilog ./data_forward_helper.v
+elaborate data_forward_helper
+analyze -format verilog ./DW_ram_2r_w_s_dff.v
+elaborate DW_ram_2r_w_s_dff
 
 # Define which module is the Highest-level Module
 current_design "top"
