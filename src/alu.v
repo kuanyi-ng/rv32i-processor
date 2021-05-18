@@ -12,15 +12,15 @@ module alu (
         reg signed [31:0] s_in2;
 
         begin
-            s_in1 = in1;
-            s_in2 = in2;
+            s_in1 = $signed(in1);
+            s_in2 = $signed(in2);
 
             case (alu_op)
                 // ADD, ADDI, Load, Store, Branch, JAL, AUIPC
-                4'b0000: alu_out = s_in1 + s_in2;
+                4'b0000: alu_out = in1 + in2;
 
                 // SLL, SLLI
-                4'b0001: alu_out = s_in1 << { 27'b0, in2[4:0] };
+                4'b0001: alu_out = in1 << { 27'b0, in2[4:0] };
 
                 // SLT, SLTI
                 4'b0010: alu_out = (s_in1 < s_in2) ? 32'd1 : 32'd0;
@@ -32,7 +32,7 @@ module alu (
                 4'b0100: alu_out = in1 ^ in2;
 
                 // SRL, SRLI
-                4'b0101: alu_out = s_in1 >> { 27'b0, in2[4:0] };
+                4'b0101: alu_out = in1 >> { 27'b0, in2[4:0] };
 
                 // OR, ORI
                 4'b0110: alu_out = in1 | in2;
@@ -41,15 +41,17 @@ module alu (
                 4'b0111: alu_out = in1 & in2;
 
                 // SUB
-                4'b1000: alu_out = s_in1 - s_in2;
+                4'b1000: alu_out = in1 - in2;
 
                 // LUI
                 4'b1001: alu_out = in2;
 
                 // JALR
+                // signed to unsigned assignment occurs. (VER-318)
                 4'b1010: alu_out = (in1 + in2) & ~1;
 
                 // SRA, SRAI
+                // signed to unsigned assignment occurs. (VER-318)
                 4'b1101: alu_out = s_in1 >>> { 27'b0, in2[4:0] };
 
                 // default: false
