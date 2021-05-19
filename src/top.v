@@ -14,6 +14,7 @@
 `include "id_wr_reg_n_picker.v"
 `include "if_id_regs.v"
 `include "if_stage.v"
+`include "interlock_u.v"
 `include "mem_stage.v"
 `include "mem_wb_regs.v"
 `include "pc_reg.v"
@@ -44,6 +45,17 @@ module top (
 );
 
     //
+    // Pipeline Interlock
+    //
+
+    wire interlock;
+    interlock_u interlock_u_inst(
+        .imem_ack_n(ACKI_n),
+        .dmem_ack_n(ACKD_n),
+        .interlock(interlock)
+    );
+
+    //
     // Pipeline Stalling
     //
 
@@ -65,6 +77,7 @@ module top (
         .clk(clk),
         .rst_n(rst_n),
         .stall(stall),
+        .interlock(interlock),
         .pc_in(next_pc),
         .pc_out(current_pc)
     );
@@ -84,7 +97,8 @@ module top (
     // if my hypothesis is correct then this will also work! (confirmed)
     // then the problem is how do I interlock the pipeline when IAD != 0
     // after read/write of Memory
-    assign IAD = (ACKI_n == 1'b0) ? current_pc : 32'hx;
+    // assign IAD = (ACKI_n == 1'b0) ? current_pc : 32'hx;
+    assign IAD = current_pc;
 
     //
     // IF-ID

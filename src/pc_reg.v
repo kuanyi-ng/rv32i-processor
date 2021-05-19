@@ -2,6 +2,7 @@ module pc_reg (
     input clk,
     input rst_n,
     input stall,
+    input interlock,
 
     input [31:0] pc_in,
     output [31:0] pc_out
@@ -14,6 +15,7 @@ module pc_reg (
     always @(posedge clk or negedge rst_n) begin
         if (!rst_n) pc <= default_pc;
         else if (stall) pc <= pc;
+        else if (interlock) pc <= pc;
         else pc <= pc_in;
     end
 
