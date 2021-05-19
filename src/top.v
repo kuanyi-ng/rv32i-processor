@@ -1,3 +1,5 @@
+`default_nettype none
+
 `include "data_forward_helper.v"
 `include "data_forward_u.v"
 `include "ex_data_picker.v"
