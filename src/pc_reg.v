@@ -7,7 +7,7 @@ module pc_reg (
     output [31:0] pc_out
 );
 
-    parameter [31:0] default_pc = 32'h0001_0000;
+    localparam [31:0] default_pc = 32'h0001_0000;
 
     reg [31:0] pc;
     
