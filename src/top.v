@@ -46,10 +46,12 @@ module top (
     // Pipeline Interlock
     //
 
+    wire [6:0] opcode_from_ex;
     wire interlock;
     interlock_u interlock_u_inst(
         .imem_ack_n(ACKI_n),
         .dmem_ack_n(ACKD_n),
+        .opcode(opcode_from_ex),
         .interlock(interlock)
     );
 
@@ -110,6 +112,7 @@ module top (
         .clk(clk),
         .rst_n(rst_n),
         .stall(stall),
+        .interlock(interlock),
         .pc_in(current_pc),
         .pc_out(pc_from_if),
         .pc4_in(pc4_if),
@@ -200,6 +203,7 @@ module top (
         .clk(clk),
         .rst_n(rst_n),
         .stall(stall),
+        .interlock(interlock),
         .pc_in(pc_from_if),
         .pc_out(pc_from_id),
         .pc4_in(pc4_from_if),
@@ -326,13 +330,13 @@ module top (
     wire [31:0] b_from_ex;
     wire [31:0] c_from_ex;
     wire [2:0] funct3_from_ex;
-    wire [6:0] opcode_from_ex;
     wire [4:0] rd_from_ex;
     wire wr_reg_n_from_ex;
     wire flush_from_ex;
     ex_mem_regs ex_mem_regs_inst(
         .clk(clk),
         .rst_n(rst_n),
+        .interlock(interlock),
         .pc4_in(pc4_from_id),
         .pc4_out(pc4_from_ex),
         .b_in(b_ex),
@@ -417,6 +421,7 @@ module top (
     mem_wb_regs mem_wb_regs_inst(
         .clk(clk),
         .rst_n(rst_n),
+        .interlock(interlock),
         .pc4_in(pc4_from_ex),
         .pc4_out(pc4_from_mem),
         .c_in(c_from_ex),
