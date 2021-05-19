@@ -2,6 +2,7 @@ module id_ex_regs (
     input clk,
     input rst_n,
     input stall,
+    input interlock,
 
     input [31:0] pc_in,
     output [31:0] pc_out,
@@ -49,23 +50,15 @@ module id_ex_regs (
     reg flush;
 
     always @(posedge clk or negedge rst_n) begin
-        if (!rst_n) begin
+        if (!rst_n || stall || interlock) begin
             // reset
-            // same behavior as reset when stall
-            pc <= 32'bx;
-            pc4 <= 32'bx;
-            data1 <= 32'bx;
-            data2 <= 32'bx;
-            funct7 <= 7'bx;
-            funct3 <= 3'bx;
-            rs2 <= 5'bx;
-            rd <= 5'bx;
-            opcode <= 7'bx;
-            imm <= 32'bx;
-            wr_reg_n <= 1'b1;   // default not to write
-            flush <= 1'b0;      // default not to flush
-        end else if (stall) begin
-            // stall has same behaviour as reset
+            //
+            // stall has the same behaviour as reset
+            // as a way to prevent double detection of
+            // pipeline stall.
+            //
+            // since interlock behaves just like stall
+            // interlock has the same behaviour as reset.
             pc <= 32'bx;
             pc4 <= 32'bx;
             data1 <= 32'bx;

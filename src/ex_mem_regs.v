@@ -1,6 +1,7 @@
 module ex_mem_regs (
     input clk,
     input rst_n,
+    input interlock,
 
     input [31:0] pc4_in,
     output [31:0] pc4_out,
@@ -46,6 +47,15 @@ module ex_mem_regs (
             opcode <= 7'bx;
             wr_reg_n <= 1'b1;   // default not to write
             flush <= 1'b0;      // default not to flush
+        end else if (interlock) begin
+            pc4 <= pc4;
+            b <= b;
+            c <= c;
+            funct3 <= funct3;
+            rd <= rd;
+            opcode <= opcode;
+            wr_reg_n <= wr_reg_n;
+            flush <= flush;
         end else begin
             pc4 <= pc4_in;
             b <= b_in;
