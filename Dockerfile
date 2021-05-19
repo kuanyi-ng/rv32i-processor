@@ -67,4 +67,8 @@ COPY ./test_pack ./test_pack/
 COPY ./test_ground ./test_ground/
 COPY ./test ./test/
 
+# 7. need hexdump binary to compile test program
+# hexdump is part of the bsdmainutils package
+RUN apt-get install -y bsdmainutils
+
 CMD ["bin/bash"]
