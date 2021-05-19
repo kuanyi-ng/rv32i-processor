@@ -2,6 +2,7 @@ module if_id_regs (
     input clk,
     input rst_n,
     input stall,
+    input interlock,
 
     input [31:0] pc_in,
     output [31:0] pc_out,
@@ -28,8 +29,8 @@ module if_id_regs (
             pc4 <= 32'bx;
             ir <= 32'bx;
             flush <= 1'b0;  // default not to flush
-        end else if (stall) begin
-            // hold the same value when stall
+        end else if (stall || interlock) begin
+            // holds the same value when stall or interlock
             pc <= pc;
             pc4 <= pc4;
             ir <= ir;

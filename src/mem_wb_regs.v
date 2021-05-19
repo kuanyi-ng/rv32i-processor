@@ -1,6 +1,7 @@
 module mem_wb_regs (
     input clk,
     input rst_n,
+    input interlock,
 
     input [31:0] pc4_in,
     output [31:0] pc4_out,
@@ -36,6 +37,14 @@ module mem_wb_regs (
             rd <= 5'bx;
             opcode <= 7'bx;
             wr_reg_n <= 1'b1; // default not to write
+        end else if (interlock) begin
+            // holds the same value when interlock
+            pc4 <= pc4;
+            c <= c;
+            d <= d;
+            rd <= rd;
+            opcode <= opcode;
+            wr_reg_n <= wr_reg_n;
         end else begin
             pc4 <= pc4_in;
             c <= c_in;
