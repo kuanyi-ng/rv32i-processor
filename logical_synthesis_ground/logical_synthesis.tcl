@@ -6,17 +6,21 @@ set target_library $LIB_MAX_FILE
 
 # Read Verilog Modules
 # Top Module
-read_verilog ./top.v
+# read_verilog ./top.v
 # Analyze and Elaborate Parameterized Modules
 analyze -format verilog ./data_forward_helper.v
 elaborate data_forward_helper
 analyze -format verilog ./DW_ram_2r_w_s_dff.v
 elaborate DW_ram_2r_w_s_dff
+analyze -format verilog ./top.v
+elaborate top
 
 # Define which module is the Highest-level Module
 current_design "top"
 
 # Max Area of Circuits
+# Usually speed is more important, so just aim for the best area
+# by setting max_area to 0
 set_max_area 0
 
 # Max Fan-out
@@ -33,8 +37,17 @@ set_clock_uncertainty -hold 0.0 [get_clock clk]
 set_input_delay 0.0 -clock clk [remove_from_collection [all_inputs] clk]
 set_output_delay 0.0 -clock clk [remove_from_collection [all_outputs] clk]
 
+# Check if Clock is created
+derive_clocks
+
 # Start Logical Synthesis
-compile -map_effort medium -area_effort high -incremental_mapping
+compile
+ungroup -all -flatten
+compile -incremental
+# compile -map_effort medium -area_effort high -incremental_mapping
+
+# Check Design
+check_design
 
 # Show results
 report_timing -max_paths 1
