@@ -4,7 +4,7 @@ module test_mem_stage ();
     reg [6:0] opcode;
     reg [2:0] funct3;
     reg [6:0] opcode_from_ex;
-    reg [31:0] b, c;
+    reg [31:0] b;
     reg flush;
 
 
@@ -19,7 +19,6 @@ module test_mem_stage ();
         .opcode(opcode),
         .funct3(funct3),
         .b(b),
-        .c(c),
         .flush(flush),
         .d(d),
         .require_mem_access(require_mem_access),
@@ -39,36 +38,29 @@ module test_mem_stage ();
         assign data_from_mem = 32'ha0b1_c2d3; // better to have diff results for signed and unsigned
             // context: LB
             // size: 10
-            // d: ffff_ffb1
-        assign c = 32'h0000_0002;
+            // d: ffff_ffd3
         assign funct3 = 3'b000;
         #10
             // context: LH
             // size: 01
-            // d: ffff_a0b1
-        assign c = 32'h0000_0002;
+            // d: ffff_c2d3
         assign funct3 = 3'b001;
         #10
             // context: LW
             // size: 00
             // d: a0b1_c2d3
-        assign c = 32'h0000_0004;
         assign funct3 = 3'b010;
         #10
             // context: LBU
             // size: 10
             // d: 0000_00d3
-        assign c = 32'h0000_0000;
         assign funct3 = 3'b100;
         #10
             // context: LHU
             // size: 01
             // d: 0000_c2d3
-        assign c = 32'h0000_0000;
         assign funct3 = 3'b101;
         #10
-
-        assign c = 32'h0000_1234;
 
         // Store Instructions
         // require_mem_access: 1

@@ -106,9 +106,7 @@ module ex_ctrl (
                     // AND, ANDI
                     3'b111: alu_op_ctrl = { 1'b0, funct3 };
 
-                    // all case covered
-                    // default: most instructions perform ADD
-                    default: alu_op_ctrl = 4'b0000;
+                    // no default case as every case is covered
                 endcase
             end else begin
                 // AUIPC, JAL, Branch, Load, Store

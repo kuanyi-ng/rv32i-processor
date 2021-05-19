@@ -22,8 +22,8 @@ module mem_ctrl (
         reg is_load, is_store;
 
         begin
-            assign is_load = (opcode == 7'b0000011);
-            assign is_store = (opcode == 7'b0100011);
+            is_load = (opcode == 7'b0000011);
+            is_store = (opcode == 7'b0100011);
 
             if (is_load) begin
                 case (funct3[1:0])
@@ -66,7 +66,7 @@ module mem_ctrl (
         reg is_store;
 
         begin
-            assign is_store = (opcode == 7'b0100011);
+            is_store = (opcode == 7'b0100011);
 
             // don't write when flush
             if (flush) write_ctrl = 1'b0;
@@ -80,8 +80,8 @@ module mem_ctrl (
         reg is_load, is_store;
 
         begin
-            assign is_load = (opcode == 7'b0000011);
-            assign is_store = (opcode == 7'b0100011);
+            is_load = (opcode == 7'b0000011);
+            is_store = (opcode == 7'b0100011);
 
             if (is_load || is_store) mem_access_ctrl = 1'b1;
             else mem_access_ctrl = 1'b0;

@@ -77,6 +77,11 @@ module top (
         .pc4(pc4_if),
         .next_pc(next_pc)
     );
+    // CHECK: ACKI_n will be 0 after data is read successfully from Imem
+    // assign IAD = current_pc
+    // if my hypothesis is correct then this will also work! (confirmed)
+    // then the problem is how do I interlock the pipeline when IAD != 0
+    // after read/write of Memory
     assign IAD = (ACKI_n == 1'b0) ? current_pc : 32'hx;
 
     //
@@ -284,11 +289,10 @@ module top (
     // Data Forward Helper EX
     //
 
-    data_forward_helper data_forward_helper_ex(
+    data_forward_helper #(.IS_MEM_STAGE(0)) data_forward_helper_ex(
         .main_data(c_ex),
         .sub_data(pc4_from_id),
         .opcode(opcode_from_id),
-        .is_mem_stage(1'b0),
         .data_to_forward(data_forwarded_from_ex)
     );
 
@@ -357,13 +361,15 @@ module top (
     //
 
     wire [31:0] data_from_mem, data_to_mem;
+    // CHECK: ACKD_n will only be 0 after data is successfully
+    // read or write to Dmem
+    // => don't have to wait for ACKD_n to be 0 before write
     mem_stage mem_stage_inst(
         .data_mem_ready_n(ACKD_n),
         .data_from_mem(data_from_mem),
         .opcode(opcode_from_ex),
         .funct3(funct3_from_ex),
         .b(b_from_ex),
-        .c(c_from_ex),
         .flush(flush_from_ex),
         .d(d_mem),
         .require_mem_access(MREQ),
@@ -379,11 +385,10 @@ module top (
     // Data Forward Helper MEM
     //
 
-    data_forward_helper data_forward_helper_mem(
+    data_forward_helper #(.IS_MEM_STAGE(1)) data_forward_helper_mem(
         .main_data(c_from_ex),
         .sub_data(d_mem),
         .opcode(opcode_from_ex),
-        .is_mem_stage(1'b1),
         .data_to_forward(data_forwarded_from_mem)
     );
 

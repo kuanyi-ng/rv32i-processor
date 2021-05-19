@@ -37,16 +37,7 @@ module ex_mem_regs (
     reg flush;
 
     always @(posedge clk or negedge rst_n) begin
-        if (rst_n) begin
-            pc4 <= pc4_in;
-            b <= b_in;
-            c <= c_in;
-            funct3 <= funct3_in;
-            rd <= rd_in;
-            opcode <= opcode_in;
-            wr_reg_n <= wr_reg_n_in;
-            flush <= flush_in;
-        end else begin
+        if (!rst_n) begin
             pc4 <= 32'bx;
             b <= 32'bx;
             c <= 32'bx;
@@ -55,6 +46,15 @@ module ex_mem_regs (
             opcode <= 7'bx;
             wr_reg_n <= 1'b1;   // default not to write
             flush <= 1'b0;      // default not to flush
+        end else begin
+            pc4 <= pc4_in;
+            b <= b_in;
+            c <= c_in;
+            funct3 <= funct3_in;
+            rd <= rd_in;
+            opcode <= opcode_in;
+            wr_reg_n <= wr_reg_n_in;
+            flush <= flush_in;
         end
     end
 

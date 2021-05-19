@@ -49,7 +49,7 @@ module ld_converter (
         reg [7:0] data;
 
         begin
-            assign data = in[7:0];
+            data = in[7:0];
 
             if (s_ext) ld_ext_b = { { 24{data[7]} }, data };
             else ld_ext_b = { 24'b0, data };
@@ -60,7 +60,7 @@ module ld_converter (
         reg [15:0] data;
 
         begin
-            assign data = in[15:0];
+            data = in[15:0];
 
             if (s_ext) ld_ext_h = { { 16{data[15]} }, data };
             else ld_ext_h = { { 16'b0 }, data };
