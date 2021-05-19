@@ -40,13 +40,13 @@ RUN apt-get install -y git
 WORKDIR /home/
 RUN mkdir github
 WORKDIR /home/github/
-RUN git clone https://github.com/riscv/riscv-gnu-toolchain
+RUN git clone --filter=blob:none https://github.com/riscv/riscv-gnu-toolchain
 
 # # 4. Installing RISC-V GNU Compiler Toolchain (Newlib/Linux multilib)
 # # https://github.com/riscv/riscv-gnu-toolchain#installation-newliblinux-multilib
 WORKDIR /home/github/riscv-gnu-toolchain/
 RUN ./configure --prefix=/opt/riscv --enable-multilib
-RUN make linux
+RUN make
 
 ENV RISCV /opt/riscv
 
