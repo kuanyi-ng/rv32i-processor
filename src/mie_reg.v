@@ -1,4 +1,7 @@
 module mie_reg (
+    input clk,
+    input rst_n,
+
     output [31:0] mie
 );
 
@@ -9,6 +12,18 @@ module mie_reg (
     reg mtie, stie, utie;
     // Software Interrupt-Enable
     reg msie, ssie, usie;
+
+    always @(posedge clk or negedge rst_n) begin
+        if (~rst_n) begin
+            { meie, seie, ueie } <= 3'b000;
+            { mtie, stie, utie } <= 3'b000;
+            { msie, ssie, usie } <= 3'b000;
+        end else begin
+            { meie, seie, ueie } <= { meie, seie, ueie };
+            { mtie, stie, utie } <= { mtie, stie, utie };
+            { msie, ssie, usie } <= { msie, ssie, usie };
+        end
+    end
 
     assign mie = { 20'b0, meie, 1'b0, seie, ueie, mtie, 1'b0, stie, utie, msie, 1'b0, ssie, usie };
 

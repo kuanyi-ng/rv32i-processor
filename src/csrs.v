@@ -73,6 +73,8 @@ module csrs (
 
     wire [31:0] mie;
     mie_reg mie_reg_inst(
+        .clk(clk),
+        .rst_n(rst_n),
         .mie(mie)
     );
 
@@ -128,6 +130,8 @@ module csrs (
 
     wire [31:0] mip;
     mip_reg mip_reg_inst(
+        .clk(clk),
+        .rst_n(rst_n),
         .mip(mip)
     );
     
