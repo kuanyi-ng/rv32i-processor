@@ -107,9 +107,10 @@ module csrs (
         .out(mepc)
     );
 
+    localparam [31:0] hard_reset_mcause_val = 32'b0;
     wire [31:0] mcause_in;
     wire [31:0] mcause;
-    reg32 mcause_reg_inst(
+    reg32 #(.rst_value(hard_reset_mcause_val)) mcause_reg_inst(
         .clk(clk),
         .rst_n(rst_n),
         .in(mcause_in),
