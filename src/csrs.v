@@ -62,8 +62,12 @@ module csrs (
     // Machine Trap Setup
     //
 
+    wire [1:0] priviledge_mode;
     wire [31:0] mstatus;
     mstatus_reg mstatus_reg_inst(
+        .clk(clk),
+        .rst_n(rst_n),
+        .priviledge_mode(priviledge_mode),
         .mstatus(mstatus)
     );
 
