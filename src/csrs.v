@@ -64,7 +64,8 @@ module csrs (
     wire [31:0] mtvec;
     wire [31:0] mcounteren;
     m_trap_setup_regs m_trap_setup_regs_inst(
-        .misa(misa)
+        .misa(misa),
+        .mtvec(mtvec)
     );
 
     //
