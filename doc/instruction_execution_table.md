@@ -726,30 +726,6 @@
     </thead>
     <tbody>
         <tr>
-            <!-- TODO: what does fence do? -->
-            <!-- instruction -->
-            <td>fence []</td>
-            <!-- IF -->
-            <!-- ID -->
-            <!-- EX -->
-            <td></td>
-            <!-- MEM -->
-            <td></td>
-            <!-- WB -->
-        </tr>
-        <tr>
-            <!-- TODO: what does fence.i do? -->
-            <!-- instruction -->
-            <td>fence.i []</td>
-            <!-- IF -->
-            <!-- ID -->
-            <!-- EX -->
-            <td></td>
-            <!-- MEM -->
-            <td></td>
-            <!-- WB -->
-        </tr>
-        <tr>
             <!-- TODO: what does csrrw do? -->
             <!-- instruction -->
             <td>csrrw [I]</td>
@@ -885,18 +861,6 @@
             <!-- TODO: what does wfi do? -->
             <!-- instruction -->
             <td>wfi [?]</td>
-            <!-- IF -->
-            <!-- ID -->
-            <!-- EX -->
-            <td></td>
-            <!-- MEM -->
-            <td></td>
-            <!-- WB -->
-        </tr>
-        <tr>
-            <!-- TODO: what does sfence.vma do? -->
-            <!-- instruction -->
-            <td>sfence.vma [?]</td>
             <!-- IF -->
             <!-- ID -->
             <!-- EX -->
