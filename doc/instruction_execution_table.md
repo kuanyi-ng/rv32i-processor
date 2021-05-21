@@ -742,14 +742,16 @@
                 Z ← CSRs[csr]
             </td>
             <!-- EX -->
-            <td></td>
+            <td>
+                C ← A
+            </td>
             <!-- MEM -->
             <td rowspan=6></td>
             <!-- WB -->
             <td>
                 x[rd] ← Z
                 <br />
-                CSRs[csr] ← A
+                CSRs[csr] ← C
             </td>
         </tr>
         <tr>
@@ -810,13 +812,15 @@
             </td>
             <!-- ID -->
             <!-- EX -->
-            <td></td>
+            <td>
+                C ← Z_imm
+            </td>
             <!-- MEM -->
             <!-- WB -->
             <td>
                 x[rd] ← Z
                 <br />
-                CSRs[csr] ← Z_imm
+                CSRs[csr] ← C
             </td>
         </tr>
         <tr>
