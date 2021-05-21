@@ -1,6 +1,17 @@
 module mstatus_reg (
+    input clk,
+    input rst_n,
+
+    output [1:0] priviledge_mode,
     output [31:0] mstatus
 );
+
+    localparam [1:0] machine_mode = 2'b11;
+    localparam [1:0] supervisor_mode = 2'b01;
+    localparam [1:0] user_mode = 2'b00;
+
+    reg [1:0] current_mode;
+
     // Machine Status Register
     // Global interrupt-enable bits     : MIE, SIE, UIE
     reg mie = 1'b1;
@@ -8,9 +19,7 @@ module mstatus_reg (
     reg uie = 1'b0;
 
     // Previous interrupt-enable bits   : MPIE, SPIE, UPIE
-    reg mpie;
-    reg spie;
-    reg upie;
+    reg mpie, spie, upie;
 
     // Previous Priviledge mode         : MPP, SPP
     // When a trap is taken from priviledge mode y into priviledge mode x,
@@ -36,7 +45,29 @@ module mstatus_reg (
     // Trap SRET                        : TSR (hardwired to 0 if S-mode not supported)
     localparam tsr = 1'b0;
 
+    always @(posedge clk or negedge rst_n) begin
+        if (~rst_n) begin
+            // on reset,
+            // priviledge mode is set to M
+            // MIE is reset to 0
+            current_mode <= machine_mode;
+            { mie, sie, uie } <= 3'b000;
+            { mpie, spie, uie } <= 3'b000;
+            mpp <= 2'b00;
+            spp <= 1'b0;
+        end else begin
+            // No interruption
+            current_mode <= current_mode;
+            { mie, sie, uie } <= { mie, sie, uie };
+            { mpie, spie, upie } <= { mpie, spie, upie };
+            mpp <= mpp;
+            spp <= spp;
+        end
+    end
+
     // SD, ?[7:0], TSR, TW, TVM, MXR, SUM, MPRV, XS[1:0], FS[1:0], MPP[1:0], ?[1:0], SPP, MPIE, ?, SPIE, UPIE, MIE, ?, SIE, UIE
     assign mstatus = { 1'b0, 8'b0, tsr, tw, tvm, mxr, sum, mprv, 2'b00, 2'b00, mpp, 2'b00, spp, mpie, 1'b0, spie, upie, mie, 1'b0, sie, uie };
     
+    assign priviledge_mode = current_mode;
+
 endmodule
