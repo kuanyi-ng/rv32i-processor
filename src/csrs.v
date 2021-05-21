@@ -1,4 +1,5 @@
 `include "m_info_regs.v"
+`include "mepc_reg.v"
 `include "mie_reg.v"
 `include "mscratch_reg.v"
 `include "mstatus_reg.v"
@@ -93,7 +94,15 @@ module csrs (
         .out(mscratch)
     );
 
+    wire [31:0] mepc_in;
     wire [31:0] mepc;
+    mepc_reg mepc_reg_inst(
+        .clk(clk),
+        .rst_n(rst_n),
+        .in(mepc_in),
+        .out(mepc)
+    );
+
     wire [31:0] mcause;
     wire [31:0] mtval;
     wire [31:0] mip;
