@@ -726,52 +726,54 @@
     </thead>
     <tbody>
         <tr>
-            <!-- TODO: what does fence do? -->
-            <!-- instruction -->
-            <td>fence []</td>
-            <!-- IF -->
-            <!-- ID -->
-            <!-- EX -->
-            <td></td>
-            <!-- MEM -->
-            <td></td>
-            <!-- WB -->
-        </tr>
-        <tr>
-            <!-- TODO: what does fence.i do? -->
-            <!-- instruction -->
-            <td>fence.i []</td>
-            <!-- IF -->
-            <!-- ID -->
-            <!-- EX -->
-            <td></td>
-            <!-- MEM -->
-            <td></td>
-            <!-- WB -->
-        </tr>
-        <tr>
             <!-- TODO: what does csrrw do? -->
             <!-- instruction -->
             <td>csrrw [I]</td>
             <!-- IF -->
+            <td rowspan=6>
+                IR ← mem[PC]
+                <br />
+                PC ← PC + 4
+            </td>
             <!-- ID -->
+            <td>
+                A ← x[rs1]
+                <br />
+                Z ← CSRs[csr]
+            </td>
             <!-- EX -->
             <td></td>
             <!-- MEM -->
-            <td></td>
+            <td rowspan=6></td>
             <!-- WB -->
+            <td>
+                x[rd] ← Z
+                <br />
+                CSRs[csr] ← A
+            </td>
         </tr>
         <tr>
-            <!-- TODO: what does csrrs do? -->
+            <!-- ZODO: what does csrrs do? -->
             <!-- instruction -->
             <td>csrrs [I]</td>
             <!-- IF -->
             <!-- ID -->
+            <td>
+                A ← x[rs1]
+                <br />
+                Z ← CSRs[csr]
+            </td>
             <!-- EX -->
-            <td></td>
+            <td>
+                C ← A | Z
+            </td>
             <!-- MEM -->
-            <td></td>
             <!-- WB -->
+            <td>
+                x[rd] ← Z
+                <br />
+                CSRs[csr] ← C
+            </td>
         </tr>
         <tr>
             <!-- TODO: what does csrrc do? -->
@@ -779,23 +781,43 @@
             <td>csrrc [I]</td>
             <!-- IF -->
             <!-- ID -->
+            <td>
+                A ← x[rs1]
+                <br />
+                Z ← CSRs[csr]
+            </td>
             <!-- EX -->
-            <td></td>
+            <td>
+                C ← Z &~ A
+            </td>
             <!-- MEM -->
-            <td></td>
             <!-- WB -->
+            <td>
+                x[rd] ← Z
+                <br />
+                CSRs[csr] ← C
+            </td>
         </tr>
         <tr>
             <!-- TODO: what does csrrwi do? -->
             <!-- instruction -->
             <td>csrrwi [U]</td>
             <!-- IF -->
+            <td>
+                Z_imm ← ext(ir[19:15])
+                <br />
+                Z ← CSRs[csr]
+            </td>
             <!-- ID -->
             <!-- EX -->
             <td></td>
             <!-- MEM -->
-            <td></td>
             <!-- WB -->
+            <td>
+                x[rd] ← Z
+                <br />
+                CSRs[csr] ← Z_imm
+            </td>
         </tr>
         <tr>
             <!-- TODO: what does csrrsi do? -->
@@ -803,11 +825,22 @@
             <td>csrrsi [U]</td>
             <!-- IF -->
             <!-- ID -->
+            <td>
+                Z_imm ← ext(ir[19:15])
+                <br />
+                Z ← CSRs[csr]
+            </td>
             <!-- EX -->
-            <td></td>
+            <td>
+                C ← Z_imm | Z
+            </td>
             <!-- MEM -->
-            <td></td>
             <!-- WB -->
+            <td>
+                x[rd] ← Z
+                <br />
+                CSRs[csr] ← C
+            </td>
         </tr>
         <tr>
             <!-- TODO: what does csrrci do? -->
@@ -815,11 +848,22 @@
             <td>csrrci [U]</td>
             <!-- IF -->
             <!-- ID -->
+            <td>
+                Z_imm ← ir[19:15]
+                <br />
+                Z ← CSRs[csr]
+            </td>
             <!-- EX -->
-            <td></td>
+            <td>
+                C ← Z &~ Z_imm
+            </td>
             <!-- MEM -->
-            <td></td>
             <!-- WB -->
+            <td>
+                x[rd] ← Z
+                <br />
+                CSRs[csr] ← C
+            </td>
         </tr>
         <tr>
             <!-- TODO: what does ecall do? -->
@@ -885,18 +929,6 @@
             <!-- TODO: what does wfi do? -->
             <!-- instruction -->
             <td>wfi [?]</td>
-            <!-- IF -->
-            <!-- ID -->
-            <!-- EX -->
-            <td></td>
-            <!-- MEM -->
-            <td></td>
-            <!-- WB -->
-        </tr>
-        <tr>
-            <!-- TODO: what does sfence.vma do? -->
-            <!-- instruction -->
-            <td>sfence.vma [?]</td>
             <!-- IF -->
             <!-- ID -->
             <!-- EX -->
