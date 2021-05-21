@@ -1,4 +1,5 @@
 `include "m_info_regs.v"
+`include "m_trap_setup_regs.v"
 
 module csrs (
     input clk,
@@ -62,6 +63,9 @@ module csrs (
     wire [31:0] mie;
     wire [31:0] mtvec;
     wire [31:0] mcounteren;
+    m_trap_setup_regs m_trap_setup_regs_inst(
+        .misa(misa)
+    );
 
     //
     // Machine Trap Handling
