@@ -45,6 +45,7 @@ module csrs (
 
     //
     // Machine Information Registers
+    // Read-only
     //
 
     wire [31:0] mvendorid;
@@ -56,6 +57,20 @@ module csrs (
         .marchid(marchid),
         .mimpid(mimpid),
         .mhartid(mhartid)
+    );
+
+    //
+    // Machine Trap Setup
+    // Read-only
+    //
+
+    wire [31:0] misa;
+    wire [31:0] mtvec;
+    wire [31:0] mcounteren;
+    m_trap_setup_regs m_trap_setup_regs_inst(
+        .misa(misa),
+        .mtvec(mtvec),
+        .mcounteren(mcounteren)
     );
 
     //
@@ -76,15 +91,6 @@ module csrs (
         .clk(clk),
         .rst_n(rst_n),
         .mie(mie)
-    );
-
-    wire [31:0] misa;    
-    wire [31:0] mtvec;
-    wire [31:0] mcounteren;
-    m_trap_setup_regs m_trap_setup_regs_inst(
-        .misa(misa),
-        .mtvec(mtvec),
-        .mcounteren(mcounteren)
     );
 
     //
@@ -135,41 +141,42 @@ module csrs (
         .mip(mip)
     );
     
-    reg [31:0] csr_out_value;
-    always @(posedge clk or negedge rst_n) begin
-        case (csr_addr)
-            mvendorid_addr: csr_out_value <= mvendorid;
+    assign csr_out = csr_out_value(csr_addr);
 
-            marchid_addr: csr_out_value <= marchid;
+    function [31:0] csr_out_value(input [11:0] csr_addr);
+        begin
+            case (csr_addr)
+                mvendorid_addr: csr_out_value = mvendorid;
 
-            mimpid_addr: csr_out_value <= mimpid;
+                marchid_addr: csr_out_value = marchid;
 
-            mhartid_addr: csr_out_value <= mhartid;
+                mimpid_addr: csr_out_value = mimpid;
 
-            mstatus_addr: csr_out_value <= mstatus;
+                mhartid_addr: csr_out_value = mhartid;
 
-            misa_addr: csr_out_value <= misa;
+                mstatus_addr: csr_out_value = mstatus;
 
-            mie_addr: csr_out_value <= mie;
+                misa_addr: csr_out_value = misa;
 
-            mtvec_addr: csr_out_value <= mtvec;
+                mie_addr: csr_out_value = mie;
 
-            mcounteren_addr: csr_out_value <= mcounteren;
+                mtvec_addr: csr_out_value = mtvec;
 
-            mscratch_addr: csr_out_value <= mscratch;
+                mcounteren_addr: csr_out_value = mcounteren;
 
-            mepc_addr: csr_out_value <= mepc;
+                mscratch_addr: csr_out_value = mscratch;
 
-            mcause_addr: csr_out_value <= mcause;
+                mepc_addr: csr_out_value = mepc;
 
-            mtval_addr: csr_out_value <= mtval;
+                mcause_addr: csr_out_value = mcause;
 
-            mip_addr: csr_out_value <= mip;
+                mtval_addr: csr_out_value = mtval;
 
-            default: csr_out_value <= 32'b0;
-        endcase
-    end
+                mip_addr: csr_out_value = mip;
 
-    assign csr_out = csr_out_value;
+                default: csr_out_value = 32'b0;
+            endcase
+        end
+    endfunction
     
 endmodule
