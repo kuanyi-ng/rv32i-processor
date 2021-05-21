@@ -1,10 +1,11 @@
 `include "m_info_regs.v"
+`include "m_trap_setup_regs.v"
 `include "mcause_reg.v"
 `include "mepc_reg.v"
 `include "mie_reg.v"
 `include "mscratch_reg.v"
 `include "mstatus_reg.v"
-`include "m_trap_setup_regs.v"
+`include "mtval_reg.v"
 
 module csrs (
     input clk,
@@ -113,7 +114,15 @@ module csrs (
         .out(mcause)
     );
 
+    wire [31:0] mtval_in;
     wire [31:0] mtval;
+    mtval_reg mtval_reg_inst(
+        .clk(clk),
+        .rst_n(rst_n),
+        .in(mtval_in),
+        .out(mtval)
+    );
+
     wire [31:0] mip;
     
     reg [31:0] csr_out_value;
