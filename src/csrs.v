@@ -1,11 +1,9 @@
 `include "m_info_regs.v"
 `include "m_trap_setup_regs.v"
-`include "mcause_reg.v"
-`include "mepc_reg.v"
 `include "mie_reg.v"
-`include "mscratch_reg.v"
+`include "mip_reg.v"
 `include "mstatus_reg.v"
-`include "mtval_reg.v"
+`include "reg32.v"
 
 module csrs (
     input clk,
@@ -89,7 +87,7 @@ module csrs (
 
     wire [31:0] mscratch_in;
     wire [31:0] mscratch;
-    mscratch_reg mscratch_reg_inst(
+    reg32 mscratch_reg_inst(
         .clk(clk),
         .rst_n(rst_n),
         .in(mscratch_in),
@@ -98,7 +96,7 @@ module csrs (
 
     wire [31:0] mepc_in;
     wire [31:0] mepc;
-    mepc_reg mepc_reg_inst(
+    reg32 mepc_reg_inst(
         .clk(clk),
         .rst_n(rst_n),
         .in(mepc_in),
@@ -107,7 +105,7 @@ module csrs (
 
     wire [31:0] mcause_in;
     wire [31:0] mcause;
-    mcause_reg mcause_reg_inst(
+    reg32 mcause_reg_inst(
         .clk(clk),
         .rst_n(rst_n),
         .in(mcause_in),
@@ -116,7 +114,7 @@ module csrs (
 
     wire [31:0] mtval_in;
     wire [31:0] mtval;
-    mtval_reg mtval_reg_inst(
+    reg32 mtval_reg_inst(
         .clk(clk),
         .rst_n(rst_n),
         .in(mtval_in),
@@ -124,6 +122,9 @@ module csrs (
     );
 
     wire [31:0] mip;
+    mip_reg mip_reg_inst(
+        .mip(mip)
+    );
     
     reg [31:0] csr_out_value;
     always @(posedge clk or negedge rst_n) begin
