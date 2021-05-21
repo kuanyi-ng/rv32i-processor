@@ -1,6 +1,7 @@
 module m_trap_setup_regs (
     output [31:0] misa,
-    output [31:0] mtvec
+    output [31:0] mtvec,
+    output [31:0] mcounteren
 );
 
     // Machine ISA Register
@@ -16,7 +17,7 @@ module m_trap_setup_regs (
 
     assign misa = { 2'b01, 4'b0, 26'b00_00_00_00_00_00_00_00_01_00_00_00_00 };
 
-    // Machine Trap Vector
+    // Machine Trap Vector Register
     // might need to allow setup of mtvec value on boot ...
 
     // Base Address
@@ -29,5 +30,9 @@ module m_trap_setup_regs (
     localparam [1:0] trap_vector_mode = 2'b00;
     // mtvec: { BASE, MODE }
     assign mtvec = { trap_vector_base_addr[31:2], trap_vector_mode };
+
+    // Machine Counter-Enable Register
+    // don't allow for the moment
+    assign mcounteren = 32'b0;
     
 endmodule
