@@ -1,4 +1,6 @@
 `include "m_info_regs.v"
+`include "mie_reg.v"
+`include "mscratch_reg.v"
 `include "mstatus_reg.v"
 `include "m_trap_setup_regs.v"
 
@@ -64,8 +66,12 @@ module csrs (
         .mstatus(mstatus)
     );
 
-    wire [31:0] misa;
     wire [31:0] mie;
+    mie_reg mie_reg_inst(
+        .mie(mie)
+    );
+
+    wire [31:0] misa;    
     wire [31:0] mtvec;
     wire [31:0] mcounteren;
     m_trap_setup_regs m_trap_setup_regs_inst(
@@ -78,7 +84,15 @@ module csrs (
     // Machine Trap Handling
     //
 
+    wire [31:0] mscratch_in;
     wire [31:0] mscratch;
+    mscratch_reg mscratch_reg_inst(
+        .clk(clk),
+        .rst_n(rst_n),
+        .in(mscratch_in),
+        .out(mscratch)
+    );
+
     wire [31:0] mepc;
     wire [31:0] mcause;
     wire [31:0] mtval;
