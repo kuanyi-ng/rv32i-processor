@@ -1,4 +1,5 @@
 `include "m_info_regs.v"
+`include "mstatus_reg.v"
 `include "m_trap_setup_regs.v"
 
 module csrs (
@@ -59,6 +60,10 @@ module csrs (
     //
 
     wire [31:0] mstatus;
+    mstatus_reg mstatus_reg_inst(
+        .mstatus(mstatus)
+    );
+
     wire [31:0] misa;
     wire [31:0] mie;
     wire [31:0] mtvec;
