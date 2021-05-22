@@ -16,7 +16,8 @@ module id_stage (
     output [6:0] funct7,
     output [11:0] csr_addr,
     output [31:0] imm,
-    output wr_reg_n         // 0: write, 1: don't write
+    output wr_reg_n,    // 0: write, 1: don't write
+    output wr_csr_n     // 0: write, 1: don't write
 );
 
     //
@@ -43,6 +44,7 @@ module id_stage (
     );
 
     assign wr_reg_n = wr_reg_n_ctrl(opcode, rd);
+    assign wr_csr_n = wr_csr_n_ctrl(opcode, funct3);
 
     //
     // Functions
@@ -57,6 +59,7 @@ module id_stage (
     localparam [6:0] store_op = 7'b0100011;
     localparam [6:0] i_type_op = 7'b0010011;
     localparam [6:0] r_type_op = 7'b0110011;
+    localparam [6:0] csr_op = 7'b1110011;
 
     function [2:0] imm_type_from(input [6:0] opcode, input [2:0] funct3);
         localparam [2:0] i_type = 3'b000;
@@ -132,6 +135,15 @@ module id_stage (
             end else begin
                 wr_reg_n_ctrl = 1'b1;
             end
+        end
+    endfunction
+
+    function wr_csr_n_ctrl(input [6:0] opcode, input [2:0] funct3);
+        begin
+            // CSR instructions share the same opcode with ecall, ebreak instructions
+            // ecall and ebreak have funct3 of 000 while CSR instruction doesn't
+            if ((opcode == csr_op) && (funct3 != 3'b000)) wr_csr_n_ctrl = 1'b0;
+            else wr_csr_n_ctrl = 1'b1;
         end
     endfunction
 endmodule
