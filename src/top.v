@@ -126,7 +126,7 @@ module top (
     wire [6:0] opcode_id;
     wire [2:0] funct3_id;
     wire [6:0] funct7_id;
-    wire [11:0] csr_addr;
+    wire [11:0] csr_addr_id;
     wire [31:0] imm_id;
     wire wr_reg_n_id_stage;
     wire wr_csr_n_id_stage;
@@ -138,7 +138,7 @@ module top (
         .opcode(opcode_id),
         .funct3(funct3_id),
         .funct7(funct7_id),
-        .csr_addr(csr_addr),
+        .csr_addr(csr_addr_id),
         .imm(imm_id),
         .wr_reg_n(wr_reg_n_id_stage),
         .wr_csr_n(wr_csr_n_id_stage)
@@ -203,9 +203,11 @@ module top (
     wire [6:0] funct7_from_id;
     wire [2:0] funct3_from_id;
     wire [4:0] rs2_from_id, rd_from_id;
+    wire [11:0] csr_addr_from_id;
     wire [6:0] opcode_from_id;
     wire [31:0] imm_from_id;
     wire wr_reg_n_from_id;
+    wire wr_csr_n_from_id;
     wire flush_from_id;
     id_ex_regs id_ex_regs_inst(
         .clk(clk),
@@ -228,12 +230,16 @@ module top (
         .rs2_out(rs2_from_id),
         .rd_in(rd_id),
         .rd_out(rd_from_id),
+        .csr_addr_in(csr_addr_id),
+        .csr_addr_out(csr_addr_from_id),
         .opcode_in(opcode_id),
         .opcode_out(opcode_from_id),
         .imm_in(imm_id),
         .imm_out(imm_from_id),
         .wr_reg_n_in(wr_reg_n_id),
         .wr_reg_n_out(wr_reg_n_from_id),
+        .wr_csr_n_in(wr_csr_n_id),
+        .wr_csr_n_out(wr_csr_n_from_id),
         .flush_in(flush_id),
         .flush_out(flush_from_id)
     );
