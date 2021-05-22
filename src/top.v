@@ -345,7 +345,9 @@ module top (
     wire [31:0] c_from_ex;
     wire [2:0] funct3_from_ex;
     wire [4:0] rd_from_ex;
+    wire [11:0] csr_addr_from_ex;
     wire wr_reg_n_from_ex;
+    wire wr_csr_n_from_ex;
     wire flush_from_ex;
     ex_mem_regs ex_mem_regs_inst(
         .clk(clk),
@@ -361,10 +363,14 @@ module top (
         .funct3_out(funct3_from_ex),
         .rd_in(rd_from_id),
         .rd_out(rd_from_ex),
+        .csr_addr_in(csr_addr_from_id),
+        .csr_addr_out(csr_addr_from_ex),
         .opcode_in(opcode_from_id),
         .opcode_out(opcode_from_ex),
         .wr_reg_n_in(wr_reg_n_from_id),
         .wr_reg_n_out(wr_reg_n_from_ex),
+        .wr_csr_n_in(wr_csr_n_from_id),
+        .wr_csr_n_out(wr_csr_n_from_ex),
         .flush_in(flush_from_id),
         .flush_out(flush_from_ex)
     );

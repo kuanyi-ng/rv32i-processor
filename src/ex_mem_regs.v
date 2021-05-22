@@ -18,11 +18,17 @@ module ex_mem_regs (
     input [4:0] rd_in,
     output [4:0] rd_out,
 
+    input [11:0] csr_addr_in,
+    output [11:0] csr_addr_out,
+
     input [6:0] opcode_in,
     output [6:0] opcode_out,
 
     input wr_reg_n_in,
     output wr_reg_n_out,
+
+    input wr_csr_n_in,
+    output wr_csr_n_out,
 
     input flush_in,
     output flush_out
@@ -33,8 +39,10 @@ module ex_mem_regs (
     reg [31:0] c;
     reg [2:0] funct3;
     reg [4:0] rd;
+    reg [11:0] csr_addr;
     reg [6:0] opcode;
     reg wr_reg_n;
+    reg wr_csr_n;
     reg flush;
 
     always @(posedge clk or negedge rst_n) begin
@@ -44,8 +52,10 @@ module ex_mem_regs (
             c <= 32'bx;
             funct3 <= 3'bx;
             rd <= 5'bx;
+            csr_addr <= 12'bx;
             opcode <= 7'bx;
             wr_reg_n <= 1'b1;   // default not to write
+            wr_csr_n <= 1'b1;   // default not to write
             flush <= 1'b0;      // default not to flush
         end else if (interlock) begin
             pc4 <= pc4;
@@ -53,8 +63,10 @@ module ex_mem_regs (
             c <= c;
             funct3 <= funct3;
             rd <= rd;
+            csr_addr <= csr_addr;
             opcode <= opcode;
             wr_reg_n <= wr_reg_n;
+            wr_csr_n <= wr_csr_n;
             flush <= flush;
         end else begin
             pc4 <= pc4_in;
@@ -62,8 +74,10 @@ module ex_mem_regs (
             c <= c_in;
             funct3 <= funct3_in;
             rd <= rd_in;
+            csr_addr <= csr_addr_in;
             opcode <= opcode_in;
             wr_reg_n <= wr_reg_n_in;
+            wr_csr_n <= wr_csr_n_in;
             flush <= flush_in;
         end
     end
@@ -73,8 +87,10 @@ module ex_mem_regs (
     assign c_out = c;
     assign funct3_out = funct3;
     assign rd_out = rd;
+    assign csr_addr_out = csr_addr;
     assign opcode_out = opcode;
     assign wr_reg_n_out = wr_reg_n;
+    assign wr_csr_n_out = wr_csr_n;
     assign flush_out = flush;
 
 endmodule
