@@ -9,7 +9,7 @@
 `include "id_ex_regs.v"
 `include "id_flush_picker.v"
 `include "id_stage.v"
-`include "id_wr_reg_n_picker.v"
+`include "id_wr_n_picker.v"
 `include "if_id_regs.v"
 `include "if_stage.v"
 `include "interlock_u.v"
@@ -126,8 +126,10 @@ module top (
     wire [6:0] opcode_id;
     wire [2:0] funct3_id;
     wire [6:0] funct7_id;
+    wire [11:0] csr_addr;
     wire [31:0] imm_id;
     wire wr_reg_n_id_stage;
+    wire wr_csr_n_id_stage;
     id_stage id_stage_inst(
         .ir(ir_from_if),
         .rs1(rd1_addr),
@@ -136,8 +138,10 @@ module top (
         .opcode(opcode_id),
         .funct3(funct3_id),
         .funct7(funct7_id),
+        .csr_addr(csr_addr),
         .imm(imm_id),
-        .wr_reg_n(wr_reg_n_id_stage)
+        .wr_reg_n(wr_reg_n_id_stage),
+        .wr_csr_n(wr_csr_n_id_stage)
     );
 
     //
@@ -173,10 +177,20 @@ module top (
     // ID wr_reg_n_picker
     //
     wire wr_reg_n_id;
-    id_wr_reg_n_picker id_wr_reg_n_picker_inst(
-        .wr_reg_n_in(wr_reg_n_id_stage),
+    id_wr_n_picker id_wr_reg_n_picker_inst(
+        .wr_n_in(wr_reg_n_id_stage),
         .flush_id(flush_id),
-        .wr_reg_n_out(wr_reg_n_id)
+        .wr_n_out(wr_reg_n_id)
+    );
+
+    //
+    // ID wr_csr_n_picker
+    //
+    wire wr_csr_n_id;
+    id_wr_n_picker id_wr_csr_n_picker_inst(
+        .wr_n_in(wr_csr_n_id_stage),
+        .flush_id(flush_id),
+        .wr_n_out(wr_csr_n_id)
     );
 
     //
