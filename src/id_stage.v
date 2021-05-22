@@ -14,6 +14,7 @@ module id_stage (
     output [6:0] opcode,
     output [2:0] funct3,
     output [6:0] funct7,
+    output [11:0] csr_addr,
     output [31:0] imm,
     output wr_reg_n         // 0: write, 1: don't write
 );
@@ -28,7 +29,8 @@ module id_stage (
         .rs2(rs2),
         .rd(rd),
         .funct3(funct3),
-        .funct7(funct7)
+        .funct7(funct7),
+        .csr_addr(csr_addr)
     );
 
     wire [2:0] imm_type;
