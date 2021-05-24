@@ -141,40 +141,44 @@ module csrs (
         .mip(mip)
     );
     
-    assign csr_out = csr_out_value(csr_addr);
+    assign csr_out = csr_read_value(csr_addr);
 
-    function [31:0] csr_out_value(input [11:0] csr_addr);
+    //
+    // Function
+    //
+
+    function [31:0] csr_read_value(input [11:0] csr_addr);
         begin
             case (csr_addr)
-                mvendorid_addr: csr_out_value = mvendorid;
+                mvendorid_addr: csr_read_value = mvendorid;
 
-                marchid_addr: csr_out_value = marchid;
+                marchid_addr: csr_read_value = marchid;
 
-                mimpid_addr: csr_out_value = mimpid;
+                mimpid_addr: csr_read_value = mimpid;
 
-                mhartid_addr: csr_out_value = mhartid;
+                mhartid_addr: csr_read_value = mhartid;
 
-                mstatus_addr: csr_out_value = mstatus;
+                mstatus_addr: csr_read_value = mstatus;
 
-                misa_addr: csr_out_value = misa;
+                misa_addr: csr_read_value = misa;
 
-                mie_addr: csr_out_value = mie;
+                mie_addr: csr_read_value = mie;
 
-                mtvec_addr: csr_out_value = mtvec;
+                mtvec_addr: csr_read_value = mtvec;
 
-                mcounteren_addr: csr_out_value = mcounteren;
+                mcounteren_addr: csr_read_value = mcounteren;
 
-                mscratch_addr: csr_out_value = mscratch;
+                mscratch_addr: csr_read_value = mscratch;
 
-                mepc_addr: csr_out_value = mepc;
+                mepc_addr: csr_read_value = mepc;
 
-                mcause_addr: csr_out_value = mcause;
+                mcause_addr: csr_read_value = mcause;
 
-                mtval_addr: csr_out_value = mtval;
+                mtval_addr: csr_read_value = mtval;
 
-                mip_addr: csr_out_value = mip;
+                mip_addr: csr_read_value = mip;
 
-                default: csr_out_value = 32'b0;
+                default: csr_read_value = 32'b0;
             endcase
         end
     endfunction
