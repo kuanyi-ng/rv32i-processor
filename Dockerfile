@@ -48,15 +48,24 @@ WORKDIR /home/github/riscv-gnu-toolchain/
 RUN ./configure --prefix=/opt/riscv --enable-multilib
 RUN make
 
+# 5. need hexdump binary to compile test program
+# hexdump is part of the bsdmainutils package
+RUN apt-get install -y bsdmainutils
+
+# 6. install packages for simulation
+RUN apt-get install -y iverilog gtkwave
+
+RUN apt-get install -y vim
+
 ENV RISCV /opt/riscv
 
-# 5. Copy extra files required to compile test programs
+# 7. Copy extra files required to compile test programs
 # Copy files from /env to RISCV
 COPY ./env/bin/memdat ${RISCV}/bin/
 COPY ./env/ldscripts ${RISCV}/ldscripts/
 COPY ./env/*_makefile ${RISCV}/
 
-# 6. Copy source files of processors and test programs
+# 8. Copy source files of processors and test programs
 WORKDIR /home/
 RUN mkdir sandbox
 WORKDIR /home/sandbox/
@@ -66,12 +75,5 @@ COPY ./src ./src/
 COPY ./test_pack ./test_pack/
 COPY ./test_ground ./test_ground/
 COPY ./test ./test/
-
-# 7. need hexdump binary to compile test program
-# hexdump is part of the bsdmainutils package
-RUN apt-get install -y bsdmainutils
-
-# 8. install packages for simulation
-RUN apt-get install -y iverilog gtkwave
 
 CMD ["bin/bash"]
