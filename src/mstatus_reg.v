@@ -2,6 +2,9 @@ module mstatus_reg (
     input clk,
     input rst_n,
 
+    input [31:0] mstatus_in,
+    input wr_mstatus,
+
     output [1:0] priviledge_mode,
     output [31:0] mstatus
 );
@@ -55,6 +58,12 @@ module mstatus_reg (
             { mpie, spie, uie } <= 3'b000;
             mpp <= 2'b00;
             spp <= 1'b0;
+        end else if (wr_mstatus) begin
+            // TODO: not sure how to update current_mode
+            { mie, sie, uie } <= { mstatus_in[3], mstatus_in[1:0] };
+            { mpie, spie, upie } <= { mstatus_in[7], mstatus_in[5:4] };
+            mpp <= mstatus_in[10:9];
+            spp <= mstatus_in[8];
         end else begin
             // No interruption
             current_mode <= current_mode;
