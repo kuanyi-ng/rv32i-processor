@@ -34,6 +34,9 @@ module id_ex_regs (
     input [31:0] imm_in,
     output [31:0] imm_out,
 
+    input [31:0] z_in,
+    output [31:0] z_out,
+
     input wr_reg_n_in,
     output wr_reg_n_out,
 
@@ -53,6 +56,7 @@ module id_ex_regs (
     reg [11:0] csr_addr;
     reg [6:0] opcode;
     reg [31:0] imm;
+    reg [31:0] z_;
     reg wr_reg_n;
     reg wr_csr_n;
     reg flush;
@@ -78,6 +82,7 @@ module id_ex_regs (
             csr_addr <= 12'bx;
             opcode <= 7'bx;
             imm <= 32'bx;
+            z_ <= 32'bx;
             wr_reg_n <= 1'b1;   // default not to write
             wr_csr_n <= 1'b1;   // default not to write
             flush <= 1'b0;      // default not to flush
@@ -93,6 +98,7 @@ module id_ex_regs (
             csr_addr <= csr_addr_in;
             opcode <= opcode_in;
             imm <= imm_in;
+            z_ <= imm_in;
             wr_reg_n <= wr_reg_n_in;
             wr_csr_n <= wr_csr_n_in;
             flush <= flush_in;
@@ -110,6 +116,7 @@ module id_ex_regs (
     assign rd_out = rd;
     assign opcode_out = opcode;
     assign imm_out = imm;
+    assign z_out = z_;
     assign wr_reg_n_out = wr_reg_n;
     assign wr_csr_n_out = wr_csr_n;
     assign flush_out = flush;

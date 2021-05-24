@@ -12,6 +12,9 @@ module ex_mem_regs (
     input [31:0] c_in,
     output [31:0] c_out,
 
+    input [31:0] z_in,
+    output [31:0] z_out,
+
     input [2:0] funct3_in,
     output [2:0] funct3_out,
 
@@ -37,6 +40,7 @@ module ex_mem_regs (
     reg [31:0] pc4;
     reg [31:0] b;
     reg [31:0] c;
+    reg [31:0] z_;
     reg [2:0] funct3;
     reg [4:0] rd;
     reg [11:0] csr_addr;
@@ -50,6 +54,7 @@ module ex_mem_regs (
             pc4 <= 32'bx;
             b <= 32'bx;
             c <= 32'bx;
+            z_ <= 32'bx;
             funct3 <= 3'bx;
             rd <= 5'bx;
             csr_addr <= 12'bx;
@@ -61,6 +66,7 @@ module ex_mem_regs (
             pc4 <= pc4;
             b <= b;
             c <= c;
+            z_ <= z_;
             funct3 <= funct3;
             rd <= rd;
             csr_addr <= csr_addr;
@@ -72,6 +78,7 @@ module ex_mem_regs (
             pc4 <= pc4_in;
             b <= b_in;
             c <= c_in;
+            z_ <= z_in;
             funct3 <= funct3_in;
             rd <= rd_in;
             csr_addr <= csr_addr_in;
@@ -85,6 +92,7 @@ module ex_mem_regs (
     assign pc4_out = pc4;
     assign b_out = b;
     assign c_out = c;
+    assign z_out = z_;
     assign funct3_out = funct3;
     assign rd_out = rd;
     assign csr_addr_out = csr_addr;

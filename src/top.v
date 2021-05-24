@@ -225,6 +225,7 @@ module top (
     wire [11:0] csr_addr_from_id;
     wire [6:0] opcode_from_id;
     wire [31:0] imm_from_id;
+    wire [31:0] z_from_id;
     wire wr_reg_n_from_id;
     wire wr_csr_n_from_id;
     wire flush_from_id;
@@ -255,6 +256,8 @@ module top (
         .opcode_out(opcode_from_id),
         .imm_in(imm_id),
         .imm_out(imm_from_id),
+        .z_in(z_csrs),
+        .z_out(z_from_id),
         .wr_reg_n_in(wr_reg_n_id),
         .wr_reg_n_out(wr_reg_n_from_id),
         .wr_csr_n_in(wr_csr_n_id),
@@ -362,6 +365,7 @@ module top (
     wire [31:0] pc4_from_ex;
     wire [31:0] b_from_ex;
     wire [31:0] c_from_ex;
+    wire [31:0] z_from_ex;
     wire [2:0] funct3_from_ex;
     wire [4:0] rd_from_ex;
     wire [11:0] csr_addr_from_ex;
@@ -378,6 +382,8 @@ module top (
         .b_out(b_from_ex),
         .c_in(c_ex),
         .c_out(c_from_ex),
+        .z_in(z_from_id),
+        .z_out(z_from_ex),
         .funct3_in(funct3_from_id),
         .funct3_out(funct3_from_ex),
         .rd_in(rd_from_id),
@@ -453,6 +459,7 @@ module top (
     wire [31:0] pc4_from_mem;
     wire [31:0] c_from_mem;
     wire [31:0] d_from_mem;
+    wire [31:0] z_from_mem;
     wire [6:0] opcode_from_mem;
     mem_wb_regs mem_wb_regs_inst(
         .clk(clk),
@@ -464,6 +471,8 @@ module top (
         .c_out(c_from_mem),
         .d_in(d_mem),
         .d_out(d_from_mem),
+        .z_in(z_from_ex),
+        .z_out(z_from_mem),
         .rd_in(rd_from_ex),
         .rd_out(wr_addr),
         .csr_addr_in(csr_addr_from_ex),
