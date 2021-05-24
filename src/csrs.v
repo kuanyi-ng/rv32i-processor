@@ -21,6 +21,8 @@ module csrs (
     output [31:0] csr_out
 );
 
+    wire wr_csr = !wr_csr_n;
+
     //
     // Priviledge Mode
     //
@@ -82,16 +84,19 @@ module csrs (
     // Machine Trap Setup
     //
 
+    wire wr_mstatus = wr_csr && (csr_wr_addr == mstatus_addr);
     wire [1:0] priviledge_mode;
     wire [31:0] mstatus;
     mstatus_reg mstatus_reg_inst(
         .clk(clk),
         .rst_n(rst_n),
+        .mstatus_in(csr_data_in),
+        .wr_mstatus(wr_mstatus),
         .priviledge_mode(priviledge_mode),
         .mstatus(mstatus)
     );
 
-    wire wr_mie = !wr_csr_n && (csr_wr_addr == mie_addr);
+    wire wr_mie = wr_csr && (csr_wr_addr == mie_addr);
     wire [31:0] mie;
     mie_reg mie_reg_inst(
         .clk(clk),
@@ -105,47 +110,54 @@ module csrs (
     // Machine Trap Handling
     //
 
-    wire [31:0] mscratch_in;
+    wire wr_mscratch = wr_csr && (csr_wr_addr == mscratch_addr);
     wire [31:0] mscratch;
     reg32 mscratch_reg_inst(
         .clk(clk),
         .rst_n(rst_n),
-        .in(mscratch_in),
+        .in(csr_data_in),
+        .wr_reg(wr_mscratch),
         .out(mscratch)
     );
 
-    wire [31:0] mepc_in;
+    wire wr_mepc = wr_csr && (csr_wr_addr == mepc_addr);
     wire [31:0] mepc;
     reg32 mepc_reg_inst(
         .clk(clk),
         .rst_n(rst_n),
-        .in(mepc_in),
+        .in(csr_data_in),
+        .wr_reg(wr_mepc),
         .out(mepc)
     );
 
     localparam [31:0] hard_reset_mcause_val = 32'b0;
-    wire [31:0] mcause_in;
+    wire wr_mcause = wr_csr && (csr_wr_addr == mcause_addr);
     wire [31:0] mcause;
     reg32 #(.rst_value(hard_reset_mcause_val)) mcause_reg_inst(
         .clk(clk),
         .rst_n(rst_n),
-        .in(mcause_in),
+        .in(csr_data_in),
+        .wr_reg(wr_mcause),
         .out(mcause)
     );
 
-    wire [31:0] mtval_in;
+    wire wr_mtval = wr_csr && (csr_wr_addr == mtval_addr);
     wire [31:0] mtval;
     reg32 mtval_reg_inst(
         .clk(clk),
         .rst_n(rst_n),
-        .in(mtval_in),
+        .in(csr_data_in),
+        .wr_reg(wr_mtval),
         .out(mtval)
     );
 
+    wire wr_mip = wr_csr && (csr_wr_addr == mip_addr);
     wire [31:0] mip;
     mip_reg mip_reg_inst(
         .clk(clk),
         .rst_n(rst_n),
+        .mip_in(csr_data_in),
+        .wr_mip(wr_mip),
         .mip(mip)
     );
     
