@@ -10,7 +10,12 @@ module csrs (
     input rst_n,
 
     // Inputs
+    // Read
     input [11:0] csr_addr,
+    // Write
+    input [11:0] csr_wr_addr,
+    input [31:0] csr_data_in,
+    input wr_csr_n,
 
     // Outputs
     output [31:0] csr_out
