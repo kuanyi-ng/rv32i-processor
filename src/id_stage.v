@@ -68,6 +68,7 @@ module id_stage (
         localparam [2:0] u_type = 3'b011;
         localparam [2:0] j_type = 3'b100;
         localparam [2:0] shamt_type = 3'b101;
+        localparam [2:0] csr_type = 3'b110;
         localparam [2:0] default_type = 3'b111;
 
         begin
@@ -105,6 +106,8 @@ module id_stage (
                     else
                         imm_type_from = i_type;
                 end
+
+                csr_op: imm_type_from = csr_type;
 
                 // default: anything not from above
                 default: imm_type_from = default_type;
