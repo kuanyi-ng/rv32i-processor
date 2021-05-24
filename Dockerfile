@@ -71,4 +71,7 @@ COPY ./test ./test/
 # hexdump is part of the bsdmainutils package
 RUN apt-get install -y bsdmainutils
 
+# 8. install packages for simulation
+RUN apt-get install -y iverilog gtkwave
+
 CMD ["bin/bash"]
