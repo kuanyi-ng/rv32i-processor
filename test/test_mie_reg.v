@@ -1,7 +1,7 @@
 module test_mie_reg ();
     reg clk, rst_n;
     reg [31:0] mie_in;
-    reg wr_mie_n;
+    reg wr_mie;
     
     wire [31:0] mie;
 
@@ -9,7 +9,7 @@ module test_mie_reg ();
         .clk(clk),
         .rst_n(rst_n),
         .mie_in(mie_in),
-        .wr_mie_n(wr_mie_n),
+        .wr_mie(wr_mie),
         .mie(mie)
     );
 
@@ -25,11 +25,11 @@ module test_mie_reg ();
         #5 clk = 1'b0;
 
         #5 clk = 1'b1;
-        wr_mie_n = 1'b1;        
+        wr_mie = 1'b0;
         #5 clk = 1'b0;
 
         #5 clk = 1'b1;
-        wr_mie_n = 1'b0;
+        wr_mie = 1'b1;
         #5 clk = 1'b0;
 
         $finish;
