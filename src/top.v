@@ -434,7 +434,9 @@ module top (
     wire [31:0] pc4_from_mem;
     wire [31:0] c_from_mem;
     wire [31:0] d_from_mem;
+    wire [11:0] csr_addr_from_mem;
     wire [6:0] opcode_from_mem;
+    wire wr_csr_n_from_mem;
     mem_wb_regs mem_wb_regs_inst(
         .clk(clk),
         .rst_n(rst_n),
@@ -447,10 +449,14 @@ module top (
         .d_out(d_from_mem),
         .rd_in(rd_from_ex),
         .rd_out(wr_addr),
+        .csr_addr_in(csr_addr_from_ex),
+        .csr_addr_out(csr_addr_from_mem),
         .opcode_in(opcode_from_ex),
         .opcode_out(opcode_from_mem),
         .wr_reg_n_in(wr_reg_n_from_ex),
-        .wr_reg_n_out(wr_n)
+        .wr_reg_n_out(wr_n),
+        .wr_csr_n_in(wr_csr_n_from_ex),
+        .wr_csr_n_out(wr_csr_n_from_mem)
     );
 
     //
