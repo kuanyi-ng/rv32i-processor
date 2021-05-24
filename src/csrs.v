@@ -91,10 +91,13 @@ module csrs (
         .mstatus(mstatus)
     );
 
+    wire wr_mie = !wr_csr_n && (csr_wr_addr == mie_addr);
     wire [31:0] mie;
     mie_reg mie_reg_inst(
         .clk(clk),
         .rst_n(rst_n),
+        .mie_in(csr_data_in),
+        .wr_mie(wr_mie),
         .mie(mie)
     );
 
