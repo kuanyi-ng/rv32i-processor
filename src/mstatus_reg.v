@@ -55,7 +55,7 @@ module mstatus_reg (
             // MIE is reset to 0
             current_mode <= machine_mode;
             { mie, sie, uie } <= 3'b000;
-            { mpie, spie, uie } <= 3'b000;
+            { mpie, spie, upie } <= 3'b000;
             mpp <= 2'b00;
             spp <= 1'b0;
         end else if (wr_mstatus) begin
