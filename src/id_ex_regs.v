@@ -98,7 +98,7 @@ module id_ex_regs (
             csr_addr <= csr_addr_in;
             opcode <= opcode_in;
             imm <= imm_in;
-            z_ <= imm_in;
+            z_ <= z_in;
             wr_reg_n <= wr_reg_n_in;
             wr_csr_n <= wr_csr_n_in;
             flush <= flush_in;
