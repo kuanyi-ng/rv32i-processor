@@ -316,6 +316,7 @@ module top (
         .data1(data1_from_id),
         .data2(data2_from_id),
         .imm(imm_from_id),
+        .z_(z_from_id),
         .jump(jump_from_branch_alu),
         .c(c_ex)
     );
