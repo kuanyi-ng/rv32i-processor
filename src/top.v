@@ -516,7 +516,9 @@ module top (
         .c(c_from_mem),
         .d(d_from_mem),
         .pc4(pc4_from_mem),
-        .data_to_reg(data_in)
+        .z_(z_from_mem),
+        .data_to_reg(data_in),
+        .data_to_csr(csr_data_in)
     );
 
 endmodule
