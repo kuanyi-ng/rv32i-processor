@@ -1,4 +1,5 @@
 `include "csrs.v"
+`include "csr_forward_u.v"
 `include "data_forward_helper.v"
 `include "data_forward_u.v"
 `include "ex_data_picker.v"
@@ -213,8 +214,27 @@ module top (
     );
 
     //
-    // TODO: id_z_picker
+    // CSR Forward Unit
     //
+
+    wire [11:0] csr_addr_from_id;
+    wire [6:0] opcode_from_id;
+    wire wr_csr_n_from_id;
+    wire forward_z;
+    csr_forward_u csr_forward_u_inst(
+        .csr_addr_in_id(csr_addr_id),
+        .csr_addr_in_ex(csr_addr_from_id),
+        .opcode_in_ex(opcode_from_id),
+        .wr_csr_n_in_ex(wr_csr_n_from_id),
+        .forward_z(forward_z)
+    );
+
+    //
+    // id_z_picker
+    //
+
+    wire [31:0] z_id;
+    assign z_id = (forward_z) ? c_ex : z_csrs;
 
     //
     // ID-EX
@@ -226,12 +246,9 @@ module top (
     wire [6:0] funct7_from_id;
     wire [2:0] funct3_from_id;
     wire [4:0] rs2_from_id, rd_from_id;
-    wire [11:0] csr_addr_from_id;
-    wire [6:0] opcode_from_id;
     wire [31:0] imm_from_id;
     wire [31:0] z_from_id;
     wire wr_reg_n_from_id;
-    wire wr_csr_n_from_id;
     wire flush_from_id;
     id_ex_regs id_ex_regs_inst(
         .clk(clk),
@@ -260,7 +277,7 @@ module top (
         .opcode_out(opcode_from_id),
         .imm_in(imm_id),
         .imm_out(imm_from_id),
-        .z_in(z_csrs),
+        .z_in(z_id),
         .z_out(z_from_id),
         .wr_reg_n_in(wr_reg_n_id),
         .wr_reg_n_out(wr_reg_n_from_id),
