@@ -24,7 +24,7 @@ module wb_ctrl (
             is_load = (opcode == load_op);
             is_jal = (opcode == jal_op);
             is_jalr = (opcode == jalr_op);
-            is_csr = (opcode == csr_op);
+            is_csr = (opcode == csr_op);    // NOTE: need to be careful of ecall, ebreak
 
             if (is_load) data_to_reg_ctrl = 2'b01;
             else if (is_jal || is_jalr) data_to_reg_ctrl = 2'b10;

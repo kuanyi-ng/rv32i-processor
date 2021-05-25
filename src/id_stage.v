@@ -130,7 +130,7 @@ module id_stage (
             is_load = (opcode == load_op);
             is_jal = (opcode == jal_op);
             is_jalr = (opcode == jalr_op);
-            is_csr = (opcode == csr_op);
+            is_csr = (opcode == csr_op); // NOTE: need to be careful for ebreak ecall
 
             if (rd == 5'b00000) begin
                 // don't allow write to x0 (always 0)

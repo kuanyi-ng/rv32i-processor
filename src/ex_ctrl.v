@@ -108,7 +108,7 @@ module ex_ctrl (
             is_jalr = (opcode == jalr_op);
             is_reg_reg_ir = (opcode == r_type_op);
             is_reg_imm_ir = (opcode == i_type_op);
-            is_csr_ir = (opcode == csr_op);
+            is_csr_ir = (opcode == csr_op); // NOTE: need to be careful for ecall, ebreak
 
             if (is_lui) begin
                 alu_op_ctrl = 4'b1001;
