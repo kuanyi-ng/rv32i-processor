@@ -42,6 +42,7 @@ test_programs_paths = {
     "load_use": "./test_pack/asm/load_use/",
     "p2": "./test_pack/asm/p2/",
     "p2_part": "./test_pack/asm/p2_part/",
+    "csr": "./test_pack/asm/csr/",
 }
 
 def clean_test_ground():
