@@ -368,6 +368,7 @@ module top (
     data_forward_helper #(.IS_MEM_STAGE(0)) data_forward_helper_ex(
         .main_data(c_ex),
         .sub_data(pc4_from_id),
+        .csr_data(z_from_id),
         .opcode(opcode_from_id),
         .data_to_forward(data_forwarded_from_ex)
     );
@@ -470,6 +471,7 @@ module top (
     data_forward_helper #(.IS_MEM_STAGE(1)) data_forward_helper_mem(
         .main_data(c_from_ex),
         .sub_data(d_mem),
+        .csr_data(z_from_ex),
         .opcode(opcode_from_ex),
         .data_to_forward(data_forwarded_from_mem)
     );
