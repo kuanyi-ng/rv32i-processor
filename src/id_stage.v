@@ -119,9 +119,10 @@ module id_stage (
         // 0: write, 1: don't write
 
         // whitelist instead of blacklist to be more secure.
-        reg is_lui, is_auipc, is_i_type, is_r_type, is_load, is_jal, is_jalr;
+        reg is_lui, is_auipc, is_i_type, is_r_type, is_load, is_jal, is_jalr, is_csr;
 
         begin
+            // might to add csr
             is_lui = (opcode == lui_op);
             is_auipc = (opcode == auipc_op);
             is_i_type = (opcode == i_type_op);
@@ -129,11 +130,12 @@ module id_stage (
             is_load = (opcode == load_op);
             is_jal = (opcode == jal_op);
             is_jalr = (opcode == jalr_op);
+            is_csr = (opcode == csr_op);
 
             if (rd == 5'b00000) begin
                 // don't allow write to x0 (always 0)
                 wr_reg_n_ctrl = 1'b1;
-            end else if (is_lui || is_auipc || is_i_type || is_r_type || is_load || is_jal || is_jalr) begin
+            end else if (is_lui || is_auipc || is_i_type || is_r_type || is_load || is_jal || is_jalr || is_csr) begin
                 wr_reg_n_ctrl = 1'b0;
             end else begin
                 wr_reg_n_ctrl = 1'b1;
