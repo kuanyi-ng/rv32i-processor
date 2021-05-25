@@ -121,4 +121,8 @@ module test_ex_stage ();
 
         $finish;
     end
+
+    initial begin
+        $monitor("t: %3d, jump: %b, c: %h", $time, jump, c);
+    end
 endmodule
