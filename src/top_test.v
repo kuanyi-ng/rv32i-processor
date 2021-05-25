@@ -119,8 +119,8 @@ module top_test;
    //*** description for wave form ***//
    initial begin
       //$monitor($stime," PC=%h INST=%h", IAD, IDT);
-      $dumpfile("top_test.vcd");
-      $dumpvars(0, u_top_1);
+      //$dumpfile("top_test.vcd");
+      //$dumpvars(0, u_top_1);
       //$shm_open("waves.shm");
       //$shm_probe("AS");
    end
