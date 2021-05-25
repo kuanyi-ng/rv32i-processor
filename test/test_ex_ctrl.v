@@ -206,26 +206,38 @@ module test_ex_ctrl ();
         opcode = 7'b1110011;
             // CSRRW
             // in1, in2: 5, 1
+            // branch_alu_op: 011
+            // alu_op: 1001
         funct3 = 3'b001;
         #10
             // CSRRS
             // in1, in2: 5, 1
+            // branch_alu_op: 011
+            // alu_op: 0110
         funct3 = 3'b010;
         #10
             // CSRRC
             // in1, in2: 5, 1
+            // branch_alu_op: 011
+            // alu_op: 1011
         funct3 = 3'b011;
         #10
             // CSRRWI
             // in1, in2: 5, 3
+            // branch_alu_op: 011
+            // alu_op: 1001
         funct3 = 3'b101;
         #10
             // CSRRSI
             // in1, in2: 5, 3
+            // branch_alu_op: 011
+            // alu_op: 0110
         funct3 = 3'b110;
         #10
             // CSRRCI
             // in1, in2: 5, 3
+            // branch_alu_op: 011
+            // alu_op: 1011
         funct3 = 3'b111;
         #10
 

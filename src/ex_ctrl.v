@@ -47,7 +47,6 @@ module ex_ctrl (
         input [31:0] imm,
         input [31:0] z_
     );
-        reg [31:0] in1, in2;
 
         begin
             case (opcode)
@@ -71,7 +70,7 @@ module ex_ctrl (
 
                 csr_op: begin
                     // funct3[2]: 1 => csr with imm
-                    if (funct3[2]) alu_ins_ctrl = { z_, imm };
+                    if (funct3_2) alu_ins_ctrl = { z_, imm };
                     // funct3[2]: 0 => csr with register
                     else alu_ins_ctrl = { z_, data1 };
                 end
@@ -102,13 +101,14 @@ module ex_ctrl (
     endfunction
 
     function [3:0] alu_op_ctrl(input [6:0] opcode, input [2:0] funct3, input [6:0] funct7);
-        reg is_lui, is_jalr, is_reg_reg_ir, is_reg_imm_ir;
+        reg is_lui, is_jalr, is_reg_reg_ir, is_reg_imm_ir, is_csr_ir;
 
         begin
             is_lui = (opcode == lui_op);
             is_jalr = (opcode == jalr_op);
             is_reg_reg_ir = (opcode == r_type_op);
             is_reg_imm_ir = (opcode == i_type_op);
+            is_csr_ir = (opcode == csr_op);
 
             if (is_lui) begin
                 alu_op_ctrl = 4'b1001;
@@ -145,6 +145,11 @@ module ex_ctrl (
 
                     // no default case as every case is covered
                 endcase
+            end else if (is_csr_ir) begin
+                if (funct3[1:0] == 2'b01) alu_op_ctrl = 4'b1001;
+                else if (funct3[1:0] == 2'b10) alu_op_ctrl = 4'b0110;
+                else if (funct3[1:0] == 2'b11) alu_op_ctrl = 4'b1011;
+                else alu_op_ctrl = 4'bx;
             end else begin
                 // AUIPC, JAL, Branch, Load, Store
                 alu_op_ctrl = 4'b0000;
