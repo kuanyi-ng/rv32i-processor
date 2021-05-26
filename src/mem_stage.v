@@ -61,7 +61,7 @@ module mem_stage #(
 
     st_converter st_converter_inst(
         .in(b),
-        .format(funct3),
+        .funct3(funct3),
         .out(data_to_mem)
     );
 
