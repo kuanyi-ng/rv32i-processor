@@ -25,6 +25,9 @@ module mem_ctrl #(
     wire is_load = (opcode == LOAD_OP);
     wire is_store = (opcode == STORE_OP);
 
+    // NOTE: tried to simplify by
+    // assign access_size = funct3[1:0];
+    // but didn't work
     assign access_size = access_size_ctrl(is_load, is_store, funct3);
     assign write_to_data_mem = write_ctrl(is_store, flush);
     assign require_mem_access = mem_access_ctrl(is_load, is_store);
