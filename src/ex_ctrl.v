@@ -1,4 +1,27 @@
-module ex_ctrl (
+module ex_ctrl
+#(
+    // opcode
+    parameter [6:0] LUI_OP = 7'b0110111,
+    parameter [6:0] AUIPC_OP = 7'b0010111,
+    parameter [6:0] JAL_OP = 7'b1101111,
+    parameter [6:0] JALR_OP = 7'b1100111,
+    parameter [6:0] BRANCH_OP = 7'b1100011,
+    parameter [6:0] LOAD_OP = 7'b0000011,
+    parameter [6:0] STORE_OP = 7'b0100011,
+    parameter [6:0] I_TYPE_OP = 7'b0010011,
+    parameter [6:0] R_TYPE_OP = 7'b0110011,
+    parameter [6:0] CSR_OP = 7'b1110011,
+
+    // ALU OP
+    parameter [3:0] ADD = 4'b0000,
+    parameter [3:0] OR = 4'b0110,
+    parameter [3:0] CP_IN2 = 4'b1001,
+    parameter [3:0] CSRRC = 4'b1011,
+
+    // Branch ALU OP
+    parameter [2:0] JUMP = 3'b010,
+    parameter [2:0] NO_JUMP = 3'b011
+) (
     input [6:0] opcode,
     input [2:0] funct3,
     input [6:0] funct7,
@@ -25,17 +48,6 @@ module ex_ctrl (
     // Functions
     //
 
-    localparam [6:0] lui_op = 7'b0110111;
-    localparam [6:0] auipc_op = 7'b0010111;
-    localparam [6:0] jal_op = 7'b1101111;
-    localparam [6:0] jalr_op = 7'b1100111;
-    localparam [6:0] branch_op = 7'b1100011;
-    localparam [6:0] load_op = 7'b0000011;
-    localparam [6:0] store_op = 7'b0100011;
-    localparam [6:0] i_type_op = 7'b0010011;
-    localparam [6:0] r_type_op = 7'b0110011;
-    localparam [6:0] csr_op = 7'b1110011;
-
     // Select the input to ALU
     // return { in1, in2 }
     function [63:0] alu_ins_ctrl(
@@ -50,25 +62,25 @@ module ex_ctrl (
 
         begin
             case (opcode)
-                lui_op: alu_ins_ctrl = { pc, imm };
+                LUI_OP: alu_ins_ctrl = { pc, imm };
 
-                auipc_op: alu_ins_ctrl = { pc, imm };
+                AUIPC_OP: alu_ins_ctrl = { pc, imm };
 
-                jal_op: alu_ins_ctrl = { pc, imm };
+                JAL_OP: alu_ins_ctrl = { pc, imm };
                 
-                jalr_op: alu_ins_ctrl = { data1, imm };
+                JALR_OP: alu_ins_ctrl = { data1, imm };
 
-                branch_op: alu_ins_ctrl = { pc, imm };
+                BRANCH_OP: alu_ins_ctrl = { pc, imm };
 
-                load_op: alu_ins_ctrl = { data1, imm };
+                LOAD_OP: alu_ins_ctrl = { data1, imm };
 
-                store_op: alu_ins_ctrl = { data1, imm };
+                STORE_OP: alu_ins_ctrl = { data1, imm };
 
-                i_type_op: alu_ins_ctrl = { data1, imm };
+                I_TYPE_OP: alu_ins_ctrl = { data1, imm };
 
-                r_type_op: alu_ins_ctrl = { data1, data2 };
+                R_TYPE_OP: alu_ins_ctrl = { data1, data2 };
 
-                csr_op: begin
+                CSR_OP: begin
                     // funct3[2]: 1 => csr with imm
                     if (funct3_2) alu_ins_ctrl = { z_, imm };
                     // funct3[2]: 0 => csr with register
@@ -86,16 +98,16 @@ module ex_ctrl (
         reg is_jal, is_jalr, is_branch;
 
         begin
-            is_jal = (opcode == jal_op);
-            is_jalr = (opcode == jalr_op);
-            is_branch = (opcode == branch_op);
+            is_jal = (opcode == JAL_OP);
+            is_jalr = (opcode == JALR_OP);
+            is_branch = (opcode == BRANCH_OP);
 
             if (is_jal || is_jalr) begin
-                branch_alu_op_ctrl = 3'b010;
+                branch_alu_op_ctrl = JUMP;
             end else if (is_branch) begin
                 branch_alu_op_ctrl = funct3;
             end else begin
-                branch_alu_op_ctrl = 3'b011;
+                branch_alu_op_ctrl = NO_JUMP;
             end
         end
     endfunction
@@ -104,11 +116,11 @@ module ex_ctrl (
         reg is_lui, is_jalr, is_reg_reg_ir, is_reg_imm_ir, is_csr_ir;
 
         begin
-            is_lui = (opcode == lui_op);
-            is_jalr = (opcode == jalr_op);
-            is_reg_reg_ir = (opcode == r_type_op);
-            is_reg_imm_ir = (opcode == i_type_op);
-            is_csr_ir = (opcode == csr_op); // NOTE: need to be careful for ecall, ebreak
+            is_lui = (opcode == LUI_OP);
+            is_jalr = (opcode == JALR_OP);
+            is_reg_reg_ir = (opcode == R_TYPE_OP);
+            is_reg_imm_ir = (opcode == I_TYPE_OP);
+            is_csr_ir = (opcode == CSR_OP); // NOTE: need to be careful for ecall, ebreak
 
             if (is_lui) begin
                 alu_op_ctrl = 4'b1001;
@@ -118,7 +130,7 @@ module ex_ctrl (
                 case (funct3)
                     // ADD, SUB, ADDI
                     3'b000: begin
-                        if (opcode == i_type_op) alu_op_ctrl = { 1'b0, funct3 };
+                        if (opcode == I_TYPE_OP) alu_op_ctrl = { 1'b0, funct3 };
                         else alu_op_ctrl = { funct7[5], funct3 };
                     end
                     
@@ -146,13 +158,13 @@ module ex_ctrl (
                     // no default case as every case is covered
                 endcase
             end else if (is_csr_ir) begin
-                if (funct3[1:0] == 2'b01) alu_op_ctrl = 4'b1001;
-                else if (funct3[1:0] == 2'b10) alu_op_ctrl = 4'b0110;
-                else if (funct3[1:0] == 2'b11) alu_op_ctrl = 4'b1011;
+                if (funct3[1:0] == 2'b01) alu_op_ctrl = CP_IN2;
+                else if (funct3[1:0] == 2'b10) alu_op_ctrl = OR;
+                else if (funct3[1:0] == 2'b11) alu_op_ctrl = CSRRC;
                 else alu_op_ctrl = 4'bx;
             end else begin
                 // AUIPC, JAL, Branch, Load, Store
-                alu_op_ctrl = 4'b0000;
+                alu_op_ctrl = ADD;
             end
         end 
     endfunction
