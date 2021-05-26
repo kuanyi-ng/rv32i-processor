@@ -12,6 +12,7 @@
 `include "id_flush_picker.v"
 `include "id_stage.v"
 `include "id_wr_n_picker.v"
+`include "id_z_picker.v"
 `include "if_id_regs.v"
 `include "if_stage.v"
 `include "interlock_u.v"
@@ -220,12 +221,17 @@ module top (
     wire [11:0] csr_addr_from_id;
     wire [6:0] opcode_from_id;
     wire wr_csr_n_from_id;
-    wire forward_z;
+    wire [11:0] csr_addr_from_ex;
+    wire wr_csr_n_from_ex;
+    wire [1:0] forward_z;
     csr_forward_u csr_forward_u_inst(
         .csr_addr_in_id(csr_addr_id),
         .csr_addr_in_ex(csr_addr_from_id),
         .opcode_in_ex(opcode_from_id),
         .wr_csr_n_in_ex(wr_csr_n_from_id),
+        .csr_addr_in_mem(csr_addr_from_ex),
+        .opcode_in_mem(opcode_from_ex),
+        .wr_csr_n_in_mem(wr_csr_n_from_ex),
         .forward_z(forward_z)
     );
 
@@ -233,8 +239,15 @@ module top (
     // id_z_picker
     //
 
+    wire [31:0] c_from_ex;
     wire [31:0] z_id;
-    assign z_id = (forward_z) ? c_ex : z_csrs;
+    id_z_picker id_z_picker_inst(
+        .z_from_csr(z_csrs),
+        .z_from_ex(c_ex),
+        .z_from_mem(c_from_ex),
+        .forward_z(forward_z),
+        .z_id(z_id)
+    );
 
     //
     // ID-EX
@@ -387,13 +400,10 @@ module top (
 
     wire [31:0] pc4_from_ex;
     wire [31:0] b_from_ex;
-    wire [31:0] c_from_ex;
     wire [31:0] z_from_ex;
     wire [2:0] funct3_from_ex;
     wire [4:0] rd_from_ex;
-    wire [11:0] csr_addr_from_ex;
     wire wr_reg_n_from_ex;
-    wire wr_csr_n_from_ex;
     wire flush_from_ex;
     ex_mem_regs ex_mem_regs_inst(
         .clk(clk),
