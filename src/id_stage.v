@@ -21,8 +21,22 @@ module id_stage (
 );
 
     //
+    // Local Parameters
+    //
+
+    localparam [2:0] I_TYPE = 3'b000;
+    localparam [2:0] B_TYPE = 3'b001;
+    localparam [2:0] S_TYPE = 3'b010;
+    localparam [2:0] U_TYPE = 3'b011;
+    localparam [2:0] J_TYPE = 3'b100;
+    localparam [2:0] SHAMT_TYPE = 3'b101;
+    localparam [2:0] CSR_TYPE = 3'b110;
+    localparam [2:0] DEFAULT_TYPE = 3'b111;
+
+    //
     // Main
     //
+
     ir_splitter ir_splitter_inst(
         .ir(ir),
         .opcode(opcode),
@@ -37,7 +51,16 @@ module id_stage (
     wire [2:0] imm_type;
     assign imm_type = imm_type_from(opcode, funct3);
 
-    imm_extractor imm_extractor_inst(
+    imm_extractor #(
+        .I_TYPE(I_TYPE),
+        .B_TYPE(B_TYPE),
+        .S_TYPE(S_TYPE),
+        .U_TYPE(U_TYPE),
+        .J_TYPE(J_TYPE),
+        .SHAMT_TYPE(SHAMT_TYPE),
+        .CSR_TYPE(CSR_TYPE),
+        .DEFAULT_TYPE(DEFAULT_TYPE)
+    ) imm_extractor_inst(
         .in(ir),
         .imm_type(imm_type),
         .out(imm)
@@ -50,67 +73,47 @@ module id_stage (
     // Functions
     //
 
-    localparam [6:0] lui_op = 7'b0110111;
-    localparam [6:0] auipc_op = 7'b0010111;
-    localparam [6:0] jal_op = 7'b1101111;
-    localparam [6:0] jalr_op = 7'b1100111;
-    localparam [6:0] branch_op = 7'b1100011;
-    localparam [6:0] load_op = 7'b0000011;
-    localparam [6:0] store_op = 7'b0100011;
-    localparam [6:0] i_type_op = 7'b0010011;
-    localparam [6:0] r_type_op = 7'b0110011;
-    localparam [6:0] csr_op = 7'b1110011;
-
     function [2:0] imm_type_from(input [6:0] opcode, input [2:0] funct3);
-        localparam [2:0] i_type = 3'b000;
-        localparam [2:0] b_type = 3'b001;
-        localparam [2:0] s_type = 3'b010;
-        localparam [2:0] u_type = 3'b011;
-        localparam [2:0] j_type = 3'b100;
-        localparam [2:0] shamt_type = 3'b101;
-        localparam [2:0] csr_type = 3'b110;
-        localparam [2:0] default_type = 3'b111;
-
         begin
             case (opcode)
                 // U-Type
                 // LUI
-                lui_op: imm_type_from = u_type;
+                LUI_OP: imm_type_from = U_TYPE;
 
                 // AUIPC
-                auipc_op: imm_type_from = u_type;
+                AUIPC_OP: imm_type_from = U_TYPE;
 
                 // JAL
-                jal_op: imm_type_from = j_type;
+                JAL_OP: imm_type_from = J_TYPE;
 
                 // JALR
-                jalr_op: imm_type_from = i_type;
+                JALR_OP: imm_type_from = I_TYPE;
 
                 // Branch
-                branch_op: imm_type_from = b_type;
+                BRANCH_OP: imm_type_from = B_TYPE;
 
                 // Load
-                load_op: imm_type_from = i_type;
+                LOAD_OP: imm_type_from = I_TYPE;
 
                 // Store
-                store_op: imm_type_from = s_type;
+                STORE_OP: imm_type_from = S_TYPE;
 
                 // I-Type (including shamt)
-                i_type_op: begin
+                I_TYPE_OP: begin
                     if (funct3 == 3'b001)
                         // SLLI
-                        imm_type_from = shamt_type;
+                        imm_type_from = SHAMT_TYPE;
                     else if (funct3 == 3'b101)
                         // SRLI, SRAI
-                        imm_type_from = shamt_type;
+                        imm_type_from = SHAMT_TYPE;
                     else
-                        imm_type_from = i_type;
+                        imm_type_from = I_TYPE;
                 end
 
-                csr_op: imm_type_from = csr_type;
+                CSR_OP: imm_type_from = CSR_TYPE;
 
                 // default: anything not from above
-                default: imm_type_from = default_type;
+                default: imm_type_from = DEFAULT_TYPE;
             endcase
         end
    endfunction
