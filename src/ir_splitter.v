@@ -1,11 +1,15 @@
 module ir_splitter (
+    // Basic Instructions
     input [31:0] ir,
     output [6:0] opcode,
     output [4:0] rs1,
     output [4:0] rs2,
     output [4:0] rd,
     output [2:0] funct3,
-    output [6:0] funct7
+    output [6:0] funct7,
+
+    // CSRs Instructions
+    output [11:0] csr_addr
 );
     assign opcode = ir[6:0];
     assign rs1 = ir[19:15];
@@ -13,4 +17,7 @@ module ir_splitter (
     assign rd = ir[11:7];
     assign funct3 = ir[14:12];
     assign funct7 = ir[31:25];
+
+    assign csr_addr = ir[31:20];
+
 endmodule

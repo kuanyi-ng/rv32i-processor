@@ -14,8 +14,10 @@ module id_stage (
     output [6:0] opcode,
     output [2:0] funct3,
     output [6:0] funct7,
+    output [11:0] csr_addr,
     output [31:0] imm,
-    output wr_reg_n         // 0: write, 1: don't write
+    output wr_reg_n,    // 0: write, 1: don't write
+    output wr_csr_n     // 0: write, 1: don't write
 );
 
     //
@@ -28,7 +30,8 @@ module id_stage (
         .rs2(rs2),
         .rd(rd),
         .funct3(funct3),
-        .funct7(funct7)
+        .funct7(funct7),
+        .csr_addr(csr_addr)
     );
 
     wire [2:0] imm_type;
@@ -41,44 +44,59 @@ module id_stage (
     );
 
     assign wr_reg_n = wr_reg_n_ctrl(opcode, rd);
+    assign wr_csr_n = wr_csr_n_ctrl(opcode, funct3);
 
     //
     // Functions
     //
+
+    localparam [6:0] lui_op = 7'b0110111;
+    localparam [6:0] auipc_op = 7'b0010111;
+    localparam [6:0] jal_op = 7'b1101111;
+    localparam [6:0] jalr_op = 7'b1100111;
+    localparam [6:0] branch_op = 7'b1100011;
+    localparam [6:0] load_op = 7'b0000011;
+    localparam [6:0] store_op = 7'b0100011;
+    localparam [6:0] i_type_op = 7'b0010011;
+    localparam [6:0] r_type_op = 7'b0110011;
+    localparam [6:0] csr_op = 7'b1110011;
+
     function [2:0] imm_type_from(input [6:0] opcode, input [2:0] funct3);
-        parameter [2:0] i_type = 3'b000;
-        parameter [2:0] b_type = 3'b001;
-        parameter [2:0] s_type = 3'b010;
-        parameter [2:0] u_type = 3'b011;
-        parameter [2:0] j_type = 3'b100;
-        parameter [2:0] shamt_type = 3'b101;
-        parameter [2:0] default_type = 3'b111;
+        localparam [2:0] i_type = 3'b000;
+        localparam [2:0] b_type = 3'b001;
+        localparam [2:0] s_type = 3'b010;
+        localparam [2:0] u_type = 3'b011;
+        localparam [2:0] j_type = 3'b100;
+        localparam [2:0] shamt_type = 3'b101;
+        localparam [2:0] csr_type = 3'b110;
+        localparam [2:0] default_type = 3'b111;
 
         begin
             case (opcode)
                 // U-Type
                 // LUI
-                7'b0110111: imm_type_from = u_type;
+                lui_op: imm_type_from = u_type;
+
                 // AUIPC
-                7'b0010111: imm_type_from = u_type;
+                auipc_op: imm_type_from = u_type;
 
                 // JAL
-                7'b1101111: imm_type_from = j_type;
+                jal_op: imm_type_from = j_type;
 
                 // JALR
-                7'b1100111: imm_type_from = i_type;
+                jalr_op: imm_type_from = i_type;
 
                 // Branch
-                7'b1100011: imm_type_from = b_type;
+                branch_op: imm_type_from = b_type;
 
                 // Load
-                7'b0000011: imm_type_from = i_type;
+                load_op: imm_type_from = i_type;
 
                 // Store
-                7'b0100011: imm_type_from = s_type;
+                store_op: imm_type_from = s_type;
 
                 // I-Type (including shamt)
-                7'b0010011: begin
+                i_type_op: begin
                     if (funct3 == 3'b001)
                         // SLLI
                         imm_type_from = shamt_type;
@@ -88,6 +106,8 @@ module id_stage (
                     else
                         imm_type_from = i_type;
                 end
+
+                csr_op: imm_type_from = csr_type;
 
                 // default: anything not from above
                 default: imm_type_from = default_type;
@@ -99,25 +119,36 @@ module id_stage (
         // 0: write, 1: don't write
 
         // whitelist instead of blacklist to be more secure.
-        reg is_lui, is_auipc, is_i_type, is_r_type, is_load, is_jal, is_jalr;
+        reg is_lui, is_auipc, is_i_type, is_r_type, is_load, is_jal, is_jalr, is_csr;
 
         begin
-            is_lui = (opcode == 7'b0110111);
-            is_auipc = (opcode == 7'b0010111);
-            is_i_type = (opcode == 7'b0010011);
-            is_r_type = (opcode == 7'b0110011);
-            is_load = (opcode == 7'b0000011);
-            is_jal = (opcode == 7'b1101111);
-            is_jalr = (opcode == 7'b1100111);
+            // might to add csr
+            is_lui = (opcode == lui_op);
+            is_auipc = (opcode == auipc_op);
+            is_i_type = (opcode == i_type_op);
+            is_r_type = (opcode == r_type_op);
+            is_load = (opcode == load_op);
+            is_jal = (opcode == jal_op);
+            is_jalr = (opcode == jalr_op);
+            is_csr = (opcode == csr_op); // NOTE: need to be careful for ebreak ecall
 
             if (rd == 5'b00000) begin
                 // don't allow write to x0 (always 0)
                 wr_reg_n_ctrl = 1'b1;
-            end else if (is_lui || is_auipc || is_i_type || is_r_type || is_load || is_jal || is_jalr) begin
+            end else if (is_lui || is_auipc || is_i_type || is_r_type || is_load || is_jal || is_jalr || is_csr) begin
                 wr_reg_n_ctrl = 1'b0;
             end else begin
                 wr_reg_n_ctrl = 1'b1;
             end
+        end
+    endfunction
+
+    function wr_csr_n_ctrl(input [6:0] opcode, input [2:0] funct3);
+        begin
+            // CSR instructions share the same opcode with ecall, ebreak instructions
+            // ecall and ebreak have funct3 of 000 while CSR instruction doesn't
+            if ((opcode == csr_op) && (funct3 != 3'b000)) wr_csr_n_ctrl = 1'b0;
+            else wr_csr_n_ctrl = 1'b1;
         end
     endfunction
 endmodule

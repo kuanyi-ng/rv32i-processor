@@ -34,7 +34,7 @@ module alu (
                 // SRL, SRLI
                 4'b0101: alu_out = in1 >> { 27'b0, in2[4:0] };
 
-                // OR, ORI
+                // OR, ORI, CSRRS, CSRRSI
                 4'b0110: alu_out = in1 | in2;
 
                 // AND, ANDI
@@ -43,12 +43,15 @@ module alu (
                 // SUB
                 4'b1000: alu_out = in1 - in2;
 
-                // LUI
+                // LUI, CSRRW, CSRRWI
                 4'b1001: alu_out = in2;
 
                 // JALR
                 // signed to unsigned assignment occurs. (VER-318)
                 4'b1010: alu_out = (in1 + in2) & ~1;
+
+                // CSRRC, CSRRCI
+                4'b1011: alu_out = in1 & ~in2;
 
                 // SRA, SRAI
                 // signed to unsigned assignment occurs. (VER-318)

@@ -73,6 +73,21 @@ module test_imm_extractor ();
         assign ir = 32'bxxxx_xxx1_1111_xxxx_xxxx_xxxx_xxxx_xxxx;
         #10
 
+        // CSR Type
+        assign imm_type = 3'b110;
+        // context: imm starts with 0
+        // expect: 0000_000f
+        assign ir = 32'bxxxx_xxxx_xxxx_01111_101_xxxxx_1110011;
+        #10
+        // context: imm starts with 1
+        // expect: 0000_001f
+        assign ir = 32'bxxxx_xxxx_xxxx_11111_101_xxxxx_1110011;
+        #10
+
         $finish;
+    end
+
+    initial begin
+        $monitor("t: %3d, imm: %h", $time, imm_output);
     end
 endmodule

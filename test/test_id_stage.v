@@ -8,8 +8,10 @@ module test_id_stage ();
     wire [6:0] opcode;
     wire [2:0] funct3;
     wire [6:0] funct7;
+    wire [11:0] csr_addr;
     wire [31:0] imm;
     wire wr_reg_n;
+    wire wr_csr_n;
 
     id_stage subject(
         .ir(ir),
@@ -19,8 +21,10 @@ module test_id_stage ();
         .opcode(opcode),
         .funct3(funct3),
         .funct7(funct7),
+        .csr_addr(csr_addr),
         .imm(imm),
-        .wr_reg_n(wr_reg_n)
+        .wr_reg_n(wr_reg_n),
+        .wr_csr_n(wr_csr_n)
     );
 
     initial begin
@@ -117,6 +121,34 @@ module test_id_stage ();
         // wr_reg_n: 0
         #5
 
+        // ecall
+        assign ir = 32'b000000000000_00000_000_00000_1110011;
+        // wr_csr_n: 1
+        #5
+
+        // CSR
+        assign ir = 32'b001100000000_00001_001_00010_1110011;
+        // csr_addr = h300
+        // wr_csr_n: 0
+        #5
+
         $finish;
+    end
+
+    initial begin
+        $monitor(
+            "time: %3d,\nrs1: %d,\nrs2: %d,\nrd: %d,\nopcode: %b,\nfunct3: %b,\nfunct7: %b,\ncsr_addr: %h,\nimm: %h,\nwr_reg_n: %b,\nwr_csr_n: %b\n",
+            $time,
+            rs1,
+            rs2,
+            rd,
+            opcode,
+            funct3,
+            funct7,
+            csr_addr,
+            imm,
+            wr_reg_n,
+            wr_csr_n
+        );
     end
 endmodule

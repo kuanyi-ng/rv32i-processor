@@ -11,13 +11,15 @@ module ex_stage (
     input [31:0] data1,
     input [31:0] data2,
     input [31:0] imm,
+    input [31:0] z_,
 
     // outputs to MEM stage
     output jump,
     output [31:0] c
 );
 
-    wire in1_sel, in2_sel;
+    wire [31:0] in1;
+    wire [31:0] in2;
     wire [3:0] alu_op;
     wire [2:0] branch_alu_op;
 
@@ -25,19 +27,16 @@ module ex_stage (
         .opcode(opcode),
         .funct3(funct3),
         .funct7(funct7),
-        .a_sel(in1_sel),
-        .b_sel(in2_sel),
-        .alu_op(alu_op),
-        .branch_alu_op(branch_alu_op)
+        .data1(data1),
+        .data2(data2),
+        .pc(pc),
+        .imm(imm),
+        .z_(z_),
+        .in1(in1),
+        .in2(in2),
+        .branch_alu_op(branch_alu_op),
+        .alu_op(alu_op)
     );
-
-    wire [31:0] in1;
-    // A Multiplexer
-    assign in1 = (in1_sel == 1'b1) ? pc : data1;
-
-    wire [31:0] in2;
-    // B Multiplexer
-    assign in2 = (in2_sel == 1'b1) ? imm : data2;
 
     alu alu_inst(
         .in1(in1),

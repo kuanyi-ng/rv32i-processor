@@ -2,6 +2,9 @@ module mip_reg (
     input clk,
     input rst_n,
 
+    input [31:0] mip_in,
+    input wr_mip,
+
     output [31:0] mip
 );
 
@@ -18,6 +21,10 @@ module mip_reg (
             { meip, seip, ueip } <= 3'b000;
             { mtip, stip, utip } <= 3'b000;
             { msip, ssip, usip } <= 3'b000;
+        end else if (wr_mip) begin
+            { meip, seip, ueip } <= { mip_in[11], mip_in[9:8] };
+            { mtip, stip, utip } <= { mip_in[7], mip_in[5:4] };
+            { msip, ssip, usip } <= { mip_in[3], mip_in[1:0] };
         end else begin
             { meip, seip, ueip } <= { meip, seip, ueip };
             { mtip, stip, utip } <= { mtip, stip, utip };

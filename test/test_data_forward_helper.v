@@ -1,21 +1,23 @@
 module test_data_forward_helper ();
-    reg [31:0] main_data, sub_data;
+    reg [31:0] main_data, sub_data, csr_data;
     reg [6:0] opcode;
     reg is_mem_stage;
 
     wire [31:0] data_to_forward;
 
-    data_forward_helper subject(
+    // NOTE: cant test with parameterized instance
+    data_forward_helper #(.IS_MEM_STAGE(is_mem_stage)) subject(
         .main_data(main_data),
         .sub_data(sub_data),
+        .csr_data(csr_data),
         .opcode(opcode),
-        .is_mem_stage(is_mem_stage),
         .data_to_forward(data_to_forward)
     );
 
     initial begin
         assign main_data = 32'h0000_0001;
         assign sub_data = 32'h0000_0002;
+        assign csr_data = 32'h0000_0003;
 
         // LUI
         assign opcode = 7'b0110111;
@@ -75,6 +77,12 @@ module test_data_forward_helper ();
         assign opcode = 7'b0110011;
         assign is_mem_stage = 1'b0;
         // data_to_forward: 1
+        #5
+
+        // CSR
+        opcode = 7'b1110011;
+        is_mem_stage = 1'b0;
+        // data_to_forward: 3
         #5
 
         $finish;

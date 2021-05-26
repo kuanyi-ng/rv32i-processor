@@ -10,11 +10,18 @@ module csrs (
     input rst_n,
 
     // Inputs
+    // Read
     input [11:0] csr_addr,
+    // Write
+    input [11:0] csr_wr_addr,
+    input [31:0] csr_data_in,
+    input wr_csr_n,
 
     // Outputs
     output [31:0] csr_out
 );
+
+    wire wr_csr = !wr_csr_n;
 
     //
     // Priviledge Mode
@@ -77,19 +84,25 @@ module csrs (
     // Machine Trap Setup
     //
 
+    wire wr_mstatus = wr_csr && (csr_wr_addr == mstatus_addr);
     wire [1:0] priviledge_mode;
     wire [31:0] mstatus;
     mstatus_reg mstatus_reg_inst(
         .clk(clk),
         .rst_n(rst_n),
+        .mstatus_in(csr_data_in),
+        .wr_mstatus(wr_mstatus),
         .priviledge_mode(priviledge_mode),
         .mstatus(mstatus)
     );
 
+    wire wr_mie = wr_csr && (csr_wr_addr == mie_addr);
     wire [31:0] mie;
     mie_reg mie_reg_inst(
         .clk(clk),
         .rst_n(rst_n),
+        .mie_in(csr_data_in),
+        .wr_mie(wr_mie),
         .mie(mie)
     );
 
@@ -97,84 +110,95 @@ module csrs (
     // Machine Trap Handling
     //
 
-    wire [31:0] mscratch_in;
+    wire wr_mscratch = wr_csr && (csr_wr_addr == mscratch_addr);
     wire [31:0] mscratch;
     reg32 mscratch_reg_inst(
         .clk(clk),
         .rst_n(rst_n),
-        .in(mscratch_in),
+        .in(csr_data_in),
+        .wr_reg(wr_mscratch),
         .out(mscratch)
     );
 
-    wire [31:0] mepc_in;
+    wire wr_mepc = wr_csr && (csr_wr_addr == mepc_addr);
     wire [31:0] mepc;
     reg32 mepc_reg_inst(
         .clk(clk),
         .rst_n(rst_n),
-        .in(mepc_in),
+        .in(csr_data_in),
+        .wr_reg(wr_mepc),
         .out(mepc)
     );
 
     localparam [31:0] hard_reset_mcause_val = 32'b0;
-    wire [31:0] mcause_in;
+    wire wr_mcause = wr_csr && (csr_wr_addr == mcause_addr);
     wire [31:0] mcause;
     reg32 #(.rst_value(hard_reset_mcause_val)) mcause_reg_inst(
         .clk(clk),
         .rst_n(rst_n),
-        .in(mcause_in),
+        .in(csr_data_in),
+        .wr_reg(wr_mcause),
         .out(mcause)
     );
 
-    wire [31:0] mtval_in;
+    wire wr_mtval = wr_csr && (csr_wr_addr == mtval_addr);
     wire [31:0] mtval;
     reg32 mtval_reg_inst(
         .clk(clk),
         .rst_n(rst_n),
-        .in(mtval_in),
+        .in(csr_data_in),
+        .wr_reg(wr_mtval),
         .out(mtval)
     );
 
+    wire wr_mip = wr_csr && (csr_wr_addr == mip_addr);
     wire [31:0] mip;
     mip_reg mip_reg_inst(
         .clk(clk),
         .rst_n(rst_n),
+        .mip_in(csr_data_in),
+        .wr_mip(wr_mip),
         .mip(mip)
     );
     
-    assign csr_out = csr_out_value(csr_addr);
+    assign csr_out = csr_read_value(csr_addr);
 
-    function [31:0] csr_out_value(input [11:0] csr_addr);
+    //
+    // Function
+    //
+
+    function [31:0] csr_read_value(input [11:0] csr_addr);
         begin
             case (csr_addr)
-                mvendorid_addr: csr_out_value = mvendorid;
+                mvendorid_addr: csr_read_value = mvendorid;
 
-                marchid_addr: csr_out_value = marchid;
+                marchid_addr: csr_read_value = marchid;
 
-                mimpid_addr: csr_out_value = mimpid;
+                mimpid_addr: csr_read_value = mimpid;
 
-                mhartid_addr: csr_out_value = mhartid;
+                mhartid_addr: csr_read_value = mhartid;
 
-                mstatus_addr: csr_out_value = mstatus;
+                mstatus_addr: csr_read_value = mstatus;
 
-                misa_addr: csr_out_value = misa;
+                misa_addr: csr_read_value = misa;
 
-                mie_addr: csr_out_value = mie;
+                mie_addr: csr_read_value = mie;
 
-                mtvec_addr: csr_out_value = mtvec;
+                mtvec_addr: csr_read_value = mtvec;
 
-                mcounteren_addr: csr_out_value = mcounteren;
+                mcounteren_addr: csr_read_value = mcounteren;
 
-                mscratch_addr: csr_out_value = mscratch;
+                mscratch_addr: csr_read_value = mscratch;
 
-                mepc_addr: csr_out_value = mepc;
+                mepc_addr: csr_read_value = mepc;
 
-                mcause_addr: csr_out_value = mcause;
+                mcause_addr: csr_read_value = mcause;
 
-                mtval_addr: csr_out_value = mtval;
+                mtval_addr: csr_read_value = mtval;
 
-                mip_addr: csr_out_value = mip;
+                mip_addr: csr_read_value = mip;
 
-                default: csr_out_value = 32'b0;
+                default: csr_read_value = 32'b0;
             endcase
         end
     endfunction

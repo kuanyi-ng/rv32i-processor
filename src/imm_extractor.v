@@ -1,34 +1,54 @@
 module imm_extractor (
-    input [31:0] in,
+    input [31:0] in,    // ir
     input [2:0] imm_type,
     output [31:0] out
 );
 
+    //
+    // Main
+    //
+
     assign out = imm(in, imm_type);
+
+    //
+    // Local Params
+    //
+
+    localparam [2:0] i_type = 3'b000;
+    localparam [2:0] b_type = 3'b001;
+    localparam [2:0] s_type = 3'b010;
+    localparam [2:0] u_type = 3'b011;
+    localparam [2:0] j_type = 3'b100;
+    localparam [2:0] shamt_type = 3'b101;
+    localparam [2:0] csr_type = 3'b110;
+
+    //
+    // Functions
+    //
 
     function [31:0] imm(input [31:0] in, input [2:0] imm_type);
        begin
         case (imm_type)
             // I-Type (include jalr)
-            3'b000: imm = i_imm(in);
+            i_type: imm = i_imm(in);
 
             // B-Type
-            3'b001: imm = b_imm(in);
+            b_type: imm = b_imm(in);
 
             // S-Type
-            3'b010: imm = s_imm(in);
+            s_type: imm = s_imm(in);
 
             // U-Type
-            3'b011: imm = u_imm(in);
+            u_type: imm = u_imm(in);
 
             // J-Type (doesn't include jalr)
-            3'b100: imm = j_imm(in);
+            j_type: imm = j_imm(in);
 
             // shamt_imm
-            // NOTE: maybe can pass it on as it is
-            // imm = in;
-            // as the lower 5 bits will be extracted within alu
-            3'b101: imm = shamt_imm(in);
+            shamt_type: imm = shamt_imm(in);
+
+            // z_imm (csr)
+            csr_type: imm = csr_imm(in);
 
             // default: 0
             default: imm = 32'd0;
@@ -87,6 +107,13 @@ module imm_extractor (
     function [31:0] shamt_imm(input [31:0] in);
         begin
             shamt_imm = { 27'd0, in[24:20] };
+        end
+    endfunction
+
+    // z_imm <= ext({ IR[19:15] })a
+    function [31:0] csr_imm(input [31:0] in);
+        begin
+            csr_imm = { 27'b0, in[19:15] };
         end
     endfunction
 endmodule

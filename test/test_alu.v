@@ -7,82 +7,94 @@ module test_alu ();
 
     initial begin
         // initial setup
-        assign data1 = 32'd4;
-        assign data2 = 32'd6;
+        data1 = 32'd4;
+        data2 = 32'd6;
 
         // ADD, ADDI, Load, Store, Branch, JAL, AUIPC
         // expect: 0000_000a
-        assign alu_op = 4'b0000;
+        alu_op = 4'b0000;
         #10
 
         // SUB
         // expect: ffff_fffe
-        assign alu_op = 4'b1000;
+        alu_op = 4'b1000;
         #10
 
         // XOR, XORI
         // expect: 0000_0002
-        assign alu_op = 4'b0100;
+        alu_op = 4'b0100;
         #10
 
-        // OR, ORI
+        // OR, ORI, CSRRS, CSRRSI
         // expect: 0000_0006
-        assign alu_op = 4'b0110;
+        alu_op = 4'b0110;
         #10
 
         // AND, ANDI
         // expect: 0000_0004
-        assign alu_op = 4'b0111;
+        alu_op = 4'b0111;
         #10
 
-        assign data1 = 32'hf000_0004;
-        assign data2 = 32'd4;
+        data1 = 32'hf000_0004;
+        data2 = 32'd4;
 
         // SLL, SLLI
         // expect: 0000_0040
-        assign alu_op = 4'b0001;
+        alu_op = 4'b0001;
         #10
 
         // SRL, SRLI
         // expect: 0f00_0000
-        assign alu_op = 4'b0101;
+        alu_op = 4'b0101;
         #10
 
         // SRA, SRAI
         // expect: ff00_0000
-        assign alu_op = 4'b1101;
+        alu_op = 4'b1101;
         #10
 
-        assign data1 = 32'h0000_1000;
-        assign data2 = 32'hf000_1000;
+        data1 = 32'h0000_1000;
+        data2 = 32'hf000_1000;
 
         // SLT, SLTI
         // expect: 0000_0000
-        assign alu_op = 4'b0010;
+        alu_op = 4'b0010;
         #10
 
         // SLTU, SLTIU
         // expect: 0000_0001
-        assign alu_op = 4'b0011;
+        alu_op = 4'b0011;
         #10
 
         // JALR
-        assign data2 = 32'd8;
-        assign alu_op = 4'b1010;
+        data2 = 32'd8;
+        alu_op = 4'b1010;
         // context: doesn't switch 0th bit
         // expect: 0000_0008
-        assign data1 = 32'd1;
+        data1 = 32'd1;
         #10
         // context: switch 0th bit
         // expect: 0000_000a
-        assign data1 = 32'd2;
+        data1 = 32'd2;
         #10
 
-        // LUI
+        // LUI, CSRRW, CSRRWI
         // expect: 0000_0008
-        assign alu_op = 4'b1001;
+        alu_op = 4'b1001;
+        #10
+
+        data1 = 32'h0000_1000;
+        data2 = 32'hf000_1000;
+
+        // CSRRC, CSRRCI
+        // 0000_0000
+        alu_op = 4'b1011;
         #10
 
         $finish;
+    end
+
+    initial begin
+        $monitor("t: %d, c: %h", $time, alu_output);
     end
 endmodule
