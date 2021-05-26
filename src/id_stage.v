@@ -1,7 +1,19 @@
 `include "ir_splitter.v"
 `include "imm_extractor.v"
 
-module id_stage (
+module id_stage
+#(
+    parameter [6:0] LUI_OP = 7'b0110111,
+    parameter [6:0] AUIPC_OP = 7'b0010111,
+    parameter [6:0] JAL_OP = 7'b1101111,
+    parameter [6:0] JALR_OP = 7'b1100111,
+    parameter [6:0] BRANCH_OP = 7'b1100011,
+    parameter [6:0] LOAD_OP = 7'b0000011,
+    parameter [6:0] STORE_OP = 7'b0100011,
+    parameter [6:0] I_TYPE_OP = 7'b0010011,
+    parameter [6:0] R_TYPE_OP = 7'b0110011,
+    parameter [6:0] CSR_OP = 7'b1110011
+) (
     // inputs from IF stage
     input [31:0] ir,
 
@@ -66,7 +78,7 @@ module id_stage (
         .out(imm)
     );
 
-    assign wr_reg_n = wr_reg_n_ctrl(opcode, rd);
+    assign wr_reg_n = wr_reg_n_ctrl(opcode, rd, funct3);
     assign wr_csr_n = wr_csr_n_ctrl(opcode, funct3);
 
     //
@@ -118,7 +130,7 @@ module id_stage (
         end
    endfunction
 
-   function wr_reg_n_ctrl(input [6:0] opcode, input [4:0] rd);
+   function wr_reg_n_ctrl(input [6:0] opcode, input [4:0] rd, input [2:0] funct3);
         // 0: write, 1: don't write
 
         // whitelist instead of blacklist to be more secure.
@@ -126,14 +138,14 @@ module id_stage (
 
         begin
             // might to add csr
-            is_lui = (opcode == lui_op);
-            is_auipc = (opcode == auipc_op);
-            is_i_type = (opcode == i_type_op);
-            is_r_type = (opcode == r_type_op);
-            is_load = (opcode == load_op);
-            is_jal = (opcode == jal_op);
-            is_jalr = (opcode == jalr_op);
-            is_csr = (opcode == csr_op); // NOTE: need to be careful for ebreak ecall
+            is_lui = (opcode == LUI_OP);
+            is_auipc = (opcode == AUIPC_OP);
+            is_i_type = (opcode == I_TYPE_OP);
+            is_r_type = (opcode == R_TYPE_OP);
+            is_load = (opcode == LOAD_OP);
+            is_jal = (opcode == JAL_OP);
+            is_jalr = (opcode == JALR_OP);
+            is_csr = (opcode == CSR_OP) && (funct3 != 3'b000);
 
             if (rd == 5'b00000) begin
                 // don't allow write to x0 (always 0)
@@ -150,7 +162,7 @@ module id_stage (
         begin
             // CSR instructions share the same opcode with ecall, ebreak instructions
             // ecall and ebreak have funct3 of 000 while CSR instruction doesn't
-            if ((opcode == csr_op) && (funct3 != 3'b000)) wr_csr_n_ctrl = 1'b0;
+            if ((opcode == CSR_OP) && (funct3 != 3'b000)) wr_csr_n_ctrl = 1'b0;
             else wr_csr_n_ctrl = 1'b1;
         end
     endfunction
