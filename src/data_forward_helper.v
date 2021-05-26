@@ -58,8 +58,8 @@ module data_forward_helper
                 prep_data_to_forward = sub;
             end else if (is_csr) begin
                 prep_data_to_forward = csr;
-            end else if (is_load && is_mem_stage) begin
-                prep_data_to_forward = sub;
+            end else if (is_load) begin
+                prep_data_to_forward = (is_mem_stage) ? sub : 32'bx;
             end else begin
                 // includes Store, Branch instructions
                 prep_data_to_forward = 32'bx;

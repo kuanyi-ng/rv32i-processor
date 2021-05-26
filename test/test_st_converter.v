@@ -4,7 +4,7 @@ module test_st_converter ();
 
     wire [31:0] data_to_store;
 
-    st_converter subject(.in(data), .format(funct3), .out(data_to_store));
+    st_converter subject(.in(data), .funct3(funct3), .out(data_to_store));
 
     initial begin
         assign data = 32'h1234_5678;

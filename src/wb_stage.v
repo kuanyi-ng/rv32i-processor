@@ -1,6 +1,16 @@
-`include "wb_ctrl.v"
-
-module wb_stage (
+module wb_stage
+#(
+    parameter [6:0] LUI_OP = 7'b0110111,
+    parameter [6:0] AUIPC_OP = 7'b0010111,
+    parameter [6:0] JAL_OP = 7'b1101111,
+    parameter [6:0] JALR_OP = 7'b1100111,
+    parameter [6:0] BRANCH_OP = 7'b1100011,
+    parameter [6:0] LOAD_OP = 7'b0000011,
+    parameter [6:0] STORE_OP = 7'b0100011,
+    parameter [6:0] I_TYPE_OP = 7'b0010011,
+    parameter [6:0] R_TYPE_OP = 7'b0110011,
+    parameter [6:0] CSR_OP = 7'b1110011
+) (
     // inputs from MEM
     input [6:0] opcode,
     input [31:0] c,
@@ -19,35 +29,32 @@ module wb_stage (
     // Main
     //
 
-    wire write;
-    wire [1:0] data_to_reg_sel;
-
-    wb_ctrl wb_ctrl_inst(
-        .opcode(opcode),
-        .data_to_reg_sel(data_to_reg_sel)
-    );
-
-    assign data_to_reg = data_to_reg_prep(data_to_reg_sel, c, d, pc4, z_);
-
+    assign data_to_reg = data_to_reg_prep(opcode, c, d, pc4, z_);
     assign data_to_csr = c;
 
     //
     // Functions
     //
+
     function [31:0] data_to_reg_prep(
-        input [1:0] sel,
+        input [6:0] opcode,
         input [31:0] c,
         input [31:0] d,
         input [31:0] pc4,
         input [31:0] z_
     );
+        reg is_load, is_jal, is_jalr, is_csr;
+
         begin
-            case (sel)
-                2'b00: data_to_reg_prep = c;
-                2'b01: data_to_reg_prep = d;
-                2'b10: data_to_reg_prep = pc4;
-                2'b11: data_to_reg_prep = z_;
-            endcase
+            is_load = (opcode == LOAD_OP);
+            is_jal = (opcode == JAL_OP);
+            is_jalr = (opcode == JALR_OP);
+            is_csr = (opcode == CSR_OP);    // NOTE: need to be careful of ecall, ebreak
+
+            if (is_load) data_to_reg_prep = d;
+            else if (is_jal || is_jalr) data_to_reg_prep = pc4;
+            else if (is_csr) data_to_reg_prep = z_;
+            else data_to_reg_prep = c;
         end
     endfunction
 endmodule

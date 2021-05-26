@@ -8,14 +8,46 @@ set target_library $LIB_MAX_FILE
 # Top Module
 # read_verilog ./top.v
 # Analyze and Elaborate Parameterized Modules
+
+analyze -format verilog ./imm_extractor.v
+elaborate imm_extractor
+
+analyze -format verilog ./id_stage.v
+elaborate id_stage
+
+analyze -format verilog ./ex_ctrl.v
+elaborate ex_ctrl
+
+analyze -format verilog ./alu.v
+elaborate alu
+
+analyze -format verilog ./branch_alu.v
+elaborate branch_alu
+
+analyze -format verilog ./ex_stage.v
+elaborate ex_stage
+
 analyze -format verilog ./data_forward_helper.v
 elaborate data_forward_helper
+
+analyze -format verilog ./mem_ctrl.v
+elaborate mem_ctrl
+
+analyze -format verilog ./mem_stage.v
+elaborate mem_stage
+
+analyze -format verilog ./wb_stage.v
+elaborate wb_stage
+
 analyze -format verilog ./DW_ram_2r_w_s_dff.v
 elaborate DW_ram_2r_w_s_dff
+
 analyze -format verilog ./rf32x32.v
 elaborate rf32x32
+
 analyze -format verilog ./reg32.v
 elaborate reg32
+
 analyze -format verilog ./top.v
 elaborate top
 

@@ -17,7 +17,7 @@ module mie_reg (
     reg msie, ssie, usie;
 
     always @(posedge clk or negedge rst_n) begin
-        if (~rst_n) begin
+        if (!rst_n) begin
             { meie, seie, ueie } <= 3'b000;
             { mtie, stie, utie } <= 3'b000;
             { msie, ssie, usie } <= 3'b000;

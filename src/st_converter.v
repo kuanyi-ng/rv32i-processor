@@ -1,13 +1,13 @@
 module st_converter (
     input [31:0] in,
-    input [2:0] format, // ir[14:12]: funct3
+    input [2:0] funct3,
     output [31:0] out
 );
-    assign out = prep_st_data(in, format);
+    assign out = prep_st_data(in, funct3);
 
-    function [31:0] prep_st_data(input [31:0] raw_data, input [2:0] format);
+function [31:0] prep_st_data(input [31:0] raw_data, input [2:0] funct3);
         begin
-            case (format)
+            case (funct3)
                 // SB
                 // { 4{byte} }
                 3'b000: prep_st_data = { 4{raw_data[7:0]} };

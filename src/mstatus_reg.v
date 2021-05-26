@@ -17,9 +17,9 @@ module mstatus_reg (
 
     // Machine Status Register
     // Global interrupt-enable bits     : MIE, SIE, UIE
-    reg mie = 1'b1;
-    reg sie = 1'b0;
-    reg uie = 1'b0;
+    reg mie;
+    reg sie;
+    reg uie;
 
     // Previous interrupt-enable bits   : MPIE, SPIE, UPIE
     reg mpie, spie, upie;
@@ -49,12 +49,12 @@ module mstatus_reg (
     localparam tsr = 1'b0;
 
     always @(posedge clk or negedge rst_n) begin
-        if (~rst_n) begin
+        if (!rst_n) begin
             // on reset,
             // priviledge mode is set to M
             // MIE is reset to 0
             current_mode <= machine_mode;
-            { mie, sie, uie } <= 3'b000;
+            { mie, sie, uie } <= 3'b100;
             { mpie, spie, upie } <= 3'b000;
             mpp <= 2'b00;
             spp <= 1'b0;

@@ -1,4 +1,14 @@
-module imm_extractor (
+module imm_extractor
+#(
+    parameter [2:0] I_TYPE = 3'b000,
+    parameter [2:0] B_TYPE = 3'b001,
+    parameter [2:0] S_TYPE = 3'b010,
+    parameter [2:0] U_TYPE = 3'b011,
+    parameter [2:0] J_TYPE = 3'b100,
+    parameter [2:0] SHAMT_TYPE = 3'b101,
+    parameter [2:0] CSR_TYPE = 3'b110,
+    parameter [2:0] DEFAULT_TYPE = 3'b111
+) (
     input [31:0] in,    // ir
     input [2:0] imm_type,
     output [31:0] out
@@ -11,18 +21,6 @@ module imm_extractor (
     assign out = imm(in, imm_type);
 
     //
-    // Local Params
-    //
-
-    localparam [2:0] i_type = 3'b000;
-    localparam [2:0] b_type = 3'b001;
-    localparam [2:0] s_type = 3'b010;
-    localparam [2:0] u_type = 3'b011;
-    localparam [2:0] j_type = 3'b100;
-    localparam [2:0] shamt_type = 3'b101;
-    localparam [2:0] csr_type = 3'b110;
-
-    //
     // Functions
     //
 
@@ -30,25 +28,25 @@ module imm_extractor (
        begin
         case (imm_type)
             // I-Type (include jalr)
-            i_type: imm = i_imm(in);
+            I_TYPE: imm = i_imm(in);
 
             // B-Type
-            b_type: imm = b_imm(in);
+            B_TYPE: imm = b_imm(in);
 
             // S-Type
-            s_type: imm = s_imm(in);
+            S_TYPE: imm = s_imm(in);
 
             // U-Type
-            u_type: imm = u_imm(in);
+            U_TYPE: imm = u_imm(in);
 
             // J-Type (doesn't include jalr)
-            j_type: imm = j_imm(in);
+            J_TYPE: imm = j_imm(in);
 
             // shamt_imm
-            shamt_type: imm = shamt_imm(in);
+            SHAMT_TYPE: imm = shamt_imm(in);
 
             // z_imm (csr)
-            csr_type: imm = csr_imm(in);
+            CSR_TYPE: imm = csr_imm(in);
 
             // default: 0
             default: imm = 32'd0;

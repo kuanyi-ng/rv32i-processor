@@ -1,4 +1,19 @@
-module alu (
+module alu
+#(
+    parameter [3:0] ADD = 4'b0000,
+    parameter [3:0] SLL = 4'b0001,
+    parameter [3:0] SLT = 4'b0010,
+    parameter [3:0] SLTU = 4'b0011,
+    parameter [3:0] XOR = 4'b0100,
+    parameter [3:0] SRL = 4'b0101,
+    parameter [3:0] OR = 4'b0110,
+    parameter [3:0] AND = 4'b0111,
+    parameter [3:0] SUB = 4'b1000,
+    parameter [3:0] CP_IN2 = 4'b1001,
+    parameter [3:0] JALR = 4'b1010,
+    parameter [3:0] CSRRC = 4'b1011,
+    parameter [3:0] SRA = 4'b1101
+) (
     input [31:0] in1,
     input [31:0] in2,
     input [3:0] alu_op,
@@ -17,45 +32,45 @@ module alu (
 
             case (alu_op)
                 // ADD, ADDI, Load, Store, Branch, JAL, AUIPC
-                4'b0000: alu_out = in1 + in2;
+                ADD: alu_out = in1 + in2;
 
                 // SLL, SLLI
-                4'b0001: alu_out = in1 << { 27'b0, in2[4:0] };
+                SLL: alu_out = in1 << { 27'b0, in2[4:0] };
 
                 // SLT, SLTI
-                4'b0010: alu_out = (s_in1 < s_in2) ? 32'd1 : 32'd0;
+                SLT: alu_out = (s_in1 < s_in2) ? 32'd1 : 32'd0;
 
                 // SLTU, SLTIU
-                4'b0011: alu_out = (in1 < in2) ? 32'd1 : 32'd0;
+                SLTU: alu_out = (in1 < in2) ? 32'd1 : 32'd0;
 
                 // XOR, XORI
-                4'b0100: alu_out = in1 ^ in2;
+                XOR: alu_out = in1 ^ in2;
 
                 // SRL, SRLI
-                4'b0101: alu_out = in1 >> { 27'b0, in2[4:0] };
+                SRL: alu_out = in1 >> { 27'b0, in2[4:0] };
 
                 // OR, ORI, CSRRS, CSRRSI
-                4'b0110: alu_out = in1 | in2;
+                OR: alu_out = in1 | in2;
 
                 // AND, ANDI
-                4'b0111: alu_out = in1 & in2;
+                AND: alu_out = in1 & in2;
 
                 // SUB
-                4'b1000: alu_out = in1 - in2;
+                SUB: alu_out = in1 - in2;
 
                 // LUI, CSRRW, CSRRWI
-                4'b1001: alu_out = in2;
+                CP_IN2: alu_out = in2;
 
                 // JALR
                 // signed to unsigned assignment occurs. (VER-318)
-                4'b1010: alu_out = (in1 + in2) & ~1;
+                JALR: alu_out = (in1 + in2) & ~1;
 
                 // CSRRC, CSRRCI
-                4'b1011: alu_out = in1 & ~in2;
+                CSRRC: alu_out = in1 & ~in2;
 
                 // SRA, SRAI
                 // signed to unsigned assignment occurs. (VER-318)
-                4'b1101: alu_out = s_in1 >>> { 27'b0, in2[4:0] };
+                SRA: alu_out = s_in1 >>> { 27'b0, in2[4:0] };
 
                 // default: false
                 default: alu_out = 32'b0;
