@@ -55,7 +55,7 @@ module ex_stage
     localparam [2:0] LT = 3'b100;
     localparam [2:0] GE = 3'b101;
     localparam [2:0] LTU = 3'b110;
-    localparam [2:0] GEU = 3'b11;
+    localparam [2:0] GEU = 3'b111;
 
     wire [31:0] in1;
     wire [31:0] in2;
