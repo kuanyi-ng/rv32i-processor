@@ -3,16 +3,8 @@
 `include "ld_converter.v"
 
 module mem_stage #(
-    parameter [6:0] LUI_OP = 7'b0110111,
-    parameter [6:0] AUIPC_OP = 7'b0010111,
-    parameter [6:0] JAL_OP = 7'b1101111,
-    parameter [6:0] JALR_OP = 7'b1100111,
-    parameter [6:0] BRANCH_OP = 7'b1100011,
     parameter [6:0] LOAD_OP = 7'b0000011,
-    parameter [6:0] STORE_OP = 7'b0100011,
-    parameter [6:0] I_TYPE_OP = 7'b0010011,
-    parameter [6:0] R_TYPE_OP = 7'b0110011,
-    parameter [6:0] CSR_OP = 7'b1110011
+    parameter [6:0] STORE_OP = 7'b0100011
 ) (
     // inputs from Memory Module
     input data_mem_ready_n,  // 0: ready to access memory, 1: not ready
