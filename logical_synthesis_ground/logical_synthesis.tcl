@@ -12,6 +12,10 @@ analyze -format verilog ./data_forward_helper.v
 elaborate data_forward_helper
 analyze -format verilog ./DW_ram_2r_w_s_dff.v
 elaborate DW_ram_2r_w_s_dff
+analyze -format verilog ./rf32x32.v
+elaborate rf32x32
+analyze -format verilog ./reg32.v
+elaborate reg32
 analyze -format verilog ./top.v
 elaborate top
 
