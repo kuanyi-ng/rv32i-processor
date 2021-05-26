@@ -49,7 +49,7 @@ module mstatus_reg (
     localparam tsr = 1'b0;
 
     always @(posedge clk or negedge rst_n) begin
-        if (~rst_n) begin
+        if (!rst_n) begin
             // on reset,
             // priviledge mode is set to M
             // MIE is reset to 0

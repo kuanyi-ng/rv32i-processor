@@ -17,7 +17,7 @@ module mip_reg (
     reg msip, ssip, usip;
 
     always @(posedge clk or negedge rst_n) begin
-        if (~rst_n) begin
+        if (!rst_n) begin
             { meip, seip, ueip } <= 3'b000;
             { mtip, stip, utip } <= 3'b000;
             { msip, ssip, usip } <= 3'b000;
