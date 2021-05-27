@@ -33,7 +33,7 @@ module branch_alu
                 // NE
                 NE: branch_alu_out = (in1 != in2);
 
-                // JAL, JALR
+                // JAL, JALR, MRET
                 JUMP: branch_alu_out = 1'b1;
 
                 // Other instructions that doesn't need to branch / jump
