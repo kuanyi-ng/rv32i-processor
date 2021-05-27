@@ -29,7 +29,8 @@ module id_stage
     output [11:0] csr_addr,
     output [31:0] imm,
     output wr_reg_n,    // 0: write, 1: don't write
-    output wr_csr_n     // 0: write, 1: don't write
+    output wr_csr_n,    // 0: write, 1: don't write
+    output is_mret      // 0: not mret, 1: mret
 );
 
     //
@@ -44,6 +45,8 @@ module id_stage
     localparam [2:0] SHAMT_TYPE = 3'b101;
     localparam [2:0] CSR_TYPE = 3'b110;
     localparam [2:0] DEFAULT_TYPE = 3'b111;
+
+    localparam [31:0] MRET_IR = 32'b0011000_00010_00000_000_00000_1110011;
 
     //
     // Main
@@ -80,6 +83,8 @@ module id_stage
 
     assign wr_reg_n = wr_reg_n_ctrl(opcode, rd, funct3);
     assign wr_csr_n = wr_csr_n_ctrl(opcode, funct3);
+
+    assign is_mret = (ir == MRET_IR);
 
     //
     // Functions

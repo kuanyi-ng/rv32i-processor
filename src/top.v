@@ -75,6 +75,7 @@ module top (
     wire wr_csr_n_id_stage;
     wire wr_reg_n_id;
     wire wr_csr_n_id;
+    wire is_mret_id;
 
     // ID-EX
     wire [31:0] pc_from_id;
@@ -205,7 +206,8 @@ module top (
         .csr_addr(csr_addr_id),
         .imm(imm_id),
         .wr_reg_n(wr_reg_n_id_stage),
-        .wr_csr_n(wr_csr_n_id_stage)
+        .wr_csr_n(wr_csr_n_id_stage),
+        .is_mret(is_mret_id)
     );
 
     id_data_picker id_data_picker_inst(
@@ -417,6 +419,7 @@ module top (
         .csr_wr_addr(csr_wr_addr),
         .csr_data_in(csr_data_in),
         .wr_csr_n(wr_csr_n_from_mem),
+        .is_mret(is_mret_id),
         .csr_out(z_csrs)
     );
 
