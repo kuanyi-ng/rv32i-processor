@@ -10,7 +10,7 @@ module ex_ctrl
     parameter [6:0] STORE_OP = 7'b0100011,
     parameter [6:0] I_TYPE_OP = 7'b0010011,
     parameter [6:0] R_TYPE_OP = 7'b0110011,
-    parameter [6:0] CSR_OP = 7'b1110011,
+    parameter [6:0] SYSTEM_OP = 7'b1110011,
 
     // ALU OP
     parameter [3:0] ADD = 4'b0000,
@@ -80,7 +80,7 @@ module ex_ctrl
 
                 R_TYPE_OP: alu_ins_ctrl = { data1, data2 };
 
-                CSR_OP: begin
+                SYSTEM_OP: begin
                     // funct3[2]: 1 => csr with imm
                     if (funct3_2) alu_ins_ctrl = { z_, imm };
                     // funct3[2]: 0 => csr with register
@@ -120,7 +120,7 @@ module ex_ctrl
             is_jalr = (opcode == JALR_OP);
             is_reg_reg_ir = (opcode == R_TYPE_OP);
             is_reg_imm_ir = (opcode == I_TYPE_OP);
-            is_csr_ir = (opcode == CSR_OP); // NOTE: need to be careful for ecall, ebreak
+            is_csr_ir = (opcode == SYSTEM_OP); // NOTE: need to be careful for ecall, ebreak
 
             if (is_lui) begin
                 alu_op_ctrl = 4'b1001;

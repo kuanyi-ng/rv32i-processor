@@ -12,7 +12,7 @@ module id_stage
     parameter [6:0] STORE_OP = 7'b0100011,
     parameter [6:0] I_TYPE_OP = 7'b0010011,
     parameter [6:0] R_TYPE_OP = 7'b0110011,
-    parameter [6:0] CSR_OP = 7'b1110011
+    parameter [6:0] SYSTEM_OP = 7'b1110011
 ) (
     // inputs from IF stage
     input [31:0] ir,
@@ -122,7 +122,7 @@ module id_stage
                         imm_type_from = I_TYPE;
                 end
 
-                CSR_OP: imm_type_from = CSR_TYPE;
+                SYSTEM_OP: imm_type_from = CSR_TYPE;
 
                 // default: anything not from above
                 default: imm_type_from = DEFAULT_TYPE;
@@ -145,7 +145,7 @@ module id_stage
             is_load = (opcode == LOAD_OP);
             is_jal = (opcode == JAL_OP);
             is_jalr = (opcode == JALR_OP);
-            is_csr = (opcode == CSR_OP) && (funct3 != 3'b000);
+            is_csr = (opcode == SYSTEM_OP) && (funct3 != 3'b000);
 
             if (rd == 5'b00000) begin
                 // don't allow write to x0 (always 0)
@@ -162,7 +162,7 @@ module id_stage
         begin
             // CSR instructions share the same opcode with ecall, ebreak instructions
             // ecall and ebreak have funct3 of 000 while CSR instruction doesn't
-            if ((opcode == CSR_OP) && (funct3 != 3'b000)) wr_csr_n_ctrl = 1'b0;
+            if ((opcode == SYSTEM_OP) && (funct3 != 3'b000)) wr_csr_n_ctrl = 1'b0;
             else wr_csr_n_ctrl = 1'b1;
         end
     endfunction

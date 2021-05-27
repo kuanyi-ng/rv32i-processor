@@ -9,7 +9,7 @@ module wb_stage
     parameter [6:0] STORE_OP = 7'b0100011,
     parameter [6:0] I_TYPE_OP = 7'b0010011,
     parameter [6:0] R_TYPE_OP = 7'b0110011,
-    parameter [6:0] CSR_OP = 7'b1110011
+    parameter [6:0] SYSTEM_OP = 7'b1110011
 ) (
     // inputs from MEM
     input [6:0] opcode,
@@ -49,7 +49,7 @@ module wb_stage
             is_load = (opcode == LOAD_OP);
             is_jal = (opcode == JAL_OP);
             is_jalr = (opcode == JALR_OP);
-            is_csr = (opcode == CSR_OP);    // NOTE: need to be careful of ecall, ebreak
+            is_csr = (opcode == SYSTEM_OP);    // NOTE: need to be careful of ecall, ebreak
 
             if (is_load) data_to_reg_prep = d;
             else if (is_jal || is_jalr) data_to_reg_prep = pc4;

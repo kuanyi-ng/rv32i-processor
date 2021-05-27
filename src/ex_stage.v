@@ -13,7 +13,7 @@ module ex_stage
     parameter [6:0] STORE_OP = 7'b0100011,
     parameter [6:0] I_TYPE_OP = 7'b0010011,
     parameter [6:0] R_TYPE_OP = 7'b0110011,
-    parameter [6:0] CSR_OP = 7'b1110011
+    parameter [6:0] SYSTEM_OP = 7'b1110011
 ) (
     // inputs from ID stage
     input [6:0] opcode,
@@ -72,7 +72,7 @@ module ex_stage
         .STORE_OP(STORE_OP),
         .I_TYPE_OP(I_TYPE_OP),
         .R_TYPE_OP(R_TYPE_OP),
-        .CSR_OP(CSR_OP),
+        .SYSTEM_OP(SYSTEM_OP),
         .ADD(ADD),
         .OR(OR),
         .CP_IN2(CP_IN2),
