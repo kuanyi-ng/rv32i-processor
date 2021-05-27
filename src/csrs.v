@@ -124,9 +124,10 @@ module csrs (
         .out(mscratch)
     );
 
+    localparam [31:0] mepc_reset_val = 32'bx;
     wire wr_mepc = wr_csr && (csr_wr_addr == mepc_addr);
     wire [31:0] mepc;
-    reg32 mepc_reg_inst(
+    reg32 #(.rst_value(mepc_reset_val)) mepc_reg_inst(
         .clk(clk),
         .rst_n(rst_n),
         .in(csr_data_in),
