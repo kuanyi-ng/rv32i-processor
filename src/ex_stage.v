@@ -76,6 +76,7 @@ module ex_stage
         .ADD(ADD),
         .OR(OR),
         .CP_IN2(CP_IN2),
+        .JALR(JALR),
         .CSRRC(CSRRC),
         .JUMP(JUMP),
         .NO_JUMP(NO_JUMP)

@@ -96,14 +96,15 @@ module ex_ctrl
     function [2:0] branch_alu_op_ctrl(input [6:0] opcode, input [2:0] funct3);
         // first check if instruction is one of the following:
         // JAL. JALR, Branch
-        reg is_jal, is_jalr, is_branch;
+        reg is_jal, is_jalr, is_branch, is_system_call;
 
         begin
             is_jal = (opcode == JAL_OP);
             is_jalr = (opcode == JALR_OP);
             is_branch = (opcode == BRANCH_OP);
+            is_system_call = (opcode == SYSTEM_OP) && (funct3 == 3'b000); // mret, ecall, ebreak
 
-            if (is_jal || is_jalr) begin
+            if (is_jal || is_jalr || is_system_call) begin
                 branch_alu_op_ctrl = JUMP;
             end else if (is_branch) begin
                 branch_alu_op_ctrl = funct3;
