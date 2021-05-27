@@ -628,13 +628,13 @@
             <td>
                 C ← PC + B_imm
                 <br />
-                jump_or_branch = (A == B)
+                jump = (A == B)
             </td>
             <!-- MEM -->
             <td rowspan=6></td>
             <!-- WB -->
             <td rowspan=6>
-                if (jump_or_branch) PC ← C
+                if (jump) PC ← C
             </td>
         </tr>
         <tr>
@@ -646,7 +646,7 @@
             <td>
                 C ← PC + B_imm
                 <br />
-                jump_or_branch = (A != B)
+                jump = (A != B)
             </td>
             <!-- MEM -->
             <!-- WB -->
@@ -660,7 +660,7 @@
             <td>
                 C ← PC + B_imm
                 <br />
-                jump_or_branch = (A < B) ... signed
+                jump = (A < B) ... signed
             </td>
             <!-- MEM -->
             <!-- WB -->
@@ -674,7 +674,7 @@
             <td>
                 C ← PC + B_imm
                 <br />
-                jump_or_branch = (A >= B) ... signed
+                jump = (A >= B) ... signed
             </td>
             <!-- MEM -->
             <!-- WB -->
@@ -688,7 +688,7 @@
             <td>
                 C ← PC + B_imm
                 <br />
-                jump_or_branch = (A < B) ... unsigned
+                jump = (A < B) ... unsigned
             </td>
             <!-- MEM -->
             <!-- WB -->
@@ -702,7 +702,7 @@
             <td>
                 C ← PC + B_imm
                 <br />
-                jump_or_branch = (A >= B) ... signed
+                jump = (A >= B) ... signed
             </td>
             <!-- MEM -->
             <!-- WB -->
@@ -710,8 +710,8 @@
     </tbody>
 </table>
 
-## Extra?
-> NOTE: Probably don't have to implement these instructions for a basic processor.
+## Extra Instruction
+> NOTE: These instructions are not required for a basic processor (running MiBench).
 
 <table>
     <thead>
@@ -726,7 +726,6 @@
     </thead>
     <tbody>
         <tr>
-            <!-- TODO: what does csrrw do? -->
             <!-- instruction -->
             <td>csrrw [I]</td>
             <!-- IF -->
@@ -755,7 +754,6 @@
             </td>
         </tr>
         <tr>
-            <!-- ZODO: what does csrrs do? -->
             <!-- instruction -->
             <td>csrrs [I]</td>
             <!-- IF -->
@@ -778,7 +776,6 @@
             </td>
         </tr>
         <tr>
-            <!-- TODO: what does csrrc do? -->
             <!-- instruction -->
             <td>csrrc [I]</td>
             <!-- IF -->
@@ -801,7 +798,6 @@
             </td>
         </tr>
         <tr>
-            <!-- TODO: what does csrrwi do? -->
             <!-- instruction -->
             <td>csrrwi [U]</td>
             <!-- IF -->
@@ -824,7 +820,6 @@
             </td>
         </tr>
         <tr>
-            <!-- TODO: what does csrrsi do? -->
             <!-- instruction -->
             <td>csrrsi [U]</td>
             <!-- IF -->
@@ -847,7 +842,6 @@
             </td>
         </tr>
         <tr>
-            <!-- TODO: what does csrrci do? -->
             <!-- instruction -->
             <td>csrrci [U]</td>
             <!-- IF -->
@@ -918,13 +912,31 @@
             <!-- WB -->
         </tr>
         <tr>
-            <!-- TODO: what does mret do? -->
+            <!-- Return from Machine-Mode Exception Handler -->
             <!-- instruction -->
             <td>mret [?]</td>
             <!-- IF -->
+            <td>
+                IR ← mem[PC]
+                <br />
+                PC ← PC + 4
+            </td>
             <!-- ID -->
+            <td>
+                Z ← CSRs[mpec]
+                <br />
+                mstatus.mie ← mstatus.mpie
+                <br />
+                mstatus.mpie ← 1
+            </td>
             <!-- EX -->
-            <td></td>
+            <td>
+                C ← Z
+                <br />
+                jump ← 1
+                <br />
+                PC ← C
+            </td>
             <!-- MEM -->
             <td></td>
             <!-- WB -->
