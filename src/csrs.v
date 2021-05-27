@@ -165,12 +165,12 @@ module csrs (
         .wr_mip(wr_mip),
         .mip(mip)
     );
-    
+
     // NOTE: read mepc during mret instruction
     // - the csr_addr decoded from mepc = medeleg
     // - medeleg register doesn't exist in a M-only implementation
-    // - that's why mepc is forced to read instead of reading from csr_addr
-    assign csr_out = (is_mret) ? mepc : csr_read_from(csr_addr);
+    // - but csr_addr is updated to point to mepc instead of medeleg in id_stage
+    assign csr_out = csr_read_from(csr_addr);
 
     //
     // Function
