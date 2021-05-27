@@ -17,6 +17,9 @@ module csrs (
     input [31:0] csr_data_in,
     input wr_csr_n,
 
+    // MRET
+    input is_mret,
+
     // Outputs
     output [31:0] csr_out
 );
@@ -90,6 +93,7 @@ module csrs (
     mstatus_reg mstatus_reg_inst(
         .clk(clk),
         .rst_n(rst_n),
+        .is_mret(is_mret),
         .mstatus_in(csr_data_in),
         .wr_mstatus(wr_mstatus),
         .priviledge_mode(priviledge_mode),
@@ -161,44 +165,48 @@ module csrs (
         .mip(mip)
     );
     
-    assign csr_out = csr_read_value(csr_addr);
+    // NOTE: read mepc during mret instruction
+    // - the csr_addr decoded from mepc = medeleg
+    // - medeleg register doesn't exist in a M-only implementation
+    // - that's why mepc is forced to read instead of reading from csr_addr
+    assign csr_out = (is_mret) ? mepc : csr_read_from(csr_addr);
 
     //
     // Function
     //
 
-    function [31:0] csr_read_value(input [11:0] csr_addr);
+    function [31:0] csr_read_from(input [11:0] csr_addr);
         begin
             case (csr_addr)
-                mvendorid_addr: csr_read_value = mvendorid;
+                mvendorid_addr: csr_read_from = mvendorid;
 
-                marchid_addr: csr_read_value = marchid;
+                marchid_addr: csr_read_from = marchid;
 
-                mimpid_addr: csr_read_value = mimpid;
+                mimpid_addr: csr_read_from = mimpid;
 
-                mhartid_addr: csr_read_value = mhartid;
+                mhartid_addr: csr_read_from = mhartid;
 
-                mstatus_addr: csr_read_value = mstatus;
+                mstatus_addr: csr_read_from = mstatus;
 
-                misa_addr: csr_read_value = misa;
+                misa_addr: csr_read_from = misa;
 
-                mie_addr: csr_read_value = mie;
+                mie_addr: csr_read_from = mie;
 
-                mtvec_addr: csr_read_value = mtvec;
+                mtvec_addr: csr_read_from = mtvec;
 
-                mcounteren_addr: csr_read_value = mcounteren;
+                mcounteren_addr: csr_read_from = mcounteren;
 
-                mscratch_addr: csr_read_value = mscratch;
+                mscratch_addr: csr_read_from = mscratch;
 
-                mepc_addr: csr_read_value = mepc;
+                mepc_addr: csr_read_from = mepc;
 
-                mcause_addr: csr_read_value = mcause;
+                mcause_addr: csr_read_from = mcause;
 
-                mtval_addr: csr_read_value = mtval;
+                mtval_addr: csr_read_from = mtval;
 
-                mip_addr: csr_read_value = mip;
+                mip_addr: csr_read_from = mip;
 
-                default: csr_read_value = 32'b0;
+                default: csr_read_from = 32'b0;
             endcase
         end
     endfunction
