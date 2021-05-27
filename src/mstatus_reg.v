@@ -2,6 +2,8 @@ module mstatus_reg (
     input clk,
     input rst_n,
 
+    input is_mret,
+
     input [31:0] mstatus_in,
     input wr_mstatus,
 
@@ -56,8 +58,11 @@ module mstatus_reg (
             current_mode <= machine_mode;
             { mie, sie, uie } <= 3'b100;
             { mpie, spie, upie } <= 3'b000;
-            mpp <= 2'b00;
+            // User-mode not supported
+            mpp <= machine_mode;
             spp <= 1'b0;
+        end else if (is_mret) begin
+            { mie, mpie } <= { mpie, 1'b1 };
         end else if (wr_mstatus) begin
             // TODO: not sure how to update current_mode
             { mie, sie, uie } <= { mstatus_in[3], mstatus_in[1:0] };
