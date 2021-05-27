@@ -28,4 +28,7 @@ check_mepc:
     # stop program
     j   loop
 
+    # 80010000 :00 00 18 08
+    # 80010004 :00 00 18 80
+
 	.data    # data section
