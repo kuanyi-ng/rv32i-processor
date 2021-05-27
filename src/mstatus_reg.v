@@ -1,5 +1,4 @@
 module mstatus_reg (
-    input clk,
     input rst_n,
 
     input is_mret,
@@ -50,32 +49,32 @@ module mstatus_reg (
     // Trap SRET                        : TSR (hardwired to 0 if S-mode not supported)
     localparam tsr = 1'b0;
 
-    always @(posedge clk or negedge rst_n) begin
+    always @* begin
         if (!rst_n) begin
             // on reset,
             // priviledge mode is set to M
             // MIE is reset to 0
-            current_mode <= machine_mode;
-            { mie, sie, uie } <= 3'b100;
-            { mpie, spie, upie } <= 3'b000;
+            current_mode = machine_mode;
+            { mie, sie, uie } = 3'b100;
+            { mpie, spie, upie } = 3'b000;
             // User-mode not supported
-            mpp <= machine_mode;
-            spp <= 1'b0;
+            mpp = machine_mode;
+            spp = 1'b0;
         end else if (is_mret) begin
-            { mie, mpie } <= { mpie, 1'b1 };
+            { mie, mpie } = { mpie, 1'b1 };
         end else if (wr_mstatus) begin
             // TODO: not sure how to update current_mode
-            { mie, sie, uie } <= { mstatus_in[3], mstatus_in[1:0] };
-            { mpie, spie, upie } <= { mstatus_in[7], mstatus_in[5:4] };
-            mpp <= mstatus_in[12:11];
-            spp <= mstatus_in[8];
+            { mie, sie, uie } = { mstatus_in[3], mstatus_in[1:0] };
+            { mpie, spie, upie } = { mstatus_in[7], mstatus_in[5:4] };
+            mpp = mstatus_in[12:11];
+            spp = mstatus_in[8];
         end else begin
             // No interruption
-            current_mode <= current_mode;
-            { mie, sie, uie } <= { mie, sie, uie };
-            { mpie, spie, upie } <= { mpie, spie, upie };
-            mpp <= mpp;
-            spp <= spp;
+            current_mode = current_mode;
+            { mie, sie, uie } = { mie, sie, uie };
+            { mpie, spie, upie } = { mpie, spie, upie };
+            mpp = mpp;
+            spp = spp;
         end
     end
 

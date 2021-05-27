@@ -6,7 +6,6 @@
 `include "csr_reg.v"
 
 module csrs (
-    input clk,
     input rst_n,
 
     // Inputs
@@ -91,7 +90,6 @@ module csrs (
     wire [1:0] priviledge_mode;
     wire [31:0] mstatus;
     mstatus_reg mstatus_reg_inst(
-        .clk(clk),
         .rst_n(rst_n),
         .is_mret(is_mret),
         .mstatus_in(csr_data_in),
@@ -103,7 +101,6 @@ module csrs (
     wire wr_mie = wr_csr && (csr_wr_addr == mie_addr);
     wire [31:0] mie;
     mie_reg mie_reg_inst(
-        .clk(clk),
         .rst_n(rst_n),
         .mie_in(csr_data_in),
         .wr_mie(wr_mie),
@@ -155,7 +152,6 @@ module csrs (
     wire wr_mip = wr_csr && (csr_wr_addr == mip_addr);
     wire [31:0] mip;
     mip_reg mip_reg_inst(
-        .clk(clk),
         .rst_n(rst_n),
         .mip_in(csr_data_in),
         .wr_mip(wr_mip),

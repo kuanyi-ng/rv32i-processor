@@ -1,5 +1,4 @@
 module mie_reg (
-    input clk,
     input rst_n,
 
     input [31:0] mie_in,
@@ -16,19 +15,19 @@ module mie_reg (
     // Software Interrupt-Enable
     reg msie, ssie, usie;
 
-    always @(posedge clk or negedge rst_n) begin
+    always @* begin
         if (!rst_n) begin
-            { meie, seie, ueie } <= 3'b000;
-            { mtie, stie, utie } <= 3'b000;
-            { msie, ssie, usie } <= 3'b000;
+            { meie, seie, ueie } = 3'b000;
+            { mtie, stie, utie } = 3'b000;
+            { msie, ssie, usie } = 3'b000;
         end else if (wr_mie) begin
-            { meie ,seie, ueie } <= { mie_in[11], mie_in[9:8] };
-            { mtie, stie, utie } <= { mie_in[7], mie_in[5:4] };
-            { msie, ssie, usie } <= { mie_in[3], mie_in[1:0] };
+            { meie ,seie, ueie } = { mie_in[11], mie_in[9:8] };
+            { mtie, stie, utie } = { mie_in[7], mie_in[5:4] };
+            { msie, ssie, usie } = { mie_in[3], mie_in[1:0] };
         end else begin
-            { meie, seie, ueie } <= { meie, seie, ueie };
-            { mtie, stie, utie } <= { mtie, stie, utie };
-            { msie, ssie, usie } <= { msie, ssie, usie };
+            { meie, seie, ueie } = { meie, seie, ueie };
+            { mtie, stie, utie } = { mtie, stie, utie };
+            { msie, ssie, usie } = { msie, ssie, usie };
         end
     end
 
