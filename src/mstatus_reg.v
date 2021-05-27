@@ -67,7 +67,7 @@ module mstatus_reg (
             // TODO: not sure how to update current_mode
             { mie, sie, uie } <= { mstatus_in[3], mstatus_in[1:0] };
             { mpie, spie, upie } <= { mstatus_in[7], mstatus_in[5:4] };
-            mpp <= mstatus_in[10:9];
+            mpp <= mstatus_in[12:11];
             spp <= mstatus_in[8];
         end else begin
             // No interruption
