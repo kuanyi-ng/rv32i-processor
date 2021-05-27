@@ -120,7 +120,7 @@ module ex_ctrl
             is_jalr = (opcode == JALR_OP);
             is_reg_reg_ir = (opcode == R_TYPE_OP);
             is_reg_imm_ir = (opcode == I_TYPE_OP);
-            is_csr_ir = (opcode == SYSTEM_OP); // NOTE: need to be careful for ecall, ebreak
+            is_csr_ir = (opcode == SYSTEM_OP) && (funct3 != 3'b000);
 
             if (is_lui) begin
                 alu_op_ctrl = 4'b1001;
