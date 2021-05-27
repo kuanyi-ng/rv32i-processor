@@ -49,7 +49,7 @@ module alu
                 // SRL, SRLI
                 SRL: alu_out = in1 >> { 27'b0, in2[4:0] };
 
-                // OR, ORI, CSRRS, CSRRSI
+                // OR, ORI, CSRRS, CSRRSI, MRET
                 OR: alu_out = in1 | in2;
 
                 // AND, ANDI

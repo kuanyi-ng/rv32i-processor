@@ -16,6 +16,7 @@ module ex_ctrl
     parameter [3:0] ADD = 4'b0000,
     parameter [3:0] OR = 4'b0110,
     parameter [3:0] CP_IN2 = 4'b1001,
+    parameter [3:0] JALR = 4'b1010,
     parameter [3:0] CSRRC = 4'b1011,
 
     // Branch ALU OP
@@ -83,7 +84,7 @@ module ex_ctrl
                 SYSTEM_OP: begin
                     // funct3[2]: 1 => csr with imm
                     if (funct3_2) alu_ins_ctrl = { z_, imm };
-                    // funct3[2]: 0 => csr with register
+                    // funct3[2]: 0 => csr with register, mret
                     else alu_ins_ctrl = { z_, data1 };
                 end
 
@@ -113,7 +114,7 @@ module ex_ctrl
     endfunction
 
     function [3:0] alu_op_ctrl(input [6:0] opcode, input [2:0] funct3, input [6:0] funct7);
-        reg is_lui, is_jalr, is_reg_reg_ir, is_reg_imm_ir, is_csr_ir;
+        reg is_lui, is_jalr, is_reg_reg_ir, is_reg_imm_ir, is_csr_ir, is_system_call;
 
         begin
             is_lui = (opcode == LUI_OP);
@@ -121,11 +122,12 @@ module ex_ctrl
             is_reg_reg_ir = (opcode == R_TYPE_OP);
             is_reg_imm_ir = (opcode == I_TYPE_OP);
             is_csr_ir = (opcode == SYSTEM_OP) && (funct3 != 3'b000);
+            is_system_call = (opcode == SYSTEM_OP) && (funct3 == 3'b000);
 
             if (is_lui) begin
-                alu_op_ctrl = 4'b1001;
+                alu_op_ctrl = CP_IN2;
             end else if (is_jalr) begin
-                alu_op_ctrl = 4'b1010;
+                alu_op_ctrl = JALR;
             end else if (is_reg_reg_ir || is_reg_imm_ir) begin
                 case (funct3)
                     // ADD, SUB, ADDI
@@ -162,6 +164,9 @@ module ex_ctrl
                 else if (funct3[1:0] == 2'b10) alu_op_ctrl = OR;
                 else if (funct3[1:0] == 2'b11) alu_op_ctrl = CSRRC;
                 else alu_op_ctrl = 4'bx;
+            end else if (is_system_call) begin
+                // MRET
+                alu_op_ctrl = OR;
             end else begin
                 // AUIPC, JAL, Branch, Load, Store
                 alu_op_ctrl = ADD;
