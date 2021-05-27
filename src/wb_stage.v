@@ -12,6 +12,7 @@ module wb_stage
     parameter [6:0] SYSTEM_OP = 7'b1110011
 ) (
     // inputs from MEM
+    input [2:0] funct3,
     input [6:0] opcode,
     input [31:0] c,
     input [31:0] d,
@@ -29,7 +30,7 @@ module wb_stage
     // Main
     //
 
-    assign data_to_reg = data_to_reg_prep(opcode, c, d, pc4, z_);
+    assign data_to_reg = data_to_reg_prep(funct3, opcode, c, d, pc4, z_);
     assign data_to_csr = c;
 
     //
@@ -37,6 +38,7 @@ module wb_stage
     //
 
     function [31:0] data_to_reg_prep(
+        input [2:0] funct3,
         input [6:0] opcode,
         input [31:0] c,
         input [31:0] d,
@@ -49,7 +51,7 @@ module wb_stage
             is_load = (opcode == LOAD_OP);
             is_jal = (opcode == JAL_OP);
             is_jalr = (opcode == JALR_OP);
-            is_csr = (opcode == SYSTEM_OP);    // NOTE: need to be careful of ecall, ebreak
+            is_csr = (opcode == SYSTEM_OP) && (funct3 != 3'b000);
 
             if (is_load) data_to_reg_prep = d;
             else if (is_jal || is_jalr) data_to_reg_prep = pc4;
