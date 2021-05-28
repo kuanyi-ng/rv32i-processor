@@ -87,7 +87,7 @@ module id_stage
     );
 
     assign wr_reg_n = wr_reg_n_ctrl(opcode, rd, funct3);
-    assign wr_csr_n = wr_csr_n_ctrl(opcode, funct3);
+    assign wr_csr_n = wr_csr_n_ctrl(opcode, funct3, rs1);
 
     assign is_mret = (ir == MRET_IR);
 
@@ -168,11 +168,18 @@ module id_stage
         end
     endfunction
 
-    function wr_csr_n_ctrl(input [6:0] opcode, input [2:0] funct3);
+    function wr_csr_n_ctrl(input [6:0] opcode, input [2:0] funct3, input [4:0] rs1);
+        reg is_csr_ir, is_csrr_ir;
+
         begin
+            is_csr_ir = (opcode == SYSTEM_OP) && (funct3 != 3'b000);
+            is_csrr_ir = (opcode == SYSTEM_OP) && (funct3 == 3'b010) && (rs1 == 5'b00000);
+
+            // Don't update when it's CSRR (pseudo-instruction for CSRRS rd, csr, x0)
+            if (is_csrr_ir) wr_csr_n_ctrl = 1'b1;
             // CSR instructions share the same opcode with ecall, ebreak instructions
             // ecall and ebreak have funct3 of 000 while CSR instruction doesn't
-            if ((opcode == SYSTEM_OP) && (funct3 != 3'b000)) wr_csr_n_ctrl = 1'b0;
+            else if ((opcode == SYSTEM_OP) && (funct3 != 3'b000)) wr_csr_n_ctrl = 1'b0;
             else wr_csr_n_ctrl = 1'b1;
         end
     endfunction
