@@ -21,7 +21,7 @@ module csrs (
     input is_mret,
 
     // Outputs
-    output [31:0] csr_out
+    output reg [31:0] csr_out
 );
 
     wire wr_csr = !wr_csr_n;
@@ -166,50 +166,42 @@ module csrs (
         .mip(mip)
     );
 
-    // NOTE: read mepc during mret instruction
-    // - the csr_addr decoded from mepc = medeleg
-    // - medeleg register doesn't exist in a M-only implementation
-    // - but csr_addr is updated to point to mepc instead of medeleg in id_stage
-    assign csr_out = csr_read_from(csr_addr);
+    always @(*) begin
+        // NOTE: read mepc during mret instruction
+        // - the csr_addr decoded from mepc = medeleg
+        // - medeleg register doesn't exist in a M-only implementation
+        // - but csr_addr is updated to point to mepc instead of medeleg in id_stage
+        case (csr_addr)
+                mvendorid_addr: csr_out = mvendorid;
 
-    //
-    // Function
-    //
+                marchid_addr: csr_out = marchid;
 
-    function [31:0] csr_read_from(input [11:0] csr_addr);
-        begin
-            case (csr_addr)
-                mvendorid_addr: csr_read_from = mvendorid;
+                mimpid_addr: csr_out = mimpid;
 
-                marchid_addr: csr_read_from = marchid;
+                mhartid_addr: csr_out = mhartid;
 
-                mimpid_addr: csr_read_from = mimpid;
+                mstatus_addr: csr_out = mstatus;
 
-                mhartid_addr: csr_read_from = mhartid;
+                misa_addr: csr_out = misa;
 
-                mstatus_addr: csr_read_from = mstatus;
+                mie_addr: csr_out = mie;
 
-                misa_addr: csr_read_from = misa;
+                mtvec_addr: csr_out = mtvec;
 
-                mie_addr: csr_read_from = mie;
+                mcounteren_addr: csr_out = mcounteren;
 
-                mtvec_addr: csr_read_from = mtvec;
+                mscratch_addr: csr_out = mscratch;
 
-                mcounteren_addr: csr_read_from = mcounteren;
+                mepc_addr: csr_out = mepc;
 
-                mscratch_addr: csr_read_from = mscratch;
+                mcause_addr: csr_out = mcause;
 
-                mepc_addr: csr_read_from = mepc;
+                mtval_addr: csr_out = mtval;
 
-                mcause_addr: csr_read_from = mcause;
+                mip_addr: csr_out = mip;
 
-                mtval_addr: csr_read_from = mtval;
+                default: csr_out = 32'b0;
+        endcase
+    end
 
-                mip_addr: csr_read_from = mip;
-
-                default: csr_read_from = 32'b0;
-            endcase
-        end
-    endfunction
-    
 endmodule
