@@ -12,7 +12,7 @@ module id_stage
     parameter [6:0] STORE_OP = 7'b0100011,
     parameter [6:0] I_TYPE_OP = 7'b0010011,
     parameter [6:0] R_TYPE_OP = 7'b0110011,
-    parameter [6:0] CSR_OP = 7'b1110011
+    parameter [6:0] SYSTEM_OP = 7'b1110011
 ) (
     // inputs from IF stage
     input [31:0] ir,
@@ -29,7 +29,8 @@ module id_stage
     output [11:0] csr_addr,
     output [31:0] imm,
     output wr_reg_n,    // 0: write, 1: don't write
-    output wr_csr_n     // 0: write, 1: don't write
+    output wr_csr_n,    // 0: write, 1: don't write
+    output is_mret      // 0: not mret, 1: mret
 );
 
     //
@@ -45,10 +46,14 @@ module id_stage
     localparam [2:0] CSR_TYPE = 3'b110;
     localparam [2:0] DEFAULT_TYPE = 3'b111;
 
+    localparam [11:0] MEPC_ADDR = 12'h341;
+    localparam [31:0] MRET_IR = 32'b0011000_00010_00000_000_00000_1110011;
+
     //
     // Main
     //
 
+    wire [11:0] temp_csr_addr;
     ir_splitter ir_splitter_inst(
         .ir(ir),
         .opcode(opcode),
@@ -57,8 +62,11 @@ module id_stage
         .rd(rd),
         .funct3(funct3),
         .funct7(funct7),
-        .csr_addr(csr_addr)
+        .csr_addr(temp_csr_addr)
     );
+    // change csr_addr to mepc when is_mret is true
+    // this will enable csr_forwarding value of mepc
+    assign csr_addr = (is_mret) ? MEPC_ADDR : temp_csr_addr;
 
     wire [2:0] imm_type;
     assign imm_type = imm_type_from(opcode, funct3);
@@ -79,7 +87,9 @@ module id_stage
     );
 
     assign wr_reg_n = wr_reg_n_ctrl(opcode, rd, funct3);
-    assign wr_csr_n = wr_csr_n_ctrl(opcode, funct3);
+    assign wr_csr_n = wr_csr_n_ctrl(opcode, funct3, rs1);
+
+    assign is_mret = (ir == MRET_IR);
 
     //
     // Functions
@@ -122,7 +132,7 @@ module id_stage
                         imm_type_from = I_TYPE;
                 end
 
-                CSR_OP: imm_type_from = CSR_TYPE;
+                SYSTEM_OP: imm_type_from = CSR_TYPE;
 
                 // default: anything not from above
                 default: imm_type_from = DEFAULT_TYPE;
@@ -145,7 +155,7 @@ module id_stage
             is_load = (opcode == LOAD_OP);
             is_jal = (opcode == JAL_OP);
             is_jalr = (opcode == JALR_OP);
-            is_csr = (opcode == CSR_OP) && (funct3 != 3'b000);
+            is_csr = (opcode == SYSTEM_OP) && (funct3 != 3'b000);
 
             if (rd == 5'b00000) begin
                 // don't allow write to x0 (always 0)
@@ -158,11 +168,18 @@ module id_stage
         end
     endfunction
 
-    function wr_csr_n_ctrl(input [6:0] opcode, input [2:0] funct3);
+    function wr_csr_n_ctrl(input [6:0] opcode, input [2:0] funct3, input [4:0] rs1);
+        reg is_csr_ir, is_csrr_ir;
+
         begin
+            is_csr_ir = (opcode == SYSTEM_OP) && (funct3 != 3'b000);
+            is_csrr_ir = (opcode == SYSTEM_OP) && (funct3 == 3'b010) && (rs1 == 5'b00000);
+
+            // Don't update when it's CSRR (pseudo-instruction for CSRRS rd, csr, x0)
+            if (is_csrr_ir) wr_csr_n_ctrl = 1'b1;
             // CSR instructions share the same opcode with ecall, ebreak instructions
             // ecall and ebreak have funct3 of 000 while CSR instruction doesn't
-            if ((opcode == CSR_OP) && (funct3 != 3'b000)) wr_csr_n_ctrl = 1'b0;
+            else if ((opcode == SYSTEM_OP) && (funct3 != 3'b000)) wr_csr_n_ctrl = 1'b0;
             else wr_csr_n_ctrl = 1'b1;
         end
     endfunction

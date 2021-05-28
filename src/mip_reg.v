@@ -1,5 +1,4 @@
 module mip_reg (
-    input clk,
     input rst_n,
 
     input [31:0] mip_in,
@@ -16,19 +15,27 @@ module mip_reg (
     // Software Interrupt-Enable
     reg msip, ssip, usip;
 
-    always @(posedge clk or negedge rst_n) begin
+    always @(negedge rst_n) begin
         if (!rst_n) begin
             { meip, seip, ueip } <= 3'b000;
             { mtip, stip, utip } <= 3'b000;
             { msip, ssip, usip } <= 3'b000;
-        end else if (wr_mip) begin
-            { meip, seip, ueip } <= { mip_in[11], mip_in[9:8] };
-            { mtip, stip, utip } <= { mip_in[7], mip_in[5:4] };
-            { msip, ssip, usip } <= { mip_in[3], mip_in[1:0] };
         end else begin
             { meip, seip, ueip } <= { meip, seip, ueip };
             { mtip, stip, utip } <= { mtip, stip, utip };
             { msip, ssip, usip } <= { msip, ssip, usip };
+        end
+    end
+
+    always @* begin
+        if (wr_mip) begin
+            { meip, seip, ueip } = { mip_in[11], mip_in[9:8] };
+            { mtip, stip, utip } = { mip_in[7], mip_in[5:4] };
+            { msip, ssip, usip } = { mip_in[3], mip_in[1:0] };
+        end else begin
+            { meip, seip, ueip } = { meip, seip, ueip };
+            { mtip, stip, utip } = { mtip, stip, utip };
+            { msip, ssip, usip } = { msip, ssip, usip };
         end
     end
 

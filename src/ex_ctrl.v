@@ -10,12 +10,13 @@ module ex_ctrl
     parameter [6:0] STORE_OP = 7'b0100011,
     parameter [6:0] I_TYPE_OP = 7'b0010011,
     parameter [6:0] R_TYPE_OP = 7'b0110011,
-    parameter [6:0] CSR_OP = 7'b1110011,
+    parameter [6:0] SYSTEM_OP = 7'b1110011,
 
     // ALU OP
     parameter [3:0] ADD = 4'b0000,
     parameter [3:0] OR = 4'b0110,
     parameter [3:0] CP_IN2 = 4'b1001,
+    parameter [3:0] JALR = 4'b1010,
     parameter [3:0] CSRRC = 4'b1011,
 
     // Branch ALU OP
@@ -80,10 +81,10 @@ module ex_ctrl
 
                 R_TYPE_OP: alu_ins_ctrl = { data1, data2 };
 
-                CSR_OP: begin
+                SYSTEM_OP: begin
                     // funct3[2]: 1 => csr with imm
                     if (funct3_2) alu_ins_ctrl = { z_, imm };
-                    // funct3[2]: 0 => csr with register
+                    // funct3[2]: 0 => csr with register, mret
                     else alu_ins_ctrl = { z_, data1 };
                 end
 
@@ -95,14 +96,15 @@ module ex_ctrl
     function [2:0] branch_alu_op_ctrl(input [6:0] opcode, input [2:0] funct3);
         // first check if instruction is one of the following:
         // JAL. JALR, Branch
-        reg is_jal, is_jalr, is_branch;
+        reg is_jal, is_jalr, is_branch, is_system_call;
 
         begin
             is_jal = (opcode == JAL_OP);
             is_jalr = (opcode == JALR_OP);
             is_branch = (opcode == BRANCH_OP);
+            is_system_call = (opcode == SYSTEM_OP) && (funct3 == 3'b000); // mret, ecall, ebreak
 
-            if (is_jal || is_jalr) begin
+            if (is_jal || is_jalr || is_system_call) begin
                 branch_alu_op_ctrl = JUMP;
             end else if (is_branch) begin
                 branch_alu_op_ctrl = funct3;
@@ -113,19 +115,20 @@ module ex_ctrl
     endfunction
 
     function [3:0] alu_op_ctrl(input [6:0] opcode, input [2:0] funct3, input [6:0] funct7);
-        reg is_lui, is_jalr, is_reg_reg_ir, is_reg_imm_ir, is_csr_ir;
+        reg is_lui, is_jalr, is_reg_reg_ir, is_reg_imm_ir, is_csr_ir, is_system_call;
 
         begin
             is_lui = (opcode == LUI_OP);
             is_jalr = (opcode == JALR_OP);
             is_reg_reg_ir = (opcode == R_TYPE_OP);
             is_reg_imm_ir = (opcode == I_TYPE_OP);
-            is_csr_ir = (opcode == CSR_OP); // NOTE: need to be careful for ecall, ebreak
+            is_csr_ir = (opcode == SYSTEM_OP) && (funct3 != 3'b000);
+            is_system_call = (opcode == SYSTEM_OP) && (funct3 == 3'b000);
 
             if (is_lui) begin
-                alu_op_ctrl = 4'b1001;
+                alu_op_ctrl = CP_IN2;
             end else if (is_jalr) begin
-                alu_op_ctrl = 4'b1010;
+                alu_op_ctrl = JALR;
             end else if (is_reg_reg_ir || is_reg_imm_ir) begin
                 case (funct3)
                     // ADD, SUB, ADDI
@@ -162,6 +165,9 @@ module ex_ctrl
                 else if (funct3[1:0] == 2'b10) alu_op_ctrl = OR;
                 else if (funct3[1:0] == 2'b11) alu_op_ctrl = CSRRC;
                 else alu_op_ctrl = 4'bx;
+            end else if (is_system_call) begin
+                // MRET
+                alu_op_ctrl = OR;
             end else begin
                 // AUIPC, JAL, Branch, Load, Store
                 alu_op_ctrl = ADD;

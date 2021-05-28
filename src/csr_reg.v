@@ -1,5 +1,6 @@
-module reg32 (
-    input clk,
+module csr_reg #(
+    parameter [31:0] rst_value = 32'b0
+) (
     input rst_n,
 
     input [31:0] in,
@@ -8,14 +9,16 @@ module reg32 (
     output [31:0] out
 );
 
-    parameter [31:0] rst_value = 32'b0;
-
     reg [31:0] stored_value;
-    
-    always @(posedge clk or negedge rst_n) begin
+
+    always @(negedge rst_n) begin
         if (!rst_n) stored_value <= rst_value;
-        else if (wr_reg) stored_value <= in;
         else stored_value <= stored_value;
+    end
+
+    always @* begin
+        if (wr_reg) stored_value = in;
+        else stored_value = stored_value;
     end
 
     assign out = stored_value;

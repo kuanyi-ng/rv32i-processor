@@ -15,6 +15,9 @@ module mem_wb_regs (
     input [31:0] z_in,
     output [31:0] z_out,
 
+    input [2:0] funct3_in,
+    output [2:0] funct3_out,
+
     input [4:0] rd_in,
     output [4:0] rd_out,
 
@@ -35,6 +38,7 @@ module mem_wb_regs (
     reg [31:0] c;
     reg [31:0] d;
     reg [31:0] z_;
+    reg [2:0] funct3;
     reg [4:0] rd;
     reg [11:0] csr_addr;
     reg [6:0] opcode;
@@ -47,6 +51,7 @@ module mem_wb_regs (
             c <= 32'bx;
             d <= 32'bx;
             z_ <= 32'bx;
+            funct3 <= 3'bx;
             rd <= 5'bx;
             csr_addr <= 12'bx;
             opcode <= 7'bx;
@@ -58,6 +63,7 @@ module mem_wb_regs (
             c <= c;
             d <= d;
             z_ <= z_;
+            funct3 <= funct3;
             rd <= rd;
             csr_addr <= csr_addr;
             opcode <= opcode;
@@ -68,6 +74,7 @@ module mem_wb_regs (
             c <= c_in;
             d <= d_in;
             z_ <= z_in;
+            funct3 <= funct3_in;
             rd <= rd_in;
             csr_addr <= csr_addr_in;
             opcode <= opcode_in;
@@ -80,6 +87,7 @@ module mem_wb_regs (
     assign c_out = c;
     assign d_out = d;
     assign z_out = z_;
+    assign funct3_out = funct3;
     assign rd_out = rd;
     assign csr_addr_out = csr_addr;
     assign opcode_out = opcode;

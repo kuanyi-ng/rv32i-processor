@@ -75,6 +75,7 @@ module top (
     wire wr_csr_n_id_stage;
     wire wr_reg_n_id;
     wire wr_csr_n_id;
+    wire is_mret_id;
 
     // ID-EX
     wire [31:0] pc_from_id;
@@ -111,6 +112,7 @@ module top (
     wire flush_from_ex;
 
     // MEM
+    wire [2:0] funct3_from_mem;
     wire [31:0] data_from_mem, data_to_mem;
     wire [31:0] d_mem;
 
@@ -204,7 +206,8 @@ module top (
         .csr_addr(csr_addr_id),
         .imm(imm_id),
         .wr_reg_n(wr_reg_n_id_stage),
-        .wr_csr_n(wr_csr_n_id_stage)
+        .wr_csr_n(wr_csr_n_id_stage),
+        .is_mret(is_mret_id)
     );
 
     id_data_picker id_data_picker_inst(
@@ -369,6 +372,8 @@ module top (
         .d_out(d_from_mem),
         .z_in(z_from_ex),
         .z_out(z_from_mem),
+        .funct3_in(funct3_from_ex),
+        .funct3_out(funct3_from_mem),
         .rd_in(rd_from_ex),
         .rd_out(wr_addr),
         .csr_addr_in(csr_addr_from_ex),
@@ -383,6 +388,7 @@ module top (
 
     // WB
     wb_stage wb_stage_inst(
+        .funct3(funct3_from_mem),
         .opcode(opcode_from_mem),
         .c(c_from_mem),
         .d(d_from_mem),
@@ -407,12 +413,12 @@ module top (
 
     // CSRs
     csrs csrs_inst(
-        .clk(clk),
         .rst_n(rst_n),
         .csr_addr(csr_addr_id),
         .csr_wr_addr(csr_wr_addr),
         .csr_data_in(csr_data_in),
         .wr_csr_n(wr_csr_n_from_mem),
+        .is_mret(is_mret_id),
         .csr_out(z_csrs)
     );
 
@@ -448,6 +454,7 @@ module top (
         .sub_data(pc4_from_id),
         .csr_data(z_from_id),
         .opcode(opcode_from_id),
+        .funct3(funct3_from_id),
         .data_to_forward(data_forwarded_from_ex)
     );
 
@@ -456,6 +463,7 @@ module top (
         .sub_data(d_mem),
         .csr_data(z_from_ex),
         .opcode(opcode_from_ex),
+        .funct3(funct3_from_ex),
         .data_to_forward(data_forwarded_from_mem)
     );
 
