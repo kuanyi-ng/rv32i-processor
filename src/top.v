@@ -413,6 +413,7 @@ module top (
 
     // CSRs
     csrs csrs_inst(
+        .clk(clk),
         .rst_n(rst_n),
         .csr_addr(csr_addr_id),
         .csr_wr_addr(csr_wr_addr),

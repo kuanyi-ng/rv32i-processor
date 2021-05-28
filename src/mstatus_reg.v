@@ -1,4 +1,5 @@
 module mstatus_reg (
+    input clk,
     input rst_n,
 
     input is_mret,
@@ -49,7 +50,10 @@ module mstatus_reg (
     // Trap SRET                        : TSR (hardwired to 0 if S-mode not supported)
     localparam tsr = 1'b0;
 
-    always @(negedge rst_n) begin
+    // NOTE:
+    // using `posedge clk` will only output the new value on the next posedge of clk (= posedge of next cycle)
+    // using `negedge clk` will ouput the new value on the next negedge of clk (= negedge of current cycle)
+    always @(negedge clk or negedge rst_n) begin
         if (!rst_n) begin
             // on reset,
             // priviledge mode is set to M
@@ -60,6 +64,14 @@ module mstatus_reg (
             // User-mode not supported
             mpp <= machine_mode;
             spp <= 1'b0;
+        end else if (is_mret) begin
+            { mie, mpie } <= { mpie, 1'b1 };
+        end else if (wr_mstatus) begin
+            // TODO: not sure how to update current_mode
+            { mie, sie, uie } <= { mstatus_in[3], mstatus_in[1:0] };
+            { mpie, spie, upie } <= { mstatus_in[7], mstatus_in[5:4] };
+            mpp <= mstatus_in[12:11];
+            spp <= mstatus_in[8];
         end else begin
             // No interruption
             current_mode <= current_mode;
@@ -67,25 +79,6 @@ module mstatus_reg (
             { mpie, spie, upie } <= { mpie, spie, upie };
             mpp <= mpp;
             spp <= spp;
-        end
-    end
-
-    always @* begin
-        if (is_mret) begin
-            { mie, mpie } = { mpie, 1'b1 };
-        end else if (wr_mstatus) begin
-            // TODO: not sure how to update current_mode
-            { mie, sie, uie } = { mstatus_in[3], mstatus_in[1:0] };
-            { mpie, spie, upie } = { mstatus_in[7], mstatus_in[5:4] };
-            mpp = mstatus_in[12:11];
-            spp = mstatus_in[8];
-        end else begin
-            // No interruption
-            current_mode = current_mode;
-            { mie, sie, uie } = { mie, sie, uie };
-            { mpie, spie, upie } = { mpie, spie, upie };
-            mpp = mpp;
-            spp = spp;
         end
     end
 

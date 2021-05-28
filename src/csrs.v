@@ -6,6 +6,7 @@
 `include "csr_reg.v"
 
 module csrs (
+    input clk,
     input rst_n,
 
     // Inputs
@@ -90,6 +91,7 @@ module csrs (
     wire [1:0] priviledge_mode;
     wire [31:0] mstatus;
     mstatus_reg mstatus_reg_inst(
+        .clk(clk),
         .rst_n(rst_n),
         .is_mret(is_mret),
         .mstatus_in(csr_data_in),
@@ -101,6 +103,7 @@ module csrs (
     wire wr_mie = wr_csr && (csr_wr_addr == mie_addr);
     wire [31:0] mie;
     mie_reg mie_reg_inst(
+        .clk(clk),
         .rst_n(rst_n),
         .mie_in(csr_data_in),
         .wr_mie(wr_mie),
@@ -114,6 +117,7 @@ module csrs (
     wire wr_mscratch = wr_csr && (csr_wr_addr == mscratch_addr);
     wire [31:0] mscratch;
     csr_reg mscratch_reg_inst(
+        .clk(clk),
         .rst_n(rst_n),
         .in(csr_data_in),
         .wr_reg(wr_mscratch),
@@ -124,6 +128,7 @@ module csrs (
     wire wr_mepc = wr_csr && (csr_wr_addr == mepc_addr);
     wire [31:0] mepc;
     csr_reg #(.rst_value(mepc_reset_val)) mepc_reg_inst(
+        .clk(clk),
         .rst_n(rst_n),
         .in(csr_data_in),
         .wr_reg(wr_mepc),
@@ -134,6 +139,7 @@ module csrs (
     wire wr_mcause = wr_csr && (csr_wr_addr == mcause_addr);
     wire [31:0] mcause;
     csr_reg #(.rst_value(hard_reset_mcause_val)) mcause_reg_inst(
+        .clk(clk),
         .rst_n(rst_n),
         .in(csr_data_in),
         .wr_reg(wr_mcause),
@@ -143,6 +149,7 @@ module csrs (
     wire wr_mtval = wr_csr && (csr_wr_addr == mtval_addr);
     wire [31:0] mtval;
     csr_reg mtval_reg_inst(
+        .clk(clk),
         .rst_n(rst_n),
         .in(csr_data_in),
         .wr_reg(wr_mtval),
@@ -152,6 +159,7 @@ module csrs (
     wire wr_mip = wr_csr && (csr_wr_addr == mip_addr);
     wire [31:0] mip;
     mip_reg mip_reg_inst(
+        .clk(clk),
         .rst_n(rst_n),
         .mip_in(csr_data_in),
         .wr_mip(wr_mip),
