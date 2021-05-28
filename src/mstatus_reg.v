@@ -49,18 +49,29 @@ module mstatus_reg (
     // Trap SRET                        : TSR (hardwired to 0 if S-mode not supported)
     localparam tsr = 1'b0;
 
-    always @* begin
+    always @(negedge rst_n) begin
         if (!rst_n) begin
             // on reset,
             // priviledge mode is set to M
             // MIE is reset to 0
-            current_mode = machine_mode;
-            { mie, sie, uie } = 3'b100;
-            { mpie, spie, upie } = 3'b000;
+            current_mode <= machine_mode;
+            { mie, sie, uie } <= 3'b100;
+            { mpie, spie, upie } <= 3'b000;
             // User-mode not supported
-            mpp = machine_mode;
-            spp = 1'b0;
-        end else if (is_mret) begin
+            mpp <= machine_mode;
+            spp <= 1'b0;
+        end else begin
+            // No interruption
+            current_mode <= current_mode;
+            { mie, sie, uie } <= { mie, sie, uie };
+            { mpie, spie, upie } <= { mpie, spie, upie };
+            mpp <= mpp;
+            spp <= spp;
+        end
+    end
+
+    always @* begin
+        if (is_mret) begin
             { mie, mpie } = { mpie, 1'b1 };
         end else if (wr_mstatus) begin
             // TODO: not sure how to update current_mode

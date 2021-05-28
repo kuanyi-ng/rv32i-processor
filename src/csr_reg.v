@@ -11,9 +11,13 @@ module csr_reg #(
 
     reg [31:0] stored_value;
 
+    always @(negedge rst_n) begin
+        if (!rst_n) stored_value <= rst_value;
+        else stored_value <= stored_value;
+    end
+
     always @* begin
-        if (!rst_n) stored_value = rst_value;
-        else if (wr_reg) stored_value = in;
+        if (wr_reg) stored_value = in;
         else stored_value = stored_value;
     end
 
