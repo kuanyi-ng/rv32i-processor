@@ -124,7 +124,7 @@ module csrs (
         .out(mscratch)
     );
 
-    localparam [31:0] mepc_reset_val = 32'bx;
+    localparam [31:0] mepc_reset_val = 32'h0001_0000;   // same default value as pc_reg
     wire wr_mepc = wr_csr && (csr_wr_addr == mepc_addr);
     wire [31:0] mepc;
     csr_reg #(.rst_value(mepc_reset_val)) mepc_reg_inst(
