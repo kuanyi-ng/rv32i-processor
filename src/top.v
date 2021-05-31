@@ -510,6 +510,7 @@ module top (
 
     // Exception Handling
     exception_ctrl_u exception_ctrl_u_inst(
+        .current_pc(current_pc),
         .i_addr_misaligned(i_addr_misaligned),
         .pc_of_i_addr_misaligned(current_pc),
         .illegal_ir(illegal_ir),

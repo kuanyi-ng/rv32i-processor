@@ -3,6 +3,9 @@ module exception_ctrl_u #(
     parameter [1:0] I_ADDR_MISALIGNMENT = 2'b01,
     parameter [1:0] ILLEGAL_IR = 2'b10
 ) (
+    // current pc
+    input [31:0] current_pc,
+
     // Instruction Address Misalignment
     input i_addr_misaligned,
     input [31:0] pc_of_i_addr_misaligned,
@@ -25,7 +28,9 @@ module exception_ctrl_u #(
     // Main
     //
 
-    assign exception_cause = cause_ctrl(i_addr_misaligned, illegal_ir, jump);
+    wire is_first_instruction = (current_pc == 32'h0001_0000);
+
+    assign exception_cause = cause_ctrl(i_addr_misaligned, illegal_ir, is_first_instruction, jump);
     assign exception_epc = epc_ctrl(exception_cause, pc_of_i_addr_misaligned, pc_of_illegal_ir);
     assign exception_tval = tval_ctrl(exception_cause, pc_of_i_addr_misaligned, ir_in_question);
 
@@ -33,11 +38,12 @@ module exception_ctrl_u #(
     // Function
     //
 
-    function [1:0] cause_ctrl(input i_addr_misaligned, input illegal_ir, input jump);
+    function [1:0] cause_ctrl(input i_addr_misaligned, input illegal_ir, input is_first_instruction, input jump);
         begin
+            // Don't raise Exception when this is the first instruction in execution
             // Don't raise Exception when jump
             // because this instruction will not be executed due to jump
-            if (jump) cause_ctrl = NOT_EXCEPTION;
+            if (is_first_instruction || jump) cause_ctrl = NOT_EXCEPTION;
             else if (illegal_ir) cause_ctrl = ILLEGAL_IR;
             else if (i_addr_misaligned) cause_ctrl = I_ADDR_MISALIGNMENT;
             else cause_ctrl = NOT_EXCEPTION;
