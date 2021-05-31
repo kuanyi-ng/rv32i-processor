@@ -30,7 +30,8 @@ module id_stage
     output [31:0] imm,
     output wr_reg_n,    // 0: write, 1: don't write
     output wr_csr_n,    // 0: write, 1: don't write
-    output is_mret      // 0: not mret, 1: mret
+    output is_mret,     // 0: not mret, 1: mret
+    output illegal_ir   // 0: legal, 1: illegal
 );
 
     //
@@ -54,6 +55,7 @@ module id_stage
     //
 
     wire [11:0] temp_csr_addr;
+    // NOTE: maybe can remove this module?
     ir_splitter ir_splitter_inst(
         .ir(ir),
         .opcode(opcode),
@@ -90,6 +92,8 @@ module id_stage
     assign wr_csr_n = wr_csr_n_ctrl(opcode, funct3, rs1);
 
     assign is_mret = (ir == MRET_IR);
+
+    assign illegal_ir = illegal_ir_check(opcode, funct3, funct7, is_mret);
 
     //
     // Functions
@@ -183,4 +187,62 @@ module id_stage
             else wr_csr_n_ctrl = 1'b1;
         end
     endfunction
+
+    function illegal_ir_check(input [6:0] opcode, input [2:0] funct3, input [6:0] funct7, input is_mret);
+        begin
+            case (opcode)
+                LUI_OP: illegal_ir_check = 1'b0;
+
+                AUIPC_OP: illegal_ir_check = 1'b0;
+
+                JAL_OP: illegal_ir_check = 1'b0;
+
+                // JALR has funct3 of 3'b000
+                // (funct3 == 3'b000) is legal
+                JALR_OP: illegal_ir_check = (funct3 != 3'b000);
+
+                // BRANCH does not have funct3 of { 010, 011 }
+                // funct3 == 010 or 011 is not legal
+                BRANCH_OP: illegal_ir_check = (funct3 == 3'b010) || (funct3 == 3'b011);
+
+                // LOAD does not have funct3 of { 011, 110, 111 }
+                // funct3 = either of those is not legal
+                LOAD_OP: illegal_ir_check = (funct3 == 3'b011) || (funct3 == 3'b110) || (funct3 == 3'b111);
+
+                // STORE only has funct3 of { 000, 001, 010 }
+                // funct3 = either of those is legal
+                // (funct3 == 3'b000) || (funct3 == 3'b001) || (funct3 == 3'b010) is legal
+                STORE_OP: illegal_ir_check = (funct3 != 3'b000) && (funct3 != 3'b001) && (funct3 != 3'b010);
+
+                I_TYPE_OP: begin
+                    // SLLI has funct7 of 0
+                    if (funct3 == 3'b001) illegal_ir_check = (funct7 != 7'b0);
+                    // SRLI, SRAI has funct7 of 0 or 0100000
+                    else if (funct3 == 3'b101) illegal_ir_check = (funct7 != 7'b0) && (funct7 != 7'b0100000);
+                    // Else, legal
+                    else illegal_ir_check = 1'b0;
+                end
+
+                R_TYPE_OP: begin
+                    // ADD, SUB has funct7 of 0 or 0100000
+                    // SRL, SRA has funct7 of 0 or 0100000
+                    if ((funct3 == 3'b000) || (funct3 == 3'b101)) illegal_ir_check = (funct7 != 7'b0) && (funct7 != 7'b0100000);
+                    // Else has funct7 of 0000000
+                    else illegal_ir_check = (funct7 != 7'b0);
+                end
+
+                SYSTEM_OP: begin
+                    // MRET
+                    // illegal if instruction with funct3 of 000 is not mret
+                    if (funct3 == 3'b000) illegal_ir_check = !is_mret;
+                    // CSRs instructions does not have funct3 of { 000, 100 }
+                    else illegal_ir_check = (funct3 == 3'b100);
+                end
+
+                // opcode is not supported
+                default: illegal_ir_check = 1'b1;
+            endcase
+        end
+    endfunction
+
 endmodule

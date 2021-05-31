@@ -12,6 +12,7 @@ module test_id_stage ();
     wire [31:0] imm;
     wire wr_reg_n;
     wire wr_csr_n;
+    wire illegal_ir;
 
     id_stage subject(
         .ir(ir),
@@ -24,7 +25,8 @@ module test_id_stage ();
         .csr_addr(csr_addr),
         .imm(imm),
         .wr_reg_n(wr_reg_n),
-        .wr_csr_n(wr_csr_n)
+        .wr_csr_n(wr_csr_n),
+        .illegal_ir(illegal_ir)
     );
 
     initial begin
@@ -34,6 +36,7 @@ module test_id_stage ();
         // imm: 0
         // rd: 3
         // wr_reg_n: 0
+        // illegal_ir: 0
         #5
 
         // AUIPC
@@ -42,6 +45,7 @@ module test_id_stage ();
         // imm: 0
         // rd: 3
         // wr_reg_n: 0
+        // illegal_ir: 0
         #5
 
         // JAL
@@ -50,6 +54,7 @@ module test_id_stage ();
         // imm: 2
         // rd: 3
         // wr_reg_n: 0
+        // illegal_ir: 0
         #5
 
         // JAL with rd: 0
@@ -58,6 +63,7 @@ module test_id_stage ();
         // imm: 2
         // rd: 0
         // wr_reg_n: 1
+        // illegal_ir: 0
         #5
 
         // JALR
@@ -68,6 +74,17 @@ module test_id_stage ();
         // rd: 3
         // funct3: 000
         // wr_reg_n: 0
+        // illegal_ir: 0
+        #5
+        // JALR (illegal)
+        assign ir = 32'b0000_0000_0010_00001_001_00011_1100111;
+        // opcode: 1100111
+        // imm: 2
+        // rs1: 1
+        // rd: 3
+        // funct3: 001
+        // wr_reg_n: 0
+        // illegal_ir: 1
         #5
 
         // Branch: BEQ
@@ -78,6 +95,27 @@ module test_id_stage ();
         // rs2: 2
         // funct3: 000
         // wr_reg_n: 1
+        // illegal_ir: 0
+        #5
+        // Branch: Illegal
+        assign ir = 32'b0_000000_00010_00001_010_0001_0_1100011;
+        // opcode: 1100011
+        // imm: 2
+        // rs1: 1
+        // rs2: 2
+        // funct3: 010
+        // wr_reg_n: 1
+        // illegal_ir: 1
+        #5
+        // Branch: Illegal
+        assign ir = 32'b0_000000_00010_00001_011_0001_0_1100011;
+        // opcode: 1100011
+        // imm: 2
+        // rs1: 1
+        // rs2: 2
+        // funct3: 011
+        // wr_reg_n: 1
+        // illegal_ir: 1
         #5
 
         // Load: LB
@@ -88,6 +126,37 @@ module test_id_stage ();
         // rd: 3
         // funct3: 000
         // wr_reg_n: 0
+        // illegal_ir: 0
+        #5
+        // Load: Illegal
+        assign ir = 32'b0000_0000_0010_00001_011_00011_0000011;
+        // opcode: 0000011
+        // imm: 2
+        // rs1: 1
+        // rd: 3
+        // funct3: 000
+        // wr_reg_n: 0
+        // illegal_ir: 1
+        #5
+        // Load: Illegal
+        assign ir = 32'b0000_0000_0010_00001_110_00011_0000011;
+        // opcode: 0000011
+        // imm: 2
+        // rs1: 1
+        // rd: 3
+        // funct3: 000
+        // wr_reg_n: 0
+        // illegal_ir: 1
+        #5
+        // Load: Illegal
+        assign ir = 32'b0000_0000_0010_00001_111_00011_0000011;
+        // opcode: 0000011
+        // imm: 2
+        // rs1: 1
+        // rd: 3
+        // funct3: 000
+        // wr_reg_n: 0
+        // illegal_ir: 1
         #5
 
         // Store: SB
@@ -98,6 +167,57 @@ module test_id_stage ();
         // rs2: 2
         // funct3: 000
         // wr_reg_n: 1
+        // illegal_ir: 0
+        #5
+        // Store: Illegal
+        assign ir = 32'b0000000_00010_00001_011_00010_0100011;
+        // opcode: 0100011
+        // imm: 2
+        // rs1: 1
+        // rs2: 2
+        // funct3: 000
+        // wr_reg_n: 1
+        // illegal_ir: 1
+        #5
+        // Store: SB
+        assign ir = 32'b0000000_00010_00001_100_00010_0100011;
+        // opcode: 0100011
+        // imm: 2
+        // rs1: 1
+        // rs2: 2
+        // funct3: 000
+        // wr_reg_n: 1
+        // illegal_ir: 1
+        #5
+        // Store: SB
+        assign ir = 32'b0000000_00010_00001_101_00010_0100011;
+        // opcode: 0100011
+        // imm: 2
+        // rs1: 1
+        // rs2: 2
+        // funct3: 000
+        // wr_reg_n: 1
+        // illegal_ir: 1
+        #5
+        // Store: SB
+        assign ir = 32'b0000000_00010_00001_110_00010_0100011;
+        // opcode: 0100011
+        // imm: 2
+        // rs1: 1
+        // rs2: 2
+        // funct3: 000
+        // wr_reg_n: 1
+        // illegal_ir: 1
+        #5
+        // Store: SB
+        assign ir = 32'b0000000_00010_00001_111_00010_0100011;
+        // opcode: 0100011
+        // imm: 2
+        // rs1: 1
+        // rs2: 2
+        // funct3: 000
+        // wr_reg_n: 1
+        // illegal_ir: 1
         #5
 
         // I: ADDI r3, r1, 12'h801
@@ -124,12 +244,20 @@ module test_id_stage ();
         // ecall
         assign ir = 32'b000000000000_00000_000_00000_1110011;
         // wr_csr_n: 1
+        // illegal_ir: 1
         #5
 
         // CSR
         assign ir = 32'b001100000000_00001_001_00010_1110011;
         // csr_addr = h300
         // wr_csr_n: 0
+        // illegal_ir: 0
+        #5
+        // CSR: Illegal
+        assign ir = 32'b001100000000_00001_100_00010_1110011;
+        // csr_addr = h300
+        // wr_csr_n: 0
+        // illegal_ir: 1
         #5
 
         $finish;
@@ -137,7 +265,7 @@ module test_id_stage ();
 
     initial begin
         $monitor(
-            "time: %3d,\nrs1: %d,\nrs2: %d,\nrd: %d,\nopcode: %b,\nfunct3: %b,\nfunct7: %b,\ncsr_addr: %h,\nimm: %h,\nwr_reg_n: %b,\nwr_csr_n: %b\n",
+            "time: %3d,\nrs1: %d,\nrs2: %d,\nrd: %d,\nopcode: %b,\nfunct3: %b,\nfunct7: %b,\ncsr_addr: %h,\nimm: %h,\nwr_reg_n: %b,\nwr_csr_n: %b\nillegal_ir: %b\n",
             $time,
             rs1,
             rs2,
@@ -148,7 +276,8 @@ module test_id_stage ();
             csr_addr,
             imm,
             wr_reg_n,
-            wr_csr_n
+            wr_csr_n,
+            illegal_ir
         );
     end
 endmodule

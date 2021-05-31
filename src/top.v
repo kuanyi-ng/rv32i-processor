@@ -157,6 +157,7 @@ module top (
 
     // Exception Handling
     wire i_addr_misaligned;
+    wire illegal_ir;
 
     //
     // Modules Instantiation
@@ -211,7 +212,8 @@ module top (
         .imm(imm_id),
         .wr_reg_n(wr_reg_n_id_stage),
         .wr_csr_n(wr_csr_n_id_stage),
-        .is_mret(is_mret_id)
+        .is_mret(is_mret_id),
+        .illegal_ir(illegal_ir)
     );
 
     id_data_picker id_data_picker_inst(
