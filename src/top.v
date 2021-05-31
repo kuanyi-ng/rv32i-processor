@@ -431,6 +431,9 @@ module top (
         .csr_data_in(csr_data_in),
         .wr_csr_n(wr_csr_n_from_mem),
         .is_mret(is_mret_id),
+        .cause_in(exception_cause),
+        .epc_in(exception_epc),
+        .tval_in(exception_tval),
         .csr_out(z_csrs),
         .mtvec_out(mtvec)
     );

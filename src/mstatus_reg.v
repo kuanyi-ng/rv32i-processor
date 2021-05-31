@@ -3,6 +3,7 @@ module mstatus_reg (
     input rst_n,
 
     input is_mret,
+    input exception_raised,
 
     input [31:0] mstatus_in,
     input wr_mstatus,
@@ -58,27 +59,26 @@ module mstatus_reg (
             // on reset,
             // priviledge mode is set to M
             // MIE is reset to 0
-            current_mode <= machine_mode;
+            // User-mode not supported
+            { current_mode, mpp, spp } <= { machine_mode, machine_mode, 1'b0 };
             { mie, sie, uie } <= 3'b100;
             { mpie, spie, upie } <= 3'b000;
-            // User-mode not supported
-            mpp <= machine_mode;
-            spp <= 1'b0;
+        end else if (exception_raised) begin
+            { current_mode, mpp } <= { machine_mode, current_mode };
+            { mpie, mie } <= { mie, 1'b0 };
         end else if (is_mret) begin
             { mie, mpie } <= { mpie, 1'b1 };
         end else if (wr_mstatus) begin
             // TODO: not sure how to update current_mode
             { mie, sie, uie } <= { mstatus_in[3], mstatus_in[1:0] };
             { mpie, spie, upie } <= { mstatus_in[7], mstatus_in[5:4] };
-            mpp <= mstatus_in[12:11];
-            spp <= mstatus_in[8];
+            { mpp, spp } <= { mstatus_in[12:11], mstatus_in[8] };
         end else begin
             // No interruption
             current_mode <= current_mode;
             { mie, sie, uie } <= { mie, sie, uie };
             { mpie, spie, upie } <= { mpie, spie, upie };
-            mpp <= mpp;
-            spp <= spp;
+            { mpp, spp } <= { mpp, spp };
         end
     end
 
