@@ -155,6 +155,9 @@ module top (
     // Pipeline Interlock
     wire interlock;
 
+    // Exception Handling
+    wire i_addr_misaligned;
+
     //
     // Modules Instantiation
     //
@@ -174,7 +177,8 @@ module top (
         .c(c_ex),
         .jump(jump_ex),
         .pc4(pc4_if),
-        .next_pc(next_pc)
+        .next_pc(next_pc),
+        .i_addr_misaligned(i_addr_misaligned)
     );
     assign IAD = current_pc;
 
