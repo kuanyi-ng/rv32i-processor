@@ -88,8 +88,8 @@ module id_stage
         .out(imm)
     );
 
-    assign wr_reg_n = wr_reg_n_ctrl(opcode, rd, funct3);
-    assign wr_csr_n = wr_csr_n_ctrl(opcode, funct3, rs1);
+    assign wr_reg_n = wr_reg_n_ctrl(opcode, rd, funct3, illegal_ir);
+    assign wr_csr_n = wr_csr_n_ctrl(opcode, funct3, rs1, illegal_ir);
 
     assign is_mret = (ir == MRET_IR);
 
@@ -144,7 +144,7 @@ module id_stage
         end
    endfunction
 
-   function wr_reg_n_ctrl(input [6:0] opcode, input [4:0] rd, input [2:0] funct3);
+   function wr_reg_n_ctrl(input [6:0] opcode, input [4:0] rd, input [2:0] funct3, input illegal_ir);
         // 0: write, 1: don't write
 
         // whitelist instead of blacklist to be more secure.
@@ -161,7 +161,9 @@ module id_stage
             is_jalr = (opcode == JALR_OP);
             is_csr = (opcode == SYSTEM_OP) && (funct3 != 3'b000);
 
-            if (rd == 5'b00000) begin
+            // Don't update when IR is illegal
+            if (illegal_ir) wr_reg_n_ctrl = 1'b1;
+            else if (rd == 5'b00000) begin
                 // don't allow write to x0 (always 0)
                 wr_reg_n_ctrl = 1'b1;
             end else if (is_lui || is_auipc || is_i_type || is_r_type || is_load || is_jal || is_jalr || is_csr) begin
@@ -172,15 +174,17 @@ module id_stage
         end
     endfunction
 
-    function wr_csr_n_ctrl(input [6:0] opcode, input [2:0] funct3, input [4:0] rs1);
+    function wr_csr_n_ctrl(input [6:0] opcode, input [2:0] funct3, input [4:0] rs1, input illegal_ir);
         reg is_csr_ir, is_csrr_ir;
 
         begin
             is_csr_ir = (opcode == SYSTEM_OP) && (funct3 != 3'b000);
             is_csrr_ir = (opcode == SYSTEM_OP) && (funct3 == 3'b010) && (rs1 == 5'b00000);
 
+            // Don't update when IR is illegal
+            if (illegal_ir) wr_csr_n_ctrl = 1'b1;
             // Don't update when it's CSRR (pseudo-instruction for CSRRS rd, csr, x0)
-            if (is_csrr_ir) wr_csr_n_ctrl = 1'b1;
+            else if (is_csrr_ir) wr_csr_n_ctrl = 1'b1;
             // CSR instructions share the same opcode with ecall, ebreak instructions
             // ecall and ebreak have funct3 of 000 while CSR instruction doesn't
             else if ((opcode == SYSTEM_OP) && (funct3 != 3'b000)) wr_csr_n_ctrl = 1'b0;
