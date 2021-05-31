@@ -6,6 +6,9 @@ module if_stage (
     input [31:0] c,
     input jump,
 
+    input [1:0] exception_cause,
+    input [31:0] exception_handling_addr,
+
     output [31:0] pc4,
     output [31:0] next_pc,
     output i_addr_misaligned
@@ -20,6 +23,8 @@ module if_stage (
         .pc4(pc4),
         .c(c),
         .jump(jump),
+        .exception_cause(exception_cause),
+        .exception_handling_addr(exception_handling_addr),
         .next_pc(next_pc)
     );
 

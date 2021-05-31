@@ -182,6 +182,8 @@ module top (
         .current_pc(current_pc),
         .c(c_ex),
         .jump(jump_ex),
+        .exception_cause(exception_cause),
+        .exception_handling_addr(mtvec),
         .pc4(pc4_if),
         .next_pc(next_pc),
         .i_addr_misaligned(i_addr_misaligned)
