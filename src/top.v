@@ -6,6 +6,7 @@
 `include "ex_jump_picker.v"
 `include "ex_mem_regs.v"
 `include "ex_stage.v"
+`include "exception_ctrl_u.v"
 `include "flush_u.v"
 `include "id_data_picker.v"
 `include "id_ex_regs.v"
@@ -158,6 +159,9 @@ module top (
     // Exception Handling
     wire i_addr_misaligned;
     wire illegal_ir;
+    wire [1:0] exception_cause;
+    wire [31:0] exception_epc;
+    wire [31:0] exception_tval;
 
     //
     // Modules Instantiation
@@ -497,6 +501,19 @@ module top (
         .dmem_ack_n(ACKD_n),
         .opcode(opcode_from_ex),
         .interlock(interlock)
+    );
+
+    // Exception Handling
+    exception_ctrl_u exception_ctrl_u_inst(
+        .i_addr_misaligned(i_addr_misaligned),
+        .pc_of_i_addr_misaligned(current_pc),
+        .illegal_ir(illegal_ir),
+        .ir_in_question(ir_from_if),
+        .pc_of_illegal_ir(pc_from_if),
+        .jump(jump_ex),
+        .exception_cause(exception_cause),
+        .exception_epc(exception_epc),
+        .exception_tval(exception_tval)
     );
 
 endmodule
