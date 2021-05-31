@@ -21,7 +21,8 @@ module csrs (
     input is_mret,
 
     // Outputs
-    output reg [31:0] csr_out
+    output reg [31:0] csr_out,
+    output reg [31:0] mtvec_out
 );
 
     wire wr_csr = !wr_csr_n;
@@ -167,6 +168,8 @@ module csrs (
     );
 
     always @(*) begin
+        // csr_out
+        //
         // NOTE: read mepc during mret instruction
         // - the csr_addr decoded from mepc = medeleg
         // - medeleg register doesn't exist in a M-only implementation
@@ -202,6 +205,10 @@ module csrs (
 
                 default: csr_out = 32'b0;
         endcase
+
+        // mtvec_out
+        //
+        mtvec_out = mtvec;
     end
 
 endmodule

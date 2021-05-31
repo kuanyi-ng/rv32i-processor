@@ -162,6 +162,7 @@ module top (
     wire [1:0] exception_cause;
     wire [31:0] exception_epc;
     wire [31:0] exception_tval;
+    wire [31:0] mtvec;
 
     //
     // Modules Instantiation
@@ -430,7 +431,8 @@ module top (
         .csr_data_in(csr_data_in),
         .wr_csr_n(wr_csr_n_from_mem),
         .is_mret(is_mret_id),
-        .csr_out(z_csrs)
+        .csr_out(z_csrs),
+        .mtvec_out(mtvec)
     );
 
     // Data Forwarding
