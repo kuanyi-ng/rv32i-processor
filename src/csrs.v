@@ -31,7 +31,7 @@ module csrs #(
 
     // Outputs
     output reg [31:0] csr_out,
-    output reg [31:0] mtvec_out
+    output reg [31:0] trap_vector_addr_out
 );
 
     wire wr_csr = !wr_csr_n;
@@ -87,10 +87,12 @@ module csrs #(
 
     wire [31:0] misa;
     wire [31:0] mtvec;
+    wire [31:0] trap_vector_addr;
     wire [31:0] mcounteren;
     m_trap_setup_regs m_trap_setup_regs_inst(
         .misa(misa),
         .mtvec(mtvec),
+        .trap_vector_addr(trap_vector_addr),
         .mcounteren(mcounteren)
     );
 
@@ -235,9 +237,9 @@ module csrs #(
                 default: csr_out = 32'b0;
         endcase
 
-        // mtvec_out
+        // trap_vector_addr_out
         //
-        mtvec_out = mtvec;
+        trap_vector_addr_out = trap_vector_addr;
     end
 
 endmodule

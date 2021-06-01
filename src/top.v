@@ -162,7 +162,7 @@ module top (
     wire [1:0] exception_cause;
     wire [31:0] exception_epc;
     wire [31:0] exception_tval;
-    wire [31:0] mtvec;
+    wire [31:0] trap_vector_addr;
 
     //
     // Modules Instantiation
@@ -183,7 +183,7 @@ module top (
         .c(c_ex),
         .jump(jump_ex),
         .exception_cause(exception_cause),
-        .exception_handling_addr(mtvec),
+        .exception_handling_addr(trap_vector_addr),
         .pc4(pc4_if),
         .next_pc(next_pc),
         .i_addr_misaligned(i_addr_misaligned)
@@ -437,7 +437,7 @@ module top (
         .epc_in(exception_epc),
         .tval_in(exception_tval),
         .csr_out(z_csrs),
-        .mtvec_out(mtvec)
+        .trap_vector_addr_out(trap_vector_addr)
     );
 
     // Data Forwarding
