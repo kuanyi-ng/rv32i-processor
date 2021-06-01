@@ -158,7 +158,8 @@ module top (
     wire interlock;
 
     // Exception Handling
-    wire i_addr_misaligned;
+    wire i_addr_misaligned_if;
+    wire i_addr_misaligned_from_if;
     wire illegal_ir;
     wire exception_raised;
     wire [1:0] exception_cause;
@@ -188,7 +189,7 @@ module top (
         .exception_handling_addr(trap_vector_addr),
         .pc4(pc4_if),
         .next_pc(next_pc),
-        .i_addr_misaligned(i_addr_misaligned)
+        .i_addr_misaligned(i_addr_misaligned_if)
     );
     assign IAD = current_pc;
 
@@ -205,7 +206,9 @@ module top (
         .ir_in(IDT),
         .ir_out(ir_from_if),
         .flush_in(flush),
-        .flush_out(flush_from_if)
+        .flush_out(flush_from_if),
+        .i_addr_misaligned_in(i_addr_misaligned_if),
+        .i_addr_misaligned_out(i_addr_misaligned_from_if)
     );
 
     // ID
@@ -516,12 +519,10 @@ module top (
 
     // Exception Handling
     exception_ctrl_u exception_ctrl_u_inst(
-        .current_pc(current_pc),
-        .i_addr_misaligned(i_addr_misaligned),
-        .pc_of_i_addr_misaligned(current_pc),
+        .pc_in_id(pc_from_if),
+        .i_addr_misaligned(i_addr_misaligned_from_if),
         .illegal_ir(illegal_ir),
-        .ir_in_question(ir_from_if),
-        .pc_of_illegal_ir(pc_from_if),
+        .ir_in_id(ir_from_if),
         .is_ecall(is_ecall_id),
         .jump(jump_ex),
         .exception_raised(exception_raised),
