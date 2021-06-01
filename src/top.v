@@ -159,6 +159,7 @@ module top (
     // Exception Handling
     wire i_addr_misaligned;
     wire illegal_ir;
+    wire exception_raised;
     wire [1:0] exception_cause;
     wire [31:0] exception_epc;
     wire [31:0] exception_tval;
@@ -182,7 +183,7 @@ module top (
         .current_pc(current_pc),
         .c(c_ex),
         .jump(jump_ex),
-        .exception_cause(exception_cause),
+        .exception_raised(exception_raised),
         .exception_handling_addr(trap_vector_addr),
         .pc4(pc4_if),
         .next_pc(next_pc),
@@ -433,6 +434,7 @@ module top (
         .csr_data_in(csr_data_in),
         .wr_csr_n(wr_csr_n_from_mem),
         .is_mret(is_mret_id),
+        .exception_raised(exception_raised),
         .cause_in(exception_cause),
         .epc_in(exception_epc),
         .tval_in(exception_tval),
@@ -519,6 +521,7 @@ module top (
         .ir_in_question(ir_from_if),
         .pc_of_illegal_ir(pc_from_if),
         .jump(jump_ex),
+        .exception_raised(exception_raised),
         .exception_cause(exception_cause),
         .exception_epc(exception_epc),
         .exception_tval(exception_tval)

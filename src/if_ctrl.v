@@ -1,10 +1,8 @@
-module if_ctrl #(
-    parameter [1:0] NOT_EXCEPTION = 2'b00
-) (
+module if_ctrl (
     input [31:0] pc4,
     input [31:0] c,
     input jump,
-    input [1:0] exception_cause,
+    input exception_raised,
     input [31:0] exception_handling_addr,
 
     output [31:0] next_pc
@@ -14,7 +12,7 @@ module if_ctrl #(
     // Main
     //
 
-    assign next_pc = next_pc_ctrl(pc4, c, jump, exception_cause, exception_handling_addr);
+    assign next_pc = next_pc_ctrl(pc4, c, jump, exception_raised, exception_handling_addr);
 
     //
     // Function
@@ -24,12 +22,12 @@ module if_ctrl #(
         input [31:0] pc4,
         input [31:0] c,
         input jump,
-        input [1:0] exception_cause,
+        input exception_raised,
         input [31:0] exception_handling_addr
     );
         begin
            if (jump) next_pc_ctrl = c;
-           else if (exception_cause != NOT_EXCEPTION) next_pc_ctrl = exception_handling_addr;
+           else if (exception_raised) next_pc_ctrl = exception_handling_addr;
            else next_pc_ctrl = pc4;
         end
     endfunction

@@ -6,7 +6,7 @@ module if_stage (
     input [31:0] c,
     input jump,
 
-    input [1:0] exception_cause,
+    input exception_raised,
     input [31:0] exception_handling_addr,
 
     output [31:0] pc4,
@@ -23,7 +23,7 @@ module if_stage (
         .pc4(pc4),
         .c(c),
         .jump(jump),
-        .exception_cause(exception_cause),
+        .exception_raised(exception_raised),
         .exception_handling_addr(exception_handling_addr),
         .next_pc(next_pc)
     );

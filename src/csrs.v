@@ -25,6 +25,7 @@ module csrs #(
     input is_mret,
 
     // Exception
+    input exception_raised,
     input [1:0] cause_in,
     input [31:0] epc_in,
     input [31:0] tval_in,
@@ -35,7 +36,6 @@ module csrs #(
 );
 
     wire wr_csr = !wr_csr_n;
-    wire exception_raised = cause_in != NOT_EXCEPTION;
 
     //
     // Priviledge Mode

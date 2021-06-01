@@ -19,6 +19,7 @@ module exception_ctrl_u #(
     input jump,
 
     // Outputs
+    output exception_raised,
     output [1:0] exception_cause,
     output [31:0] exception_epc,
     output [31:0] exception_tval
@@ -30,6 +31,7 @@ module exception_ctrl_u #(
 
     wire is_first_instruction = (current_pc == 32'h0001_0000);
 
+    assign exception_raised = exception_cause != NOT_EXCEPTION;
     assign exception_cause = cause_ctrl(i_addr_misaligned, illegal_ir, is_first_instruction, jump);
     assign exception_epc = epc_ctrl(exception_cause, pc_of_i_addr_misaligned, pc_of_illegal_ir);
     assign exception_tval = tval_ctrl(exception_cause, pc_of_i_addr_misaligned, ir_in_question);
