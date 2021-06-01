@@ -77,6 +77,7 @@ module top (
     wire wr_reg_n_id;
     wire wr_csr_n_id;
     wire is_mret_id;
+    wire is_ecall_id;
 
     // ID-EX
     wire [31:0] pc_from_id;
@@ -221,6 +222,7 @@ module top (
         .wr_reg_n(wr_reg_n_id_stage),
         .wr_csr_n(wr_csr_n_id_stage),
         .is_mret(is_mret_id),
+        .is_ecall(is_ecall_id),
         .illegal_ir(illegal_ir)
     );
 
@@ -520,6 +522,7 @@ module top (
         .illegal_ir(illegal_ir),
         .ir_in_question(ir_from_if),
         .pc_of_illegal_ir(pc_from_if),
+        .is_ecall(is_ecall_id),
         .jump(jump_ex),
         .exception_raised(exception_raised),
         .exception_cause(exception_cause),

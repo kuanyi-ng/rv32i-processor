@@ -31,6 +31,7 @@ module id_stage
     output wr_reg_n,    // 0: write, 1: don't write
     output wr_csr_n,    // 0: write, 1: don't write
     output is_mret,     // 0: not mret, 1: mret
+    output is_ecall,    // 0: not ecall, 1: ecall
     output illegal_ir   // 0: legal, 1: illegal
 );
 
@@ -49,6 +50,7 @@ module id_stage
 
     localparam [11:0] MEPC_ADDR = 12'h341;
     localparam [31:0] MRET_IR = 32'b0011000_00010_00000_000_00000_1110011;
+    localparam [31:0] ECALL_IR = 32'b000000000000_00000_000_00000_1110011;
 
     //
     // Main
@@ -92,6 +94,7 @@ module id_stage
     assign wr_csr_n = wr_csr_n_ctrl(opcode, funct3, rs1, illegal_ir);
 
     assign is_mret = (ir == MRET_IR);
+    assign is_ecall = (ir == ECALL_IR);
 
     assign illegal_ir = illegal_ir_check(opcode, funct3, funct7, is_mret);
 
@@ -237,8 +240,8 @@ module id_stage
 
                 SYSTEM_OP: begin
                     // MRET
-                    // illegal if instruction with funct3 of 000 is not mret
-                    if (funct3 == 3'b000) illegal_ir_check = !is_mret;
+                    // illegal if instruction with funct3 of 000 is not (mret or ecall)
+                    if (funct3 == 3'b000) illegal_ir_check = !(is_mret || is_ecall);
                     // CSRs instructions does not have funct3 of { 000, 100 }
                     else illegal_ir_check = (funct3 == 3'b100);
                 end

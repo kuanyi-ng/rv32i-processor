@@ -1,7 +1,8 @@
 module exception_ctrl_u #(
     parameter [1:0] NOT_EXCEPTION = 2'b00,
     parameter [1:0] I_ADDR_MISALIGNMENT = 2'b01,
-    parameter [1:0] ILLEGAL_IR = 2'b10
+    parameter [1:0] ILLEGAL_IR = 2'b10,
+    parameter [1:0] ECALL = 2'b11
 ) (
     // current pc
     input [31:0] current_pc,
@@ -14,6 +15,9 @@ module exception_ctrl_u #(
     input illegal_ir,
     input [31:0] ir_in_question,
     input [31:0] pc_of_illegal_ir,
+
+    // ECALL
+    input is_ecall,
 
     // Jump
     input jump,
@@ -32,7 +36,7 @@ module exception_ctrl_u #(
     wire is_first_instruction = (current_pc == 32'h0001_0000);
 
     assign exception_raised = exception_cause != NOT_EXCEPTION;
-    assign exception_cause = cause_ctrl(i_addr_misaligned, illegal_ir, is_first_instruction, jump);
+    assign exception_cause = cause_ctrl(i_addr_misaligned, illegal_ir, is_ecall, is_first_instruction, jump);
     assign exception_epc = epc_ctrl(exception_cause, pc_of_i_addr_misaligned, pc_of_illegal_ir);
     assign exception_tval = tval_ctrl(exception_cause, pc_of_i_addr_misaligned, ir_in_question);
 
@@ -40,7 +44,7 @@ module exception_ctrl_u #(
     // Function
     //
 
-    function [1:0] cause_ctrl(input i_addr_misaligned, input illegal_ir, input is_first_instruction, input jump);
+    function [1:0] cause_ctrl(input i_addr_misaligned, input illegal_ir, input is_ecall, input is_first_instruction, input jump);
         begin
             // Don't raise Exception when this is the first instruction in execution
             // Don't raise Exception when jump
@@ -48,6 +52,7 @@ module exception_ctrl_u #(
             if (is_first_instruction || jump) cause_ctrl = NOT_EXCEPTION;
             else if (illegal_ir) cause_ctrl = ILLEGAL_IR;
             else if (i_addr_misaligned) cause_ctrl = I_ADDR_MISALIGNMENT;
+            else if (is_ecall) cause_ctrl = ECALL;
             else cause_ctrl = NOT_EXCEPTION;
         end
     endfunction
@@ -58,6 +63,8 @@ module exception_ctrl_u #(
                 ILLEGAL_IR: epc_ctrl = pc_of_illegal_ir;
 
                 I_ADDR_MISALIGNMENT: epc_ctrl = pc_of_i_addr_misaligned;
+
+                ECALL: epc_ctrl = pc_of_illegal_ir; // NOTE: need to rename this (pc_of_illegal_ir is from ID stage)
                 
                 // set to default pc
                 // include NOT_EXCEPTION
@@ -73,7 +80,7 @@ module exception_ctrl_u #(
 
                 I_ADDR_MISALIGNMENT: tval_ctrl = pc_of_i_addr_misaligned;
 
-                // include NOT_EXCEPTION
+                // include NOT_EXCEPTION, ECALL
                 default: tval_ctrl = 32'h0;
             endcase
         end
