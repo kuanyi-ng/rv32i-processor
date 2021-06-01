@@ -33,7 +33,7 @@ module if_id_regs (
             // reset
             pc <= 32'bx;
             pc4 <= 32'bx;
-            ir <= 32'bx;
+            ir <= NOP_IR;   // NOP instruction is the same as not performing anything
             flush <= 1'b0;  // default not to flush
             i_addr_misaligned <= 1'b0;
         end else if (stall || interlock) begin
