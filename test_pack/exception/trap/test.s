@@ -7,6 +7,7 @@ P_START_MESSAGE:
 	lb 	x3, 0(x2)
 	beqz x3, ECALL
 	sb 	x3, 0(x1)
+	addi x2, x2, 1
 	j 	P_START_MESSAGE
 ECALL:	
 	ecall
@@ -16,13 +17,14 @@ P_END_MESSAGE:
 	lb 	x3, 0(x2)
 	beqz x3, EXIT
 	sb	x3, 0(x1)
+	addi x2, x2, 1
 	j P_END_MESSAGE
 EXIT:
 	li x1, 0xff000000
 	sw x0, 0(x1)
 
+.section .rodata
 START_MESSAGE:
 .string "TRAP TEST\n"
-
 CHECK_PASSED:
 .string "CHECK PASSED!!\n"
