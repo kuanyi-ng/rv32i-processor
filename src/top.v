@@ -442,7 +442,8 @@ module top (
         .e_cause_in(e_cause),
         .e_pc_in(e_pc),
         .e_tval_in(e_tval),
-        .csr_out(z_csrs)
+        .csr_out(z_csrs),
+        .trap_vector_addr_out(trap_vector_addr)
     );
 
     // Data Forwarding
