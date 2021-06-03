@@ -1,12 +1,16 @@
 module exception_ctrl_u #(
     parameter [1:0] NOT_EXCEPTION = 2'b00,
-    parameter [1:0] I_ADDR_MISALIGNMENT = 2'b01
+    parameter [1:0] I_ADDR_MISALIGNMENT = 2'b01,
+    parameter [1:0] ECALL = 2'b11
 ) (
     // Program Counter
     input [31:0] pc_in_id,
 
     // Instruction Address Misalignment
     input i_addr_misaligned,
+
+    // ECALL
+    input is_ecall,
 
     // Jump
     input jump,
@@ -23,7 +27,7 @@ module exception_ctrl_u #(
     //
 
     assign e_raised = e_cause != NOT_EXCEPTION;
-    assign e_cause = cause_ctrl(i_addr_misaligned, jump);
+    assign e_cause = cause_ctrl(i_addr_misaligned, is_ecall, jump);
     assign e_pc = epc_ctrl(e_cause, pc_in_id);
     assign e_tval = tval_ctrl(e_cause, pc_in_id);
 
@@ -31,7 +35,7 @@ module exception_ctrl_u #(
     // Function
     //
 
-    function [1:0] cause_ctrl(input i_addr_misaligned, input jump);
+    function [1:0] cause_ctrl(input i_addr_misaligned, input is_ecall, input jump);
         begin
             // Don't raise Exception when jump
             // because this instruction will not be executed due to jump
@@ -47,7 +51,10 @@ module exception_ctrl_u #(
             // with the knowledge of branch result, it's easier to decide whether to raise an exception or not
             // even though the i_addr_misaligned is detected in IF stage
             if (jump) cause_ctrl = NOT_EXCEPTION;
+            // Priority of Exception:
+            // I_ADDR_MISALIGNMENT > ECALL
             else if (i_addr_misaligned) cause_ctrl = I_ADDR_MISALIGNMENT;
+            else if (is_ecall) cause_ctrl = ECALL;
             else cause_ctrl = NOT_EXCEPTION;
         end
     endfunction
@@ -64,7 +71,7 @@ module exception_ctrl_u #(
             case (cause)
                 I_ADDR_MISALIGNMENT: tval_ctrl = pc;
 
-                // include NOT_EXCEPTION
+                // include NOT_EXCEPTION, ECALL
                 default: tval_ctrl = 32'h0;
             endcase
         end
