@@ -28,9 +28,13 @@ module id_stage
     output [6:0] funct7,
     output [11:0] csr_addr,
     output [31:0] imm,
-    output wr_reg_n,    // 0: write, 1: don't write
-    output wr_csr_n,    // 0: write, 1: don't write
-    output is_mret      // 0: not mret, 1: mret
+    // 0: write, 1: don't write
+    output wr_reg_n,
+    output wr_csr_n,
+    // 0: not mret, 1: mret
+    output is_mret,
+    // 0: not ecall, 1: ecall
+    output is_ecall
 );
 
     //
@@ -48,6 +52,7 @@ module id_stage
 
     localparam [11:0] MEPC_ADDR = 12'h341;
     localparam [31:0] MRET_IR = 32'b0011000_00010_00000_000_00000_1110011;
+    localparam [31:0] ECALL_IR = 32'b000000000000_00000_000_00000_1110011;
 
     //
     // Main
@@ -90,6 +95,7 @@ module id_stage
     assign wr_csr_n = wr_csr_n_ctrl(opcode, funct3, rs1);
 
     assign is_mret = (ir == MRET_IR);
+    assign is_ecall = (ir == ECALL_IR);
 
     //
     // Functions
