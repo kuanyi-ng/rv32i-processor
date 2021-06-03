@@ -82,27 +82,25 @@ module id_ex_regs (
             wr_csr_n <= 1'b1;   // default not to write
             flush <= 1'b0;      // default not to flush
         end else if (stall_or_interlock) begin
-            // stall has the same behaviour as reset
-            // as a way to prevent double detection of
-            // pipeline stall.
-            //
             // since interlock behaves just like stall
-            // interlock has the same behaviour as reset.
-            pc <= 32'bx;
-            pc4 <= 32'bx;
-            data1 <= 32'bx;
-            data2 <= 32'bx;
-            funct7 <= 7'bx;
-            funct3 <= 3'bx;
-            rs2 <= 5'bx;
-            rd <= 5'bx;
-            csr_addr <= 12'bx;
-            opcode <= 7'bx;
-            imm <= 32'bx;
-            z_ <= 32'bx;
-            wr_reg_n <= 1'b1;   // default not to write
-            wr_csr_n <= 1'b1;   // default not to write
-            flush <= 1'b0;      // default not to flush
+            pc <= pc;
+            pc4 <= pc4;
+            data1 <= data1;
+            data2 <= data2;
+            funct7 <= funct7;
+            funct3 <= funct3;
+            rs2 <= rs2;
+            rd <= rd;
+            csr_addr <= csr_addr;
+            opcode <= opcode;
+            imm <= imm;
+            z_ <= z_;
+            // in order to prevent double detection of stall,
+            // which will cause the pipeline to stall forever,
+            // it is required to set wr signals to inactive.
+            wr_reg_n <= 1'b1;
+            wr_csr_n <= 1'b1;
+            flush <= flush;
         end else begin
             pc <= pc_in;
             pc4 <= pc4_in;
