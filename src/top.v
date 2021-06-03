@@ -77,6 +77,7 @@ module top (
     wire wr_reg_n_id;
     wire wr_csr_n_id;
     wire is_mret_id;
+    wire is_ecall_id;
 
     // ID-EX
     wire [31:0] pc_from_id;
@@ -223,7 +224,8 @@ module top (
         .imm(imm_id),
         .wr_reg_n(wr_reg_n_id_stage),
         .wr_csr_n(wr_csr_n_id_stage),
-        .is_mret(is_mret_id)
+        .is_mret(is_mret_id),
+        .is_ecall(is_ecall)
     );
 
     id_data_picker id_data_picker_inst(
@@ -517,6 +519,7 @@ module top (
     exception_ctrl_u exception_ctrl_u_inst(
         .pc_in_id(pc_from_if),
         .i_addr_misaligned(i_addr_misaligned_from_if),
+        .is_ecall(is_ecall_id),
         .jump(jump_ex),
         .e_raised(e_raised),
         .e_cause(e_cause),
