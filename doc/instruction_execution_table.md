@@ -868,7 +868,17 @@
             <!-- instruction -->
             <td>ecall [?]</td>
             <!-- IF -->
+            <td>
+                IR ← mem[PC]
+                <br />
+                PC ← PC + 4
+            </td>
             <!-- ID -->
+            <td>
+                RaiseException
+                <br />
+                PC ← trap_vector_addr
+            </td>
             <!-- EX -->
             <td></td>
             <!-- MEM -->
