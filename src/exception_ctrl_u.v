@@ -12,20 +12,20 @@ module exception_ctrl_u #(
     input jump,
 
     // Outputs
-    output exception_raised,
-    output [1:0] exception_cause,
-    output [31:0] exception_epc,
-    output [31:0] exception_tval
+    output e_raised,
+    output [1:0] e_cause,
+    output [31:0] e_pc,
+    output [31:0] e_tval
 );
 
     //
     // Main
     //
 
-    assign exception_raised = exception_cause != NOT_EXCEPTION;
-    assign exception_cause = cause_ctrl(i_addr_misaligned, jump);
-    assign exception_epc = epc_ctrl(exception_cause, pc_in_id);
-    assign exception_tval = tval_ctrl(exception_cause, pc_in_id);
+    assign e_raised = e_cause != NOT_EXCEPTION;
+    assign e_cause = cause_ctrl(i_addr_misaligned, jump);
+    assign e_pc = epc_ctrl(e_cause, pc_in_id);
+    assign e_tval = tval_ctrl(e_cause, pc_in_id);
 
     //
     // Function
