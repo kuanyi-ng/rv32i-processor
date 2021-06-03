@@ -44,6 +44,7 @@ test_programs_paths = {
     "p2_part": "./test_pack/asm/p2_part/",
     "csr": "./test_pack/asm/csr/",
     "mret": "./test_pack/asm/mret/",
+    "trap": "./test_pack/exception/trap/",
 }
 
 def clean_test_ground():
