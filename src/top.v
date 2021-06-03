@@ -14,6 +14,7 @@
 `include "id_stage.v"
 `include "id_wr_n_picker.v"
 `include "id_z_picker.v"
+`include "if_flush_picker.v"
 `include "if_id_regs.v"
 `include "if_stage.v"
 `include "interlock_u.v"
@@ -150,6 +151,8 @@ module top (
 
     // Pipeline Flush
     wire flush;
+    // Pipelin Flush (IF)
+    wire flush_if;
     // Pipeline Flush (ID)
     wire flush_id;
 
@@ -192,6 +195,12 @@ module top (
     );
     assign IAD = current_pc;
 
+    if_flush_picker if_flush_picker_inst(
+        .e_raised(e_raised),
+        .flush_from_flush_u(flush),
+        .flush_out(flush_if)
+    );
+
     // IF-ID
     if_id_regs if_id_regs_inst(
         .clk(clk),
@@ -204,7 +213,7 @@ module top (
         .pc4_out(pc4_from_if),
         .ir_in(IDT),
         .ir_out(ir_from_if),
-        .flush_in(flush),
+        .flush_in(flush_if),
         .flush_out(flush_from_if),
         .i_addr_misaligned_in(i_addr_misaligned_if),
         .i_addr_misaligned_out(i_addr_misaligned_from_if)
