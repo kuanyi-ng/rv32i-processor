@@ -1,6 +1,7 @@
 module m_trap_setup_regs (
     output [31:0] misa,
     output [31:0] mtvec,
+    output [31:0] trap_vector_addr,
     output [31:0] mcounteren
 );
 
@@ -21,8 +22,7 @@ module m_trap_setup_regs (
     // might need to allow setup of mtvec value on boot ...
 
     // Base Address
-    // TODO: need to confirm the Base Address value
-    localparam [31:0] trap_vector_base_addr = 32'h4;    // 0000_0004
+    localparam [31:0] trap_vector_base_addr = 32'h0;
     // Trap Vector Mode
     // 0    : Direct    : pc = trap_vector_base_addr
     // 1    : Vectored  : pc = trap_vector_base_addr + 4 * cause
@@ -30,6 +30,8 @@ module m_trap_setup_regs (
     localparam [1:0] trap_vector_mode = 2'b00;
     // mtvec: { BASE, MODE }
     assign mtvec = { trap_vector_base_addr[31:2], trap_vector_mode };
+
+    assign trap_vector_addr = trap_vector_base_addr;
 
     // Machine Counter-Enable Register
     // don't allow for the moment

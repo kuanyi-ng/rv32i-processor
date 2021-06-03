@@ -5,7 +5,10 @@
 `include "mstatus_reg.v"
 `include "csr_reg.v"
 
-module csrs (
+module csrs #(
+    parameter [1:0] NOT_EXCEPTION = 2'b00,
+    parameter [1:0] I_ADDR_MISALIGNMENT = 2'b01
+) (
     input clk,
     input rst_n,
 
@@ -20,8 +23,15 @@ module csrs (
     // MRET
     input is_mret,
 
+    // Exception
+    input e_raised,
+    input [1:0] e_cause_in,
+    input [31:0] e_pc_in,
+    input [31:0] e_tval_in,
+
     // Outputs
-    output reg [31:0] csr_out
+    output reg [31:0] csr_out,
+    output reg [31:0] trap_vector_addr_out
 );
 
     wire wr_csr = !wr_csr_n;
@@ -76,10 +86,12 @@ module csrs (
 
     wire [31:0] misa;
     wire [31:0] mtvec;
+    wire [31:0] trap_vector_addr;
     wire [31:0] mcounteren;
     m_trap_setup_regs m_trap_setup_regs_inst(
         .misa(misa),
         .mtvec(mtvec),
+        .trap_vector_addr(trap_vector_addr),
         .mcounteren(mcounteren)
     );
 
@@ -94,6 +106,7 @@ module csrs (
         .clk(clk),
         .rst_n(rst_n),
         .is_mret(is_mret),
+        .e_raised(e_raised),
         .mstatus_in(csr_data_in),
         .wr_mstatus(wr_mstatus),
         .priviledge_mode(priviledge_mode),
@@ -125,33 +138,52 @@ module csrs (
     );
 
     localparam [31:0] mepc_reset_val = 32'h0001_0000;   // same default value as pc_reg
-    wire wr_mepc = wr_csr && (csr_wr_addr == mepc_addr);
+    wire wr_mepc_requested = wr_csr && (csr_wr_addr == mepc_addr);
+    wire wr_mepc = e_raised || wr_mepc_requested;
+    wire [31:0] mepc_in = (e_raised) ? e_pc_in : csr_data_in;
     wire [31:0] mepc;
     csr_reg #(.rst_value(mepc_reset_val)) mepc_reg_inst(
         .clk(clk),
         .rst_n(rst_n),
-        .in(csr_data_in),
+        .in(mepc_in),
         .wr_reg(wr_mepc),
         .out(mepc)
     );
 
     localparam [31:0] hard_reset_mcause_val = 32'b0;
-    wire wr_mcause = wr_csr && (csr_wr_addr == mcause_addr);
+    localparam [31:0] i_addr_misalignment_mcause_val = { 1'b0, 31'd0 };
+
+    wire wr_mcause_requested = wr_csr && (csr_wr_addr == mcause_addr);
+    wire wr_mcause = e_raised || wr_mcause_requested;
+    wire [31:0] mcause_in = mcause_in_ctrl(e_cause_in, csr_data_in);
+
     wire [31:0] mcause;
     csr_reg #(.rst_value(hard_reset_mcause_val)) mcause_reg_inst(
         .clk(clk),
         .rst_n(rst_n),
-        .in(csr_data_in),
+        .in(mcause_in),
         .wr_reg(wr_mcause),
         .out(mcause)
     );
 
-    wire wr_mtval = wr_csr && (csr_wr_addr == mtval_addr);
+    function [31:0] mcause_in_ctrl(input [1:0] cause, input [31:0] csr_data_in);
+        begin
+            case (cause)
+                I_ADDR_MISALIGNMENT: mcause_in_ctrl = i_addr_misalignment_mcause_val;
+
+                default: mcause_in_ctrl = csr_data_in;
+            endcase
+        end
+    endfunction
+
+    wire wr_mtval_request = wr_csr && (csr_wr_addr == mtval_addr);
+    wire wr_mtval = e_raised || wr_mtval_request;
+    wire [31:0] mtval_in = (e_raised) ? e_tval_in : csr_data_in;
     wire [31:0] mtval;
     csr_reg mtval_reg_inst(
         .clk(clk),
         .rst_n(rst_n),
-        .in(csr_data_in),
+        .in(mtval_in),
         .wr_reg(wr_mtval),
         .out(mtval)
     );
@@ -166,6 +198,7 @@ module csrs (
         .mip(mip)
     );
 
+    // csr_out
     always @(*) begin
         // NOTE: read mepc during mret instruction
         // - the csr_addr decoded from mepc = medeleg
@@ -202,6 +235,11 @@ module csrs (
 
                 default: csr_out = 32'b0;
         endcase
+    end
+
+    // trap_vector_addr_out
+    always @(*) begin
+        trap_vector_addr_out = trap_vector_addr;
     end
 
 endmodule

@@ -6,6 +6,7 @@
 `include "ex_jump_picker.v"
 `include "ex_mem_regs.v"
 `include "ex_stage.v"
+`include "exception_ctrl_u.v"
 `include "flush_u.v"
 `include "id_data_picker.v"
 `include "id_ex_regs.v"
@@ -155,6 +156,16 @@ module top (
     // Pipeline Interlock
     wire interlock;
 
+    // Exception Handling
+    wire i_addr_misaligned_if;
+    wire i_addr_misaligned_from_if;
+
+    wire e_raised;
+    wire [1:0] e_cause;
+    wire [31:0] e_pc;
+    wire [31:0] e_tval;
+    wire [31:0] trap_vector_addr;
+
     //
     // Modules Instantiation
     //
@@ -173,8 +184,11 @@ module top (
         .current_pc(current_pc),
         .c(c_ex),
         .jump(jump_ex),
+        .e_raised(e_raised),
+        .e_handling_addr(trap_vector_addr),
         .pc4(pc4_if),
-        .next_pc(next_pc)
+        .next_pc(next_pc),
+        .i_addr_misaligned(i_addr_misaligned_if)
     );
     assign IAD = current_pc;
 
@@ -191,7 +205,9 @@ module top (
         .ir_in(IDT),
         .ir_out(ir_from_if),
         .flush_in(flush),
-        .flush_out(flush_from_if)
+        .flush_out(flush_from_if),
+        .i_addr_misaligned_in(i_addr_misaligned_if),
+        .i_addr_misaligned_out(i_addr_misaligned_from_if)
     );
 
     // ID
@@ -420,6 +436,10 @@ module top (
         .csr_data_in(csr_data_in),
         .wr_csr_n(wr_csr_n_from_mem),
         .is_mret(is_mret_id),
+        .e_raised(e_raised),
+        .e_cause_in(e_cause),
+        .e_pc_in(e_pc),
+        .e_tval_in(e_tval),
         .csr_out(z_csrs)
     );
 
@@ -491,6 +511,17 @@ module top (
         .dmem_ack_n(ACKD_n),
         .opcode(opcode_from_ex),
         .interlock(interlock)
+    );
+
+    // Exception Handling
+    exception_ctrl_u exception_ctrl_u_inst(
+        .pc_in_id(pc_from_if),
+        .i_addr_misaligned(i_addr_misaligned_from_if),
+        .jump(jump_ex),
+        .e_raised(e_raised),
+        .e_cause(e_cause),
+        .e_pc(e_pc),
+        .e_tval(e_tval)
     );
 
 endmodule
