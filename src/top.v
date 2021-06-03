@@ -225,7 +225,7 @@ module top (
         .wr_reg_n(wr_reg_n_id_stage),
         .wr_csr_n(wr_csr_n_id_stage),
         .is_mret(is_mret_id),
-        .is_ecall(is_ecall)
+        .is_ecall(is_ecall_id)
     );
 
     id_data_picker id_data_picker_inst(
