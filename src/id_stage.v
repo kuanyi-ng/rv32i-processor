@@ -76,6 +76,7 @@ module id_stage
     wire [2:0] imm_type;
     assign imm_type = imm_type_from(opcode, funct3);
 
+    wire [31:0] temp_imm;
     imm_extractor #(
         .I_TYPE(I_TYPE),
         .B_TYPE(B_TYPE),
@@ -88,8 +89,10 @@ module id_stage
     ) imm_extractor_inst(
         .in(ir),
         .imm_type(imm_type),
-        .out(imm)
+        .out(temp_imm)
     );
+    // change imm to 32'b4 if is_mret is true
+    assign imm = (is_mret) ? 32'h4 : temp_imm;
 
     assign wr_reg_n = wr_reg_n_ctrl(opcode, rd, funct3);
     assign wr_csr_n = wr_csr_n_ctrl(opcode, funct3, rs1);
