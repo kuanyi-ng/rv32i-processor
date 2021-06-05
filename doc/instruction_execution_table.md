@@ -935,13 +935,15 @@
             <td>
                 Z ← CSRs[mpec]
                 <br />
+                Imm ← 4
+                <br />
                 mstatus.mie ← mstatus.mpie
                 <br />
                 mstatus.mpie ← 1
             </td>
             <!-- EX -->
             <td>
-                C ← Z
+                C ← Z + 4
                 <br />
                 jump ← 1
                 <br />
