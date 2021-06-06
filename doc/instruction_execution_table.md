@@ -935,7 +935,7 @@
             <td>
                 Z ← CSRs[mpec]
                 <br />
-                Imm ← 4
+                Imm ← (cause == ecall) ? 32'h4 : 32'h0
                 <br />
                 mstatus.mie ← mstatus.mpie
                 <br />
@@ -943,7 +943,7 @@
             </td>
             <!-- EX -->
             <td>
-                C ← Z + 4
+                C ← Z + Imm
                 <br />
                 jump ← 1
                 <br />
