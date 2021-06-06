@@ -32,7 +32,8 @@ module csrs #(
 
     // Outputs
     output reg [31:0] csr_out,
-    output reg [31:0] trap_vector_addr_out
+    output reg [31:0] trap_vector_addr_out,
+    output reg is_e_cause_eq_ecall
 );
 
     wire wr_csr = !wr_csr_n;
@@ -260,6 +261,15 @@ module csrs #(
     // trap_vector_addr_out
     always @(*) begin
         trap_vector_addr_out = trap_vector_addr;
+    end
+
+    // is_e_cause_eq_ecall
+    always @(*) begin
+        // only M-mode supported
+        //
+        // this will not be able to handle nested exception
+        // as mcause doesn't record the previous mcause value
+        is_e_cause_eq_ecall = (mcause == ecall_from_m_mcause_val);
     end
 
 endmodule

@@ -17,6 +17,9 @@ module id_stage
     // inputs from IF stage
     input [31:0] ir,
 
+    // inputs from CSRs
+    input is_e_cause_eq_ecall,
+
     // outputs to Register File
     output [4:0] rs1,
     output [4:0] rs2,
@@ -91,8 +94,12 @@ module id_stage
         .imm_type(imm_type),
         .out(temp_imm)
     );
-    // change imm to 32'b4 if is_mret is true
-    assign imm = (is_mret) ? 32'h4 : temp_imm;
+    // Calculation of Jump (return) address for MRET
+    // if it's returning from ecall: jump to mepc + 4
+    // else (other type of exception) jump to mepc
+    //
+    // When is_mret is true, temp_imm will be 32'h0
+    assign imm = (is_mret && is_e_cause_eq_ecall) ? 32'h4 : temp_imm;
 
     assign wr_reg_n = wr_reg_n_ctrl(opcode, rd, funct3);
     assign wr_csr_n = wr_csr_n_ctrl(opcode, funct3, rs1);

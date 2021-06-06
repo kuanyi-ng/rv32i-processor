@@ -166,6 +166,7 @@ module top (
     wire [31:0] e_pc;
     wire [31:0] e_tval;
     wire [31:0] trap_vector_addr;
+    wire is_e_cause_eq_ecall;
 
     //
     // Modules Instantiation
@@ -214,6 +215,7 @@ module top (
     // ID
     id_stage id_stage_inst(
         .ir(ir_from_if),
+        .is_e_cause_eq_ecall(is_e_cause_eq_ecall),
         .rs1(rd1_addr),
         .rs2(rd2_addr),
         .rd(rd_id),
@@ -443,7 +445,8 @@ module top (
         .e_pc_in(e_pc),
         .e_tval_in(e_tval),
         .csr_out(z_csrs),
-        .trap_vector_addr_out(trap_vector_addr)
+        .trap_vector_addr_out(trap_vector_addr),
+        .is_e_cause_eq_ecall(is_e_cause_eq_ecall)
     );
 
     // Data Forwarding
