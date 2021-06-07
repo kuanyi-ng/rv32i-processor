@@ -17,6 +17,9 @@ module id_stage
     // inputs from IF stage
     input [31:0] ir,
 
+    // inputs from CSRs
+    input is_e_cause_eq_ecall,
+
     // outputs to Register File
     output [4:0] rs1,
     output [4:0] rs2,
@@ -28,9 +31,13 @@ module id_stage
     output [6:0] funct7,
     output [11:0] csr_addr,
     output [31:0] imm,
-    output wr_reg_n,    // 0: write, 1: don't write
-    output wr_csr_n,    // 0: write, 1: don't write
-    output is_mret      // 0: not mret, 1: mret
+    // 0: write, 1: don't write
+    output wr_reg_n,
+    output wr_csr_n,
+    // 0: not mret, 1: mret
+    output is_mret,
+    // 0: not ecall, 1: ecall
+    output is_ecall
 );
 
     //
@@ -48,6 +55,7 @@ module id_stage
 
     localparam [11:0] MEPC_ADDR = 12'h341;
     localparam [31:0] MRET_IR = 32'b0011000_00010_00000_000_00000_1110011;
+    localparam [31:0] ECALL_IR = 32'b000000000000_00000_000_00000_1110011;
 
     //
     // Main
@@ -71,6 +79,7 @@ module id_stage
     wire [2:0] imm_type;
     assign imm_type = imm_type_from(opcode, funct3);
 
+    wire [31:0] temp_imm;
     imm_extractor #(
         .I_TYPE(I_TYPE),
         .B_TYPE(B_TYPE),
@@ -83,13 +92,20 @@ module id_stage
     ) imm_extractor_inst(
         .in(ir),
         .imm_type(imm_type),
-        .out(imm)
+        .out(temp_imm)
     );
+    // Calculation of Jump (return) address for MRET
+    // if it's returning from ecall: jump to mepc + 4
+    // else (other type of exception) jump to mepc
+    //
+    // When is_mret is true, temp_imm will be 32'h0
+    assign imm = (is_mret && is_e_cause_eq_ecall) ? 32'h4 : temp_imm;
 
     assign wr_reg_n = wr_reg_n_ctrl(opcode, rd, funct3);
     assign wr_csr_n = wr_csr_n_ctrl(opcode, funct3, rs1);
 
     assign is_mret = (ir == MRET_IR);
+    assign is_ecall = (ir == ECALL_IR);
 
     //
     // Functions

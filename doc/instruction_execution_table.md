@@ -868,7 +868,17 @@
             <!-- instruction -->
             <td>ecall [?]</td>
             <!-- IF -->
+            <td>
+                IR ← mem[PC]
+                <br />
+                PC ← PC + 4
+            </td>
             <!-- ID -->
+            <td>
+                RaiseException
+                <br />
+                PC ← trap_vector_addr
+            </td>
             <!-- EX -->
             <td></td>
             <!-- MEM -->
@@ -925,13 +935,15 @@
             <td>
                 Z ← CSRs[mpec]
                 <br />
+                Imm ← (cause == ecall) ? 32'h4 : 32'h0
+                <br />
                 mstatus.mie ← mstatus.mpie
                 <br />
                 mstatus.mpie ← 1
             </td>
             <!-- EX -->
             <td>
-                C ← Z
+                C ← Z + Imm
                 <br />
                 jump ← 1
                 <br />

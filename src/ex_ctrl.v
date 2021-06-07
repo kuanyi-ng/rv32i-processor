@@ -41,7 +41,7 @@ module ex_ctrl
     // Main
     //
 
-    assign { in1, in2 } = alu_ins_ctrl(opcode, funct3[2], data1, data2, pc, imm, z_);
+    assign { in1, in2 } = alu_ins_ctrl(opcode, funct3, data1, data2, pc, imm, z_);
     assign branch_alu_op = branch_alu_op_ctrl(opcode, funct3);
     assign alu_op = alu_op_ctrl(opcode, funct3, funct7);
 
@@ -53,7 +53,7 @@ module ex_ctrl
     // return { in1, in2 }
     function [63:0] alu_ins_ctrl(
         input [6:0] opcode,
-        input funct3_2, // funct3[2]
+        input [2:0] funct3,
         input [31:0] data1,
         input [31:0] data2,
         input [31:0] pc,
@@ -82,9 +82,11 @@ module ex_ctrl
                 R_TYPE_OP: alu_ins_ctrl = { data1, data2 };
 
                 SYSTEM_OP: begin
+                    // mret, ecall
+                    if (funct3 == 3'b000) alu_ins_ctrl = { z_, imm };
                     // funct3[2]: 1 => csr with imm
-                    if (funct3_2) alu_ins_ctrl = { z_, imm };
-                    // funct3[2]: 0 => csr with register, mret
+                    else if (funct3[2] == 1'b1) alu_ins_ctrl = { z_, imm };
+                    // funct3[2]: 0 => csr with register
                     else alu_ins_ctrl = { z_, data1 };
                 end
 
@@ -167,7 +169,7 @@ module ex_ctrl
                 else alu_op_ctrl = 4'bx;
             end else if (is_system_call) begin
                 // MRET
-                alu_op_ctrl = OR;
+                alu_op_ctrl = ADD;
             end else begin
                 // AUIPC, JAL, Branch, Load, Store
                 alu_op_ctrl = ADD;

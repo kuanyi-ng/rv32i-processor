@@ -7,7 +7,8 @@
 
 module csrs #(
     parameter [1:0] NOT_EXCEPTION = 2'b00,
-    parameter [1:0] I_ADDR_MISALIGNMENT = 2'b01
+    parameter [1:0] I_ADDR_MISALIGNMENT = 2'b01,
+    parameter [1:0] ECALL = 2'b11
 ) (
     input clk,
     input rst_n,
@@ -31,16 +32,11 @@ module csrs #(
 
     // Outputs
     output reg [31:0] csr_out,
-    output reg [31:0] trap_vector_addr_out
+    output reg [31:0] trap_vector_addr_out,
+    output reg is_e_cause_eq_ecall
 );
 
     wire wr_csr = !wr_csr_n;
-
-    //
-    // Priviledge Mode
-    //
-
-    localparam [1:0] machine_mode = 2'b11;
 
     //
     // CSRs Address
@@ -94,6 +90,14 @@ module csrs #(
         .trap_vector_addr(trap_vector_addr),
         .mcounteren(mcounteren)
     );
+
+    //
+    // Priviledge Mode
+    //
+
+    localparam [1:0] machine_mode = 2'b11;
+    localparam [1:0] supervisor_mode = 2'b01;
+    localparam [1:0] user_mode = 2'b00;
 
     //
     // Machine Trap Setup
@@ -152,6 +156,9 @@ module csrs #(
 
     localparam [31:0] hard_reset_mcause_val = 32'b0;
     localparam [31:0] i_addr_misalignment_mcause_val = { 1'b0, 31'd0 };
+    localparam [31:0] ecall_from_u_mcause_val = { 1'b0, 31'd8 };
+    localparam [31:0] ecall_from_s_mcause_val = { 1'b0, 31'd9 };
+    localparam [31:0] ecall_from_m_mcause_val = { 1'b0, 31'd11 };
 
     wire wr_mcause_requested = wr_csr && (csr_wr_addr == mcause_addr);
     wire wr_mcause = e_raised || wr_mcause_requested;
@@ -170,6 +177,20 @@ module csrs #(
         begin
             case (cause)
                 I_ADDR_MISALIGNMENT: mcause_in_ctrl = i_addr_misalignment_mcause_val;
+
+                ECALL: begin
+                    case (priviledge_mode)
+                        machine_mode: mcause_in_ctrl = ecall_from_m_mcause_val;
+
+                        supervisor_mode: mcause_in_ctrl = ecall_from_s_mcause_val;
+
+                        user_mode: mcause_in_ctrl = ecall_from_u_mcause_val;
+
+                        // NOTE: not sure what to return during this case
+                        // return ecall_from_m (highest security) just in case
+                        default: mcause_in_ctrl = ecall_from_m_mcause_val;
+                    endcase
+                end
 
                 default: mcause_in_ctrl = csr_data_in;
             endcase
@@ -240,6 +261,15 @@ module csrs #(
     // trap_vector_addr_out
     always @(*) begin
         trap_vector_addr_out = trap_vector_addr;
+    end
+
+    // is_e_cause_eq_ecall
+    always @(*) begin
+        // only M-mode supported
+        //
+        // this will not be able to handle nested exception
+        // as mcause doesn't record the previous mcause value
+        is_e_cause_eq_ecall = (mcause == ecall_from_m_mcause_val);
     end
 
 endmodule

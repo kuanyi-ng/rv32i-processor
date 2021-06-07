@@ -78,6 +78,7 @@ module top (
     wire wr_reg_n_id;
     wire wr_csr_n_id;
     wire is_mret_id;
+    wire is_ecall_id;
 
     // ID-EX
     wire [31:0] pc_from_id;
@@ -168,6 +169,7 @@ module top (
     wire [31:0] e_pc;
     wire [31:0] e_tval;
     wire [31:0] trap_vector_addr;
+    wire is_e_cause_eq_ecall;
 
     //
     // Modules Instantiation
@@ -222,6 +224,7 @@ module top (
     // ID
     id_stage id_stage_inst(
         .ir(ir_from_if),
+        .is_e_cause_eq_ecall(is_e_cause_eq_ecall),
         .rs1(rd1_addr),
         .rs2(rd2_addr),
         .rd(rd_id),
@@ -232,7 +235,8 @@ module top (
         .imm(imm_id),
         .wr_reg_n(wr_reg_n_id_stage),
         .wr_csr_n(wr_csr_n_id_stage),
-        .is_mret(is_mret_id)
+        .is_mret(is_mret_id),
+        .is_ecall(is_ecall_id)
     );
 
     id_data_picker id_data_picker_inst(
@@ -449,7 +453,9 @@ module top (
         .e_cause_in(e_cause),
         .e_pc_in(e_pc),
         .e_tval_in(e_tval),
-        .csr_out(z_csrs)
+        .csr_out(z_csrs),
+        .trap_vector_addr_out(trap_vector_addr),
+        .is_e_cause_eq_ecall(is_e_cause_eq_ecall)
     );
 
     // Data Forwarding
@@ -526,6 +532,7 @@ module top (
     exception_ctrl_u exception_ctrl_u_inst(
         .pc_in_id(pc_from_if),
         .i_addr_misaligned(i_addr_misaligned_from_if),
+        .is_ecall(is_ecall_id),
         .jump(jump_ex),
         .e_raised(e_raised),
         .e_cause(e_cause),
