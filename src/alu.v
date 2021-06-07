@@ -9,14 +9,12 @@ module alu (
 
     assign out = alu_out(in1, in2, alu_op);
 
-    function [31:0] alu_out(input [31:0] in1, input [31:0] in2, input [3:0] alu_op);
-        reg signed [31:0] s_in1;
-        reg signed [31:0] s_in2;
-
+    function signed [31:0] alu_out(
+        input signed [31:0] in1,
+        input signed [31:0] in2,
+        input [3:0] alu_op
+    );
         begin
-            s_in1 = $signed(in1);
-            s_in2 = $signed(in2);
-
             case (alu_op)
                 // ADD, ADDI, Load, Store, Branch, JAL, AUIPC
                 `ADD: alu_out = in1 + in2;
@@ -25,7 +23,7 @@ module alu (
                 `SLL: alu_out = in1 << { 27'b0, in2[4:0] };
 
                 // SLT, SLTI
-                `SLT: alu_out = (s_in1 < s_in2) ? 32'd1 : 32'd0;
+                `SLT: alu_out = (in1 < in2) ? 32'd1 : 32'd0;
 
                 // SLTU, SLTIU
                 `SLTU: alu_out = (in1 < in2) ? 32'd1 : 32'd0;
@@ -57,7 +55,7 @@ module alu (
 
                 // SRA, SRAI
                 // signed to unsigned assignment occurs. (VER-318)
-                `SRA: alu_out = s_in1 >>> { 27'b0, in2[4:0] };
+                `SRA: alu_out = in1 >>> { 27'b0, in2[4:0] };
 
                 // default: false
                 default: alu_out = 32'b0;
