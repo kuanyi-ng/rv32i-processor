@@ -1,14 +1,6 @@
-module imm_extractor
-#(
-    parameter [2:0] I_TYPE = 3'b000,
-    parameter [2:0] B_TYPE = 3'b001,
-    parameter [2:0] S_TYPE = 3'b010,
-    parameter [2:0] U_TYPE = 3'b011,
-    parameter [2:0] J_TYPE = 3'b100,
-    parameter [2:0] SHAMT_TYPE = 3'b101,
-    parameter [2:0] CSR_TYPE = 3'b110,
-    parameter [2:0] DEFAULT_TYPE = 3'b111
-) (
+`include "constants/imm_type.v"
+
+module imm_extractor (
     input [31:0] in,    // ir
     input [2:0] imm_type,
     output [31:0] out
@@ -28,25 +20,25 @@ module imm_extractor
        begin
         case (imm_type)
             // I-Type (include jalr)
-            I_TYPE: imm = i_imm(in);
+            `I_IMM: imm = i_imm(in);
 
             // B-Type
-            B_TYPE: imm = b_imm(in);
+            `B_IMM: imm = b_imm(in);
 
             // S-Type
-            S_TYPE: imm = s_imm(in);
+            `S_IMM: imm = s_imm(in);
 
             // U-Type
-            U_TYPE: imm = u_imm(in);
+            `U_IMM: imm = u_imm(in);
 
             // J-Type (doesn't include jalr)
-            J_TYPE: imm = j_imm(in);
+            `J_IMM: imm = j_imm(in);
 
             // shamt_imm
-            SHAMT_TYPE: imm = shamt_imm(in);
+            `SHAMT_IMM: imm = shamt_imm(in);
 
             // z_imm (csr)
-            CSR_TYPE: imm = csr_imm(in);
+            `CSR_IMM: imm = csr_imm(in);
 
             // default: 0
             default: imm = 32'd0;
