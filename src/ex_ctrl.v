@@ -1,4 +1,5 @@
 `include "constants/alu_op.v"
+`include "constants/branch_alu_op.v"
 
 module ex_ctrl
 #(
@@ -12,11 +13,7 @@ module ex_ctrl
     parameter [6:0] STORE_OP = 7'b0100011,
     parameter [6:0] I_TYPE_OP = 7'b0010011,
     parameter [6:0] R_TYPE_OP = 7'b0110011,
-    parameter [6:0] SYSTEM_OP = 7'b1110011,
-
-    // Branch ALU OP
-    parameter [2:0] JUMP = 3'b010,
-    parameter [2:0] NO_JUMP = 3'b011
+    parameter [6:0] SYSTEM_OP = 7'b1110011
 ) (
     input [6:0] opcode,
     input [2:0] funct3,
@@ -102,11 +99,11 @@ module ex_ctrl
             is_system_call = (opcode == SYSTEM_OP) && (funct3 == 3'b000); // mret, ecall, ebreak
 
             if (is_jal || is_jalr || is_system_call) begin
-                branch_alu_op_ctrl = JUMP;
+                branch_alu_op_ctrl = `JUMP;
             end else if (is_branch) begin
                 branch_alu_op_ctrl = funct3;
             end else begin
-                branch_alu_op_ctrl = NO_JUMP;
+                branch_alu_op_ctrl = `NO_JUMP;
             end
         end
     endfunction

@@ -30,19 +30,6 @@ module ex_stage
     output [31:0] c
 );
 
-    //
-    // Local Parameters
-    //
-
-    localparam [2:0] EQ = 3'b000;
-    localparam [2:0] NE = 3'b001;
-    localparam [2:0] JUMP = 3'b010;
-    localparam [2:0] NO_JUMP = 3'b011;
-    localparam [2:0] LT = 3'b100;
-    localparam [2:0] GE = 3'b101;
-    localparam [2:0] LTU = 3'b110;
-    localparam [2:0] GEU = 3'b111;
-
     wire [31:0] in1;
     wire [31:0] in2;
     wire [3:0] alu_op;
@@ -58,9 +45,7 @@ module ex_stage
         .STORE_OP(STORE_OP),
         .I_TYPE_OP(I_TYPE_OP),
         .R_TYPE_OP(R_TYPE_OP),
-        .SYSTEM_OP(SYSTEM_OP),
-        .JUMP(JUMP),
-        .NO_JUMP(NO_JUMP)
+        .SYSTEM_OP(SYSTEM_OP)
     ) ex_ctrl_inst(
         .opcode(opcode),
         .funct3(funct3),
@@ -83,16 +68,7 @@ module ex_stage
         .out(c)
     );
 
-    branch_alu #(
-        .EQ(EQ),
-        .NE(NE),
-        .JUMP(JUMP),
-        .NO_JUMP(NO_JUMP),
-        .LT(LT),
-        .GE(GE),
-        .LTU(LTU),
-        .GEU(GEU)
-    ) branch_alu_inst(
+    branch_alu branch_alu_inst(
         .in1(data1),
         .in2(data2),
         .branch_alu_op(branch_alu_op),
