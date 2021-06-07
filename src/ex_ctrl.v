@@ -1,3 +1,5 @@
+`include "constants/alu_op.v"
+
 module ex_ctrl
 #(
     // opcode
@@ -11,13 +13,6 @@ module ex_ctrl
     parameter [6:0] I_TYPE_OP = 7'b0010011,
     parameter [6:0] R_TYPE_OP = 7'b0110011,
     parameter [6:0] SYSTEM_OP = 7'b1110011,
-
-    // ALU OP
-    parameter [3:0] ADD = 4'b0000,
-    parameter [3:0] OR = 4'b0110,
-    parameter [3:0] CP_IN2 = 4'b1001,
-    parameter [3:0] JALR = 4'b1010,
-    parameter [3:0] CSRRC = 4'b1011,
 
     // Branch ALU OP
     parameter [2:0] JUMP = 3'b010,
@@ -128,9 +123,9 @@ module ex_ctrl
             is_system_call = (opcode == SYSTEM_OP) && (funct3 == 3'b000);
 
             if (is_lui) begin
-                alu_op_ctrl = CP_IN2;
+                alu_op_ctrl = `CP_IN2;
             end else if (is_jalr) begin
-                alu_op_ctrl = JALR;
+                alu_op_ctrl = `JALR;
             end else if (is_reg_reg_ir || is_reg_imm_ir) begin
                 case (funct3)
                     // ADD, SUB, ADDI
@@ -163,16 +158,16 @@ module ex_ctrl
                     // no default case as every case is covered
                 endcase
             end else if (is_csr_ir) begin
-                if (funct3[1:0] == 2'b01) alu_op_ctrl = CP_IN2;
-                else if (funct3[1:0] == 2'b10) alu_op_ctrl = OR;
-                else if (funct3[1:0] == 2'b11) alu_op_ctrl = CSRRC;
+                if (funct3[1:0] == 2'b01) alu_op_ctrl = `CP_IN2;
+                else if (funct3[1:0] == 2'b10) alu_op_ctrl = `OR;
+                else if (funct3[1:0] == 2'b11) alu_op_ctrl = `CSRRC;
                 else alu_op_ctrl = 4'bx;
             end else if (is_system_call) begin
                 // MRET
-                alu_op_ctrl = ADD;
+                alu_op_ctrl = `ADD;
             end else begin
                 // AUIPC, JAL, Branch, Load, Store
-                alu_op_ctrl = ADD;
+                alu_op_ctrl = `ADD;
             end
         end 
     endfunction
