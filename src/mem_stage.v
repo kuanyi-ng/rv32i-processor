@@ -1,11 +1,10 @@
+`include "constants/mem_access_size.v"
+
 `include "mem_ctrl.v"
 `include "st_converter.v"
 `include "ld_converter.v"
 
-module mem_stage #(
-    parameter [6:0] LOAD_OP = 7'b0000011,
-    parameter [6:0] STORE_OP = 7'b0100011
-) (
+module mem_stage (
     // inputs from Memory Module
     input data_mem_ready_n,  // 0: ready to access memory, 1: not ready
     input [31:0] data_from_mem,
@@ -26,23 +25,10 @@ module mem_stage #(
     output [31:0] data_to_mem
 );
 
-    // NOTE: same as the lower 2 bits of funct3
-    localparam [1:0] WORD = 2'b00;
-    localparam [1:0] HALF = 2'b01;
-    localparam [1:0] BYTE = 2'b10;
-    localparam [1:0] INPROPER_SIZE = 2'b11;
-
     // NOTE: need to request for memory access first,
     // then only we will receive data_mem_ready_n from the memory.
 
-    mem_ctrl #(
-        .LOAD_OP(LOAD_OP),
-        .STORE_OP(STORE_OP),
-        .WORD(WORD),
-        .HALF(HALF),
-        .BYTE(BYTE),
-        .INPROPER_SIZE(INPROPER_SIZE)
-    ) mem_ctrl_inst(
+    mem_ctrl mem_ctrl_inst(
         .opcode(opcode),
         .funct3(funct3),
         .flush(flush),

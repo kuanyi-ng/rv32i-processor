@@ -1,19 +1,9 @@
+`include "constants/opcode.v"
+
 `include "ir_splitter.v"
 `include "imm_extractor.v"
 
-module id_stage
-#(
-    parameter [6:0] LUI_OP = 7'b0110111,
-    parameter [6:0] AUIPC_OP = 7'b0010111,
-    parameter [6:0] JAL_OP = 7'b1101111,
-    parameter [6:0] JALR_OP = 7'b1100111,
-    parameter [6:0] BRANCH_OP = 7'b1100011,
-    parameter [6:0] LOAD_OP = 7'b0000011,
-    parameter [6:0] STORE_OP = 7'b0100011,
-    parameter [6:0] I_TYPE_OP = 7'b0010011,
-    parameter [6:0] R_TYPE_OP = 7'b0110011,
-    parameter [6:0] SYSTEM_OP = 7'b1110011
-) (
+module id_stage (
     // inputs from IF stage
     input [31:0] ir,
 
@@ -46,15 +36,6 @@ module id_stage
     // Local Parameters
     //
 
-    localparam [2:0] I_TYPE = 3'b000;
-    localparam [2:0] B_TYPE = 3'b001;
-    localparam [2:0] S_TYPE = 3'b010;
-    localparam [2:0] U_TYPE = 3'b011;
-    localparam [2:0] J_TYPE = 3'b100;
-    localparam [2:0] SHAMT_TYPE = 3'b101;
-    localparam [2:0] CSR_TYPE = 3'b110;
-    localparam [2:0] DEFAULT_TYPE = 3'b111;
-
     localparam [11:0] MEPC_ADDR = 12'h341;
     localparam [31:0] MRET_IR = 32'b0011000_00010_00000_000_00000_1110011;
     localparam [31:0] ECALL_IR = 32'b000000000000_00000_000_00000_1110011;
@@ -82,16 +63,7 @@ module id_stage
     assign imm_type = imm_type_from(opcode, funct3);
 
     wire [31:0] temp_imm;
-    imm_extractor #(
-        .I_TYPE(I_TYPE),
-        .B_TYPE(B_TYPE),
-        .S_TYPE(S_TYPE),
-        .U_TYPE(U_TYPE),
-        .J_TYPE(J_TYPE),
-        .SHAMT_TYPE(SHAMT_TYPE),
-        .CSR_TYPE(CSR_TYPE),
-        .DEFAULT_TYPE(DEFAULT_TYPE)
-    ) imm_extractor_inst(
+    imm_extractor imm_extractor_inst(
         .in(ir),
         .imm_type(imm_type),
         .out(temp_imm)
@@ -120,42 +92,42 @@ module id_stage
             case (opcode)
                 // U-Type
                 // LUI
-                LUI_OP: imm_type_from = U_TYPE;
+                `LUI_OP: imm_type_from = `U_IMM;
 
                 // AUIPC
-                AUIPC_OP: imm_type_from = U_TYPE;
+                `AUIPC_OP: imm_type_from = `U_IMM;
 
                 // JAL
-                JAL_OP: imm_type_from = J_TYPE;
+                `JAL_OP: imm_type_from = `J_IMM;
 
                 // JALR
-                JALR_OP: imm_type_from = I_TYPE;
+                `JALR_OP: imm_type_from = `I_IMM;
 
                 // Branch
-                BRANCH_OP: imm_type_from = B_TYPE;
+                `BRANCH_OP: imm_type_from = `B_IMM;
 
                 // Load
-                LOAD_OP: imm_type_from = I_TYPE;
+                `LOAD_OP: imm_type_from = `I_IMM;
 
                 // Store
-                STORE_OP: imm_type_from = S_TYPE;
+                `STORE_OP: imm_type_from = `S_IMM;
 
                 // I-Type (including shamt)
-                I_TYPE_OP: begin
+                `I_TYPE_OP: begin
                     if (funct3 == 3'b001)
                         // SLLI
-                        imm_type_from = SHAMT_TYPE;
+                        imm_type_from = `SHAMT_IMM;
                     else if (funct3 == 3'b101)
                         // SRLI, SRAI
-                        imm_type_from = SHAMT_TYPE;
+                        imm_type_from = `SHAMT_IMM;
                     else
-                        imm_type_from = I_TYPE;
+                        imm_type_from = `I_IMM;
                 end
 
-                SYSTEM_OP: imm_type_from = CSR_TYPE;
+                `SYSTEM_OP: imm_type_from = `CSR_IMM;
 
                 // default: anything not from above
-                default: imm_type_from = DEFAULT_TYPE;
+                default: imm_type_from = `DEFAULT_IMM;
             endcase
         end
    endfunction
@@ -168,14 +140,14 @@ module id_stage
 
         begin
             // might to add csr
-            is_lui = (opcode == LUI_OP);
-            is_auipc = (opcode == AUIPC_OP);
-            is_i_type = (opcode == I_TYPE_OP);
-            is_r_type = (opcode == R_TYPE_OP);
-            is_load = (opcode == LOAD_OP);
-            is_jal = (opcode == JAL_OP);
-            is_jalr = (opcode == JALR_OP);
-            is_csr = (opcode == SYSTEM_OP) && (funct3 != 3'b000);
+            is_lui = (opcode == `LUI_OP);
+            is_auipc = (opcode == `AUIPC_OP);
+            is_i_type = (opcode == `I_TYPE_OP);
+            is_r_type = (opcode == `R_TYPE_OP);
+            is_load = (opcode == `LOAD_OP);
+            is_jal = (opcode == `JAL_OP);
+            is_jalr = (opcode == `JALR_OP);
+            is_csr = (opcode == `SYSTEM_OP) && (funct3 != 3'b000);
 
             // Don't update when IR is illegal
             if (is_illegal_ir) wr_reg_n_ctrl = 1'b1;
@@ -194,8 +166,8 @@ module id_stage
         reg is_csr_ir, is_csrr_ir;
 
         begin
-            is_csr_ir = (opcode == SYSTEM_OP) && (funct3 != 3'b000);
-            is_csrr_ir = (opcode == SYSTEM_OP) && (funct3 == 3'b010) && (rs1 == 5'b00000);
+            is_csr_ir = (opcode == `SYSTEM_OP) && (funct3 != 3'b000);
+            is_csrr_ir = (opcode == `SYSTEM_OP) && (funct3 == 3'b010) && (rs1 == 5'b00000);
 
             // Don't update when IR is illegal
             if (is_illegal_ir) wr_csr_n_ctrl = 1'b1;
@@ -203,7 +175,7 @@ module id_stage
             else if (is_csrr_ir) wr_csr_n_ctrl = 1'b1;
             // CSR instructions share the same opcode with ecall, ebreak instructions
             // ecall and ebreak have funct3 of 000 while CSR instruction doesn't
-            else if ((opcode == SYSTEM_OP) && (funct3 != 3'b000)) wr_csr_n_ctrl = 1'b0;
+            else if (is_csr_ir) wr_csr_n_ctrl = 1'b0;
             else wr_csr_n_ctrl = 1'b1;
         end
     endfunction
@@ -211,30 +183,30 @@ module id_stage
     function illegal_ir_check(input [6:0] opcode, input [2:0] funct3, input [6:0] funct7, input is_mret, input is_ecall);
         begin
             case (opcode)
-                LUI_OP: illegal_ir_check = 1'b0;
+                `LUI_OP: illegal_ir_check = 1'b0;
 
-                AUIPC_OP: illegal_ir_check = 1'b0;
+                `AUIPC_OP: illegal_ir_check = 1'b0;
 
-                JAL_OP: illegal_ir_check = 1'b0;
+                `JAL_OP: illegal_ir_check = 1'b0;
 
                 // JALR has funct3 of 3'b000
                 // (funct3 == 3'b000) is legal
-                JALR_OP: illegal_ir_check = (funct3 != 3'b000);
+                `JALR_OP: illegal_ir_check = (funct3 != 3'b000);
 
                 // BRANCH does not have funct3 of { 010, 011 }
                 // funct3 == 010 or 011 is not legal
-                BRANCH_OP: illegal_ir_check = (funct3 == 3'b010) || (funct3 == 3'b011);
+                `BRANCH_OP: illegal_ir_check = (funct3 == 3'b010) || (funct3 == 3'b011);
 
                 // LOAD does not have funct3 of { 011, 110, 111 }
                 // funct3 = either of those is not legal
-                LOAD_OP: illegal_ir_check = (funct3 == 3'b011) || (funct3 == 3'b110) || (funct3 == 3'b111);
+                `LOAD_OP: illegal_ir_check = (funct3 == 3'b011) || (funct3 == 3'b110) || (funct3 == 3'b111);
 
                 // STORE only has funct3 of { 000, 001, 010 }
                 // funct3 = either of those is legal
                 // (funct3 == 3'b000) || (funct3 == 3'b001) || (funct3 == 3'b010) is legal
-                STORE_OP: illegal_ir_check = (funct3 != 3'b000) && (funct3 != 3'b001) && (funct3 != 3'b010);
+                `STORE_OP: illegal_ir_check = (funct3 != 3'b000) && (funct3 != 3'b001) && (funct3 != 3'b010);
 
-                I_TYPE_OP: begin
+                `I_TYPE_OP: begin
                     // SLLI has funct7 of 0
                     if (funct3 == 3'b001) illegal_ir_check = (funct7 != 7'b0);
                     // SRLI, SRAI has funct7 of 0 or 0100000
@@ -243,7 +215,7 @@ module id_stage
                     else illegal_ir_check = 1'b0;
                 end
 
-                R_TYPE_OP: begin
+                `R_TYPE_OP: begin
                     // ADD, SUB has funct7 of 0 or 0100000
                     // SRL, SRA has funct7 of 0 or 0100000
                     if ((funct3 == 3'b000) || (funct3 == 3'b101)) illegal_ir_check = (funct7 != 7'b0) && (funct7 != 7'b0100000);
@@ -251,7 +223,7 @@ module id_stage
                     else illegal_ir_check = (funct7 != 7'b0);
                 end
 
-                SYSTEM_OP: begin
+                `SYSTEM_OP: begin
                     // MRET
                     // illegal if instruction with funct3 of 000 is not (mret or ecall)
                     if (funct3 == 3'b000) illegal_ir_check = !(is_mret || is_ecall);

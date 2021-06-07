@@ -1,16 +1,6 @@
-module wb_stage
-#(
-    parameter [6:0] LUI_OP = 7'b0110111,
-    parameter [6:0] AUIPC_OP = 7'b0010111,
-    parameter [6:0] JAL_OP = 7'b1101111,
-    parameter [6:0] JALR_OP = 7'b1100111,
-    parameter [6:0] BRANCH_OP = 7'b1100011,
-    parameter [6:0] LOAD_OP = 7'b0000011,
-    parameter [6:0] STORE_OP = 7'b0100011,
-    parameter [6:0] I_TYPE_OP = 7'b0010011,
-    parameter [6:0] R_TYPE_OP = 7'b0110011,
-    parameter [6:0] SYSTEM_OP = 7'b1110011
-) (
+`include "constants/opcode.v"
+
+module wb_stage (
     // inputs from MEM
     input [2:0] funct3,
     input [6:0] opcode,
@@ -48,10 +38,10 @@ module wb_stage
         reg is_load, is_jal, is_jalr, is_csr;
 
         begin
-            is_load = (opcode == LOAD_OP);
-            is_jal = (opcode == JAL_OP);
-            is_jalr = (opcode == JALR_OP);
-            is_csr = (opcode == SYSTEM_OP) && (funct3 != 3'b000);
+            is_load = (opcode == `LOAD_OP);
+            is_jal = (opcode == `JAL_OP);
+            is_jalr = (opcode == `JALR_OP);
+            is_csr = (opcode == `SYSTEM_OP) && (funct3 != 3'b000);
 
             if (is_load) data_to_reg_prep = d;
             else if (is_jal || is_jalr) data_to_reg_prep = pc4;

@@ -1,14 +1,7 @@
-module mem_ctrl #(
-    // OPCODE
-    parameter [6:0] LOAD_OP = 7'b0000011,
-    parameter [6:0] STORE_OP = 7'b0100011,
+`include "constants/opcode.v"
+`include "constants/mem_access_size.v"
 
-    // SIZE
-    parameter [1:0] WORD = 2'b00,
-    parameter [1:0] HALF = 2'b01,
-    parameter [1:0] BYTE = 2'b10,
-    parameter [1:0] INPROPER_SIZE = 2'b11
-) (
+module mem_ctrl (
     input [6:0] opcode,
     input [2:0] funct3,
     input flush,
@@ -22,8 +15,8 @@ module mem_ctrl #(
     // Main
     //
 
-    wire is_load = (opcode == LOAD_OP);
-    wire is_store = (opcode == STORE_OP);
+    wire is_load = (opcode == `LOAD_OP);
+    wire is_store = (opcode == `STORE_OP);
 
     // NOTE: tried to simplify by
     // assign access_size = funct3[1:0];
@@ -41,20 +34,20 @@ module mem_ctrl #(
             if (is_load || is_store) begin
                 case (funct3[1:0])
                     // LB, LBU | SB
-                    2'b00: access_size_ctrl = BYTE;
+                    2'b00: access_size_ctrl = `BYTE;
 
                     // LH, LHU | SH
-                    2'b01: access_size_ctrl = HALF;
+                    2'b01: access_size_ctrl = `HALF;
 
                     // LW | SW
-                    2'b10: access_size_ctrl = WORD;
+                    2'b10: access_size_ctrl = `WORD;
 
                     // default: neither of byte, half, word
-                    default: access_size_ctrl = INPROPER_SIZE;
+                    default: access_size_ctrl = `INPROPER_SIZE;
                 endcase
             end else begin
                 // Other Instructions
-                access_size_ctrl = INPROPER_SIZE;
+                access_size_ctrl = `INPROPER_SIZE;
             end
         end
     endfunction
