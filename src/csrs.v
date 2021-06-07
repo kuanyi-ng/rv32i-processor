@@ -1,3 +1,4 @@
+`include "constants/exception_cause.v"
 `include "m_info_regs.v"
 `include "m_trap_setup_regs.v"
 `include "mie_reg.v"
@@ -5,11 +6,7 @@
 `include "mstatus_reg.v"
 `include "csr_reg.v"
 
-module csrs #(
-    parameter [1:0] NOT_EXCEPTION = 2'b00,
-    parameter [1:0] I_ADDR_MISALIGNMENT = 2'b01,
-    parameter [1:0] ECALL = 2'b11
-) (
+module csrs (
     input clk,
     input rst_n,
 
@@ -176,9 +173,9 @@ module csrs #(
     function [31:0] mcause_in_ctrl(input [1:0] cause, input [31:0] csr_data_in);
         begin
             case (cause)
-                I_ADDR_MISALIGNMENT: mcause_in_ctrl = i_addr_misalignment_mcause_val;
+                `I_ADDR_MISALIGNMENT: mcause_in_ctrl = i_addr_misalignment_mcause_val;
 
-                ECALL: begin
+                `ECALL: begin
                     case (priviledge_mode)
                         machine_mode: mcause_in_ctrl = ecall_from_m_mcause_val;
 
