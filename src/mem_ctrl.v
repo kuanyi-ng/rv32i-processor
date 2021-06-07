@@ -1,8 +1,6 @@
-module mem_ctrl #(
-    // OPCODE
-    parameter [6:0] LOAD_OP = 7'b0000011,
-    parameter [6:0] STORE_OP = 7'b0100011,
+`include "constants/opcode.v"
 
+module mem_ctrl #(
     // SIZE
     parameter [1:0] WORD = 2'b00,
     parameter [1:0] HALF = 2'b01,
@@ -22,8 +20,8 @@ module mem_ctrl #(
     // Main
     //
 
-    wire is_load = (opcode == LOAD_OP);
-    wire is_store = (opcode == STORE_OP);
+    wire is_load = (opcode == `LOAD_OP);
+    wire is_store = (opcode == `STORE_OP);
 
     // NOTE: tried to simplify by
     // assign access_size = funct3[1:0];

@@ -2,19 +2,7 @@
 `include "alu.v"
 `include "branch_alu.v"
 
-module ex_stage
-#(
-    parameter [6:0] LUI_OP = 7'b0110111,
-    parameter [6:0] AUIPC_OP = 7'b0010111,
-    parameter [6:0] JAL_OP = 7'b1101111,
-    parameter [6:0] JALR_OP = 7'b1100111,
-    parameter [6:0] BRANCH_OP = 7'b1100011,
-    parameter [6:0] LOAD_OP = 7'b0000011,
-    parameter [6:0] STORE_OP = 7'b0100011,
-    parameter [6:0] I_TYPE_OP = 7'b0010011,
-    parameter [6:0] R_TYPE_OP = 7'b0110011,
-    parameter [6:0] SYSTEM_OP = 7'b1110011
-) (
+module ex_stage (
     // inputs from ID stage
     input [6:0] opcode,
     input [2:0] funct3,
@@ -35,18 +23,7 @@ module ex_stage
     wire [3:0] alu_op;
     wire [2:0] branch_alu_op;
 
-    ex_ctrl #(
-        .LUI_OP(LUI_OP),
-        .AUIPC_OP(AUIPC_OP),
-        .JAL_OP(JAL_OP),
-        .JALR_OP(JALR_OP),
-        .BRANCH_OP(BRANCH_OP),
-        .LOAD_OP(LOAD_OP),
-        .STORE_OP(STORE_OP),
-        .I_TYPE_OP(I_TYPE_OP),
-        .R_TYPE_OP(R_TYPE_OP),
-        .SYSTEM_OP(SYSTEM_OP)
-    ) ex_ctrl_inst(
+    ex_ctrl ex_ctrl_inst(
         .opcode(opcode),
         .funct3(funct3),
         .funct7(funct7),

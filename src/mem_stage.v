@@ -2,10 +2,7 @@
 `include "st_converter.v"
 `include "ld_converter.v"
 
-module mem_stage #(
-    parameter [6:0] LOAD_OP = 7'b0000011,
-    parameter [6:0] STORE_OP = 7'b0100011
-) (
+module mem_stage (
     // inputs from Memory Module
     input data_mem_ready_n,  // 0: ready to access memory, 1: not ready
     input [31:0] data_from_mem,
@@ -36,8 +33,6 @@ module mem_stage #(
     // then only we will receive data_mem_ready_n from the memory.
 
     mem_ctrl #(
-        .LOAD_OP(LOAD_OP),
-        .STORE_OP(STORE_OP),
         .WORD(WORD),
         .HALF(HALF),
         .BYTE(BYTE),
