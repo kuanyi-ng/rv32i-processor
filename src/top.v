@@ -163,6 +163,7 @@ module top (
     // Exception Handling
     wire i_addr_misaligned_if;
     wire i_addr_misaligned_from_if;
+    wire is_illegal_ir_id;
 
     wire e_raised;
     wire [1:0] e_cause;
@@ -236,7 +237,8 @@ module top (
         .wr_reg_n(wr_reg_n_id_stage),
         .wr_csr_n(wr_csr_n_id_stage),
         .is_mret(is_mret_id),
-        .is_ecall(is_ecall_id)
+        .is_ecall(is_ecall_id),
+        .is_illegal_ir(is_illegal_ir_id)
     );
 
     id_data_picker id_data_picker_inst(
@@ -532,8 +534,10 @@ module top (
     exception_ctrl_u exception_ctrl_u_inst(
         .pc_in_id(pc_from_if),
         .i_addr_misaligned(i_addr_misaligned_from_if),
+        .is_illegal_ir(is_illegal_ir_id),
+        .ir_in_id(ir_from_if),
         .is_ecall(is_ecall_id),
-        .jump(jump_ex),
+        .flush(flush_id),
         .e_raised(e_raised),
         .e_cause(e_cause),
         .e_pc(e_pc),
