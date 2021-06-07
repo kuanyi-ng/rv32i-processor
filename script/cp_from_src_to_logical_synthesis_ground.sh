@@ -1,3 +1,3 @@
-# shell
+#!/usr/bin/sh
 
-cp src/*.v logical_synthesis_ground/
+cp -r src/* logical_synthesis_ground/
