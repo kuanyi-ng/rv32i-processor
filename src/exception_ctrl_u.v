@@ -14,8 +14,8 @@ module exception_ctrl_u (
     // ECALL
     input is_ecall,
 
-    // Jump
-    input jump,
+    // Flush
+    input flush,
 
     // Outputs
     output e_raised,
@@ -29,7 +29,7 @@ module exception_ctrl_u (
     //
 
     assign e_raised = e_cause != `NOT_EXCEPTION;
-    assign e_cause = cause_ctrl(i_addr_misaligned, is_illegal_ir, is_ecall, jump);
+    assign e_cause = cause_ctrl(i_addr_misaligned, is_illegal_ir, is_ecall, flush);
     assign e_pc = epc_ctrl(e_cause, pc_in_id);
     assign e_tval = tval_ctrl(e_cause, pc_in_id, ir_in_id);
 
@@ -37,10 +37,10 @@ module exception_ctrl_u (
     // Function
     //
 
-    function [1:0] cause_ctrl(input i_addr_misaligned, input is_illegal_ir, input is_ecall, input jump);
+    function [1:0] cause_ctrl(input i_addr_misaligned, input is_illegal_ir, input is_ecall, input flush);
         begin
-            // Don't raise Exception when jump
-            // because this instruction will not be executed due to jump
+            // Don't raise Exception when flush
+            // because this instruction will not be executed due to flush
             //
             // NOTE:
             // i_addr_misaligned signal is passed on from IF to ID stage.
@@ -52,7 +52,7 @@ module exception_ctrl_u (
             //  E: branch ir (branch result known)
             // with the knowledge of branch result, it's easier to decide whether to raise an exception or not
             // even though the i_addr_misaligned is detected in IF stage
-            if (jump) cause_ctrl = `NOT_EXCEPTION;
+            if (flush) cause_ctrl = `NOT_EXCEPTION;
             // Priority of Exception:
             // I_ADDR_MISALIGNMENT > ECALL
             //

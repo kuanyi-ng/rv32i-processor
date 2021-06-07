@@ -537,7 +537,7 @@ module top (
         .is_illegal_ir(is_illegal_ir_id),
         .ir_in_id(ir_from_if),
         .is_ecall(is_ecall_id),
-        .jump(jump_ex),
+        .flush(flush_id),
         .e_raised(e_raised),
         .e_cause(e_cause),
         .e_pc(e_pc),
