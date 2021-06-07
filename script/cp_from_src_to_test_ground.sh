@@ -1,3 +1,3 @@
-# shell
+#!/usr/bin/sh
 
-cp src/*.v test_ground/
+cp -r src/* test_ground/
