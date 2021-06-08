@@ -12,20 +12,8 @@ set target_library $LIB_MAX_FILE
 analyze -format verilog ./data_forward_helper.v
 elaborate data_forward_helper
 
-analyze -format verilog ./DW_ram_2r_w_s_dff.v
-elaborate DW_ram_2r_w_s_dff
-
-analyze -format verilog ./rf32x32.v
-elaborate rf32x32
-
-analyze -format verilog ./csr_reg.v
-elaborate csr_reg
-
-analyze -format verilog ./top.v
-elaborate top
-
 # Define which module is the Highest-level Module
-current_design "top"
+current_design "data_forward_helper"
 
 # Max Area of Circuits
 # Usually speed is more important, so just aim for the best area
@@ -40,7 +28,11 @@ set_max_area 0
 set_max_fanout 64 [current_design]
 
 # Create Clock
-create_clock -period 10.00 -w { 0 5.0 } clk
+# for clk-independent module
+create_clock -period 10.00 -w { 0 5.0 } -name clk
+# for module with clk as input
+# create_clock -period 10.00 -w { 0 5.0 } clk
+
 set_clock_uncertainty -setup 0.0 [get_clock clk]
 set_clock_uncertainty -hold 0.0 [get_clock clk]
 set_input_delay 0.0 -clock clk [remove_from_collection [all_inputs] clk]
@@ -52,18 +44,15 @@ derive_clocks
 # Start Logical Synthesis
 compile
 ungroup -all -flatten
-compile -incremental -map_effort high -area_effort high
-# compile -map_effort medium -area_effort high -incremental_mapping
+compile -incremental -map_effort high
 
 # Check Design
 check_design
 
 # Show results
-report_timing -net
+report_timing -path end -net -max_path 100
 report_area
-report_power
 report_constraint -all_violators
-report_reference
 
 write -hier -format verilog -output rv32_processor.vnet
 write -hier -output rv32_processor.db

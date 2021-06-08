@@ -1,3 +1,5 @@
+`include "constants/opcode.v"
+
 // interlock pipeline when memory access is not completed yet.
 // when accessing the memory, the processor will receive acknowledge signals
 // from the memory module.
@@ -17,16 +19,16 @@ module interlock_u (
 
     assign interlock = imem_ack_n || dmem_interlock_ctrl(dmem_ack_n, opcode);
 
+    //
     // Function
-    localparam [6:0] load = 7'b0000011;
-    localparam [6:0] store = 7'b0100011;
+    //
 
     function dmem_interlock_ctrl(input dmem_ack_n, input [6:0] opcode);
         reg is_load, is_store;
 
         begin
-            is_load = (opcode == load);
-            is_store = (opcode == store);
+            is_load = (opcode == `LOAD_OP);
+            is_store = (opcode == `STORE_OP);
 
             // only interlock when memory access doesn't complete
             // for Load or Store instructions
