@@ -1,3 +1,5 @@
+`include "constants/opcode.v"
+
 module stall_detector (
     // Inputs from ID Stage (current cycle)
     input [4:0] rs1,
@@ -51,8 +53,8 @@ module stall_detector (
         reg rs1_updated, rs2_updated;
 
         begin
-            is_store_in_id = (opcode_in_id == 7'b0100011);
-            is_load_in_ex = (opcode_in_ex == 7'b0000011);
+            is_store_in_id = (opcode_in_id == `STORE_OP);
+            is_load_in_ex = (opcode_in_ex == `LOAD_OP);
             rs1_is_zero = (rs1 == 5'b00000);
             rs2_is_zero = (rs2 == 5'b00000);
             rs1_updated = (!wr_reg_n_in_ex) && (rs1 == rd_in_ex);
