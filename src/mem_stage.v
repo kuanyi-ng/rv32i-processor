@@ -6,7 +6,6 @@
 
 module mem_stage (
     // inputs from Memory Module
-    input data_mem_ready_n,  // 0: ready to access memory, 1: not ready
     input [31:0] data_from_mem,
 
     // inputs from EX stage

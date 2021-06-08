@@ -374,7 +374,6 @@ module top (
 
     // MEM
     mem_stage mem_stage_inst(
-        .data_mem_ready_n(ACKD_n),
         .data_from_mem(data_from_mem),
         .opcode(opcode_from_ex),
         .funct3(funct3_from_ex),
