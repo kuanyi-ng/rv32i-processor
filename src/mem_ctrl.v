@@ -59,6 +59,10 @@ module mem_ctrl (
             // only Store Instructions write to mem
             else if (is_store) write_ctrl = 1'b1;
             else write_ctrl = 1'b0;
+
+            // current implementation has smaller area than
+            // write_ctrl = is_store && !flush
+            // which produce the same truth table
         end
     endfunction
 
@@ -66,6 +70,10 @@ module mem_ctrl (
         begin
             if (is_load || is_store) mem_access_ctrl = 1'b1;
             else mem_access_ctrl = 1'b0;
+
+            // current implementation has smaller area than
+            // mem_access_ctrl = is_load || is_store
+            // which produce the same truth table
         end
     endfunction
 endmodule
