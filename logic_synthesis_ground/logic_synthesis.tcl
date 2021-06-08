@@ -40,7 +40,7 @@ set_max_area 0
 set_max_fanout 64 [current_design]
 
 # Create Clock
-create_clock -period 10.00 clk
+create_clock -period 10.00 -w { 0 5.0 } clk
 set_clock_uncertainty -setup 0.0 [get_clock clk]
 set_clock_uncertainty -hold 0.0 [get_clock clk]
 set_input_delay 0.0 -clock clk [remove_from_collection [all_inputs] clk]
@@ -52,17 +52,18 @@ derive_clocks
 # Start Logical Synthesis
 compile
 ungroup -all -flatten
-compile -incremental
+compile -incremental -map_effort high -area_effort high
 # compile -map_effort medium -area_effort high -incremental_mapping
 
 # Check Design
 check_design
 
 # Show results
-report_timing -max_paths 1
+report_timing -net
 report_area
 report_power
 report_constraint -all_violators
+report_reference
 
 write -hier -format verilog -output rv32_processor.vnet
 write -hier -output rv32_processor.db
