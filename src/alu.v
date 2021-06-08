@@ -26,7 +26,7 @@ module alu (
                 `SLT: alu_out = (in1 < in2) ? 32'd1 : 32'd0;
 
                 // SLTU, SLTIU
-                `SLTU: alu_out = (in1 < in2) ? 32'd1 : 32'd0;
+                `SLTU: alu_out = ($unsigned(in1) < $unsigned(in2)) ? 32'd1 : 32'd0;
 
                 // XOR, XORI
                 `XOR: alu_out = in1 ^ in2;
