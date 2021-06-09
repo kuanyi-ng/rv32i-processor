@@ -1,6 +1,7 @@
 `include "constants/alu_op.v"
 `include "constants/branch_alu_op.v"
 `include "constants/opcode.v"
+`include "constants/funct3.v"
 
 module ex_ctrl (
     input [6:0] opcode,
@@ -104,8 +105,8 @@ module ex_ctrl (
             is_jalr = (opcode == `JALR_OP);
             is_reg_reg_ir = (opcode == `R_TYPE_OP);
             is_reg_imm_ir = (opcode == `I_TYPE_OP);
-            is_csr_ir = (opcode == `SYSTEM_OP) && (funct3 != 3'b000);
-            is_system_call = (opcode == `SYSTEM_OP) && (funct3 == 3'b000);
+            is_csr_ir = (opcode == `SYSTEM_OP) && (funct3 != `SYSTEM_CALL_FUNCT3);
+            is_system_call = (opcode == `SYSTEM_OP) && (funct3 == `SYSTEM_CALL_FUNCT3);
 
             if (is_lui) begin
                 alu_op_ctrl = `CP_IN2;
@@ -114,31 +115,31 @@ module ex_ctrl (
             end else if (is_reg_reg_ir || is_reg_imm_ir) begin
                 case (funct3)
                     // ADD, SUB, ADDI
-                    3'b000: begin
+                    `ADD_FUNCT3: begin
                         if (opcode == `I_TYPE_OP) alu_op_ctrl = { 1'b0, funct3 };
                         else alu_op_ctrl = { funct7[5], funct3 };
                     end
                     
                     // SLL, SLLI
-                    3'b001: alu_op_ctrl = { 1'b0, funct3 };
+                    `SLL_FUNCT3: alu_op_ctrl = { 1'b0, funct3 };
 
                     // SLT, SLTI
-                    3'b010: alu_op_ctrl = { 1'b0, funct3 };
+                    `SLT_FUNCT3: alu_op_ctrl = { 1'b0, funct3 };
                     
                     // SLTU, SLTIU
-                    3'b011: alu_op_ctrl = { 1'b0, funct3 };
+                    `SLTU_FUNCT3: alu_op_ctrl = { 1'b0, funct3 };
 
                     // XOR, XORI
-                    3'b100: alu_op_ctrl = { 1'b0, funct3 };
+                    `XOR_FUNCT3: alu_op_ctrl = { 1'b0, funct3 };
 
                     // SRL, SRA, SRAI, SRLI
-                    3'b101: alu_op_ctrl = { funct7[5], funct3 };
+                    `SR_FUNCT3: alu_op_ctrl = { funct7[5], funct3 };
 
                     // OR, ORI
-                    3'b110: alu_op_ctrl = { 1'b0, funct3 };
+                    `OR_FUNCT3: alu_op_ctrl = { 1'b0, funct3 };
 
                     // AND, ANDI
-                    3'b111: alu_op_ctrl = { 1'b0, funct3 };
+                    `AND_FUNCT3: alu_op_ctrl = { 1'b0, funct3 };
 
                     // no default case as every case is covered
                 endcase

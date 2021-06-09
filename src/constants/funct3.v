@@ -1,0 +1,9 @@
+`define ADD_FUNCT3 3'b000
+`define SLL_FUNCT3 3'b001
+`define SLT_FUNCT3 3'b010
+`define SLTU_FUNCT3 3'b011
+`define XOR_FUNCT3 3'b100
+`define SR_FUNCT3 3'b101
+`define OR_FUNCT3 3'b110
+`define AND_FUNCT3 3'b111
+`define SYSTEM_CALL_FUNCT3 3'b000
