@@ -1,0 +1,12 @@
+`define LUI_IR 4'h0
+`define AUIPC_IR 4'h1
+`define JAL_IR 4'h2
+`define JALR_IR 4'h3
+`define BRANCH_IR 4'h4
+`define LOAD_IR 4'h5
+`define STORE_IR 4'h6
+`define REG_IMM_IR 4'h7
+`define REG_REG_IR 4'h8
+`define CSR_IR 4'h9
+`define SYS_CALL_IR 4'ha
+`define X_IR 4'hf
