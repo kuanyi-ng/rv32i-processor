@@ -1,3 +1,5 @@
+`include "constants/ir_type.v"
+
 module if_id_regs (
     input clk,
     input rst_n,
@@ -13,6 +15,9 @@ module if_id_regs (
     input [31:0] ir_in,
     output [31:0] ir_out,
 
+    input [3:0] ir_type_in,
+    output [3:0] ir_type_out,
+
     input flush_in,
     output flush_out,
 
@@ -23,6 +28,7 @@ module if_id_regs (
     reg [31:0] pc;
     reg [31:0] pc4;
     reg [31:0] ir;
+    reg [3:0] ir_type;
     reg flush;
     reg i_addr_misaligned;
 
@@ -34,6 +40,7 @@ module if_id_regs (
             pc <= 32'bx;
             pc4 <= 32'bx;
             ir <= NOP_IR;
+            ir_type <= `REG_IMM_IR; // NOP
             flush <= 1'b0;  // default not to flush
             i_addr_misaligned <= 1'b0; // default for no misalignment
         end else if (stall || interlock) begin
@@ -41,6 +48,7 @@ module if_id_regs (
             pc <= pc;
             pc4 <= pc4;
             ir <= ir;
+            ir_type <= ir_type;
             flush <= flush;
             i_addr_misaligned <= i_addr_misaligned;
         end else begin
@@ -48,6 +56,7 @@ module if_id_regs (
             pc <= pc_in;
             pc4 <= pc4_in;
             ir <= ir_in;
+            ir_type <= ir_type_in;
             flush <= flush_in;
             i_addr_misaligned <= i_addr_misaligned_in;
         end
@@ -56,6 +65,7 @@ module if_id_regs (
     assign pc_out = pc;
     assign pc4_out = pc4;
     assign ir_out = ir;
+    assign ir_type_out = ir_type;
     assign flush_out = flush;
     assign i_addr_misaligned_out = i_addr_misaligned;
     

@@ -18,6 +18,7 @@
 `include "if_id_regs.v"
 `include "if_stage.v"
 `include "interlock_u.v"
+`include "ir_type_converter.v"
 `include "mem_stage.v"
 `include "mem_wb_regs.v"
 `include "pc_reg.v"
@@ -55,11 +56,13 @@ module top (
     wire [31:0] current_pc;
     wire [31:0] next_pc;
     wire [31:0] pc4_if;
+    wire [3:0] ir_type_if;
 
     // IF-ID
     wire [31:0] pc_from_if;
     wire [31:0] pc4_from_if;
     wire [31:0] ir_from_if;
+    wire [3:0] ir_type_from_if;
     wire flush_from_if;
 
     // ID
@@ -198,6 +201,12 @@ module top (
     );
     assign IAD = current_pc;
 
+    ir_type_converter ir_type_convert_inst(
+        .opcode(IDT[6:0]),
+        .funct3(IDT[14:12]),
+        .ir_type(ir_type_if)
+    );
+
     if_flush_picker if_flush_picker_inst(
         .e_raised(e_raised),
         .flush_from_flush_u(flush),
@@ -216,6 +225,8 @@ module top (
         .pc4_out(pc4_from_if),
         .ir_in(IDT),
         .ir_out(ir_from_if),
+        .ir_type_in(ir_type_if),
+        .ir_type_out(ir_type_from_if),
         .flush_in(flush_if),
         .flush_out(flush_from_if),
         .i_addr_misaligned_in(i_addr_misaligned_if),
