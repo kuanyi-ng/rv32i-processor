@@ -9,7 +9,7 @@ module mem_stage (
     input [31:0] data_from_mem,
 
     // inputs from EX stage
-    input [6:0] opcode,
+    input [3:0] ir_type,
     input [2:0] funct3,
     input [31:0] b,                 // data to store (Store Instructions)
     input flush,
@@ -28,7 +28,7 @@ module mem_stage (
     // then only we will receive data_mem_ready_n from the memory.
 
     mem_ctrl mem_ctrl_inst(
-        .opcode(opcode),
+        .ir_type(ir_type),
         .funct3(funct3),
         .flush(flush),
         .access_size(size),
