@@ -236,6 +236,7 @@ module top (
     // ID
     id_stage id_stage_inst(
         .ir(ir_from_if),
+        .ir_type(ir_type_from_if),
         .is_e_cause_eq_ecall(is_e_cause_eq_ecall),
         .rs1(rd1_addr),
         .rs2(rd2_addr),

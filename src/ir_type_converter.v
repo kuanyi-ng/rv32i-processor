@@ -33,7 +33,7 @@ module ir_type_converter (
 			`R_TYPE_OP: ir_type_ctrl = `REG_REG_IR;
 
 			`SYSTEM_OP: begin
-				if (funct3 == `SYSTEM_CALL_FUNCT3) ir_type_ctrl = `SYS_CALL_IR;
+				if (funct3 == `SYS_CALL_FUNCT3) ir_type_ctrl = `SYS_CALL_IR;
 				else ir_type_ctrl = `CSR_IR;
 			end
 

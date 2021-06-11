@@ -105,8 +105,8 @@ module ex_ctrl (
             is_jalr = (opcode == `JALR_OP);
             is_reg_reg_ir = (opcode == `R_TYPE_OP);
             is_reg_imm_ir = (opcode == `I_TYPE_OP);
-            is_csr_ir = (opcode == `SYSTEM_OP) && (funct3 != `SYSTEM_CALL_FUNCT3);
-            is_system_call = (opcode == `SYSTEM_OP) && (funct3 == `SYSTEM_CALL_FUNCT3);
+            is_csr_ir = (opcode == `SYSTEM_OP) && (funct3 != `SYS_CALL_FUNCT3);
+            is_system_call = (opcode == `SYSTEM_OP) && (funct3 == `SYS_CALL_FUNCT3);
 
             if (is_lui) begin
                 alu_op_ctrl = `CP_IN2;
