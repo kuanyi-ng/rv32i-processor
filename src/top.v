@@ -528,10 +528,10 @@ module top (
     stall_detector stall_detector_inst(
         .rs1(rd1_addr),
         .rs2(rd2_addr),
-        .opcode_in_id(opcode_id),
+        .ir_type_in_id(ir_type_from_if),
         .wr_reg_n_in_ex(wr_reg_n_from_id),
         .rd_in_ex(rd_from_id),
-        .opcode_in_ex(opcode_from_id),
+        .ir_type_in_ex(ir_type_from_id),
         .stall(stall)
     );
 

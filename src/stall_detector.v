@@ -1,15 +1,15 @@
-`include "constants/opcode.v"
+`include "constants/ir_type.v"
 
 module stall_detector (
     // Inputs from ID Stage (current cycle)
     input [4:0] rs1,
     input [4:0] rs2,
-    input [6:0] opcode_in_id,
+    input [3:0] ir_type_in_id,
 
     // Inputs from EX Stage (current cycle)
     input wr_reg_n_in_ex,
     input [4:0] rd_in_ex,
-    input [6:0] opcode_in_ex,
+    input [3:0] ir_type_in_ex,
 
     // Outputs
     output stall
@@ -21,10 +21,10 @@ module stall_detector (
     assign stall = stall_ctrl(
         rs1,
         rs2,
-        opcode_in_id,
+        ir_type_in_id,
         wr_reg_n_in_ex,
         rd_in_ex,
-        opcode_in_ex
+        ir_type_in_ex
     );
 
     //
@@ -33,10 +33,10 @@ module stall_detector (
     function stall_ctrl(
         input [4:0] rs1,
         input [4:0] rs2,
-        input [6:0] opcode_in_id,
+        input [3:0] ir_type_in_id,
         input wr_reg_n_in_ex,
         input [4:0] rd_in_ex,
-        input [6:0] opcode_in_ex
+        input [3:0] ir_type_in_ex
     );
         // stall pipeline when Load-Use situtation occurs.
         // e.g. 
@@ -53,8 +53,8 @@ module stall_detector (
         reg rs1_updated, rs2_updated;
 
         begin
-            is_store_in_id = (opcode_in_id == `STORE_OP);
-            is_load_in_ex = (opcode_in_ex == `LOAD_OP);
+            is_store_in_id = (ir_type_in_id == `STORE_IR);
+            is_load_in_ex = (ir_type_in_ex == `LOAD_IR);
             rs1_is_zero = (rs1 == 5'b00000);
             rs2_is_zero = (rs2 == 5'b00000);
             rs1_updated = (!wr_reg_n_in_ex) && (rs1 == rd_in_ex);
