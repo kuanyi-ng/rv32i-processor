@@ -62,6 +62,7 @@ module ex_ctrl (
 
                 `REG_REG_IR: alu_ins_ctrl = { data1, data2 };
 
+                // mret, ecall
                 `SYS_CALL_IR: alu_ins_ctrl = { z_, imm };
 
                 `CSR_IR: begin
@@ -103,9 +104,9 @@ module ex_ctrl (
 
                 `STORE_IR: alu_op_ctrl = `ADD;
 
-                `REG_REG_IR: alu_op_ctrl = reg_ir_alu_op_ctrl(ir_type, funct3);
+                `REG_REG_IR: alu_op_ctrl = reg_ir_alu_op_ctrl(ir_type, funct3, funct7);
 
-                `REG_IMM_IR: alu_op_ctrl = reg_ir_alu_op_ctrl(ir_type, funct3);
+                `REG_IMM_IR: alu_op_ctrl = reg_ir_alu_op_ctrl(ir_type, funct3, funct7);
 
                 `CSR_IR: begin
                     if (funct3[1:0] == 2'b01) alu_op_ctrl = `CP_IN2;
@@ -122,7 +123,7 @@ module ex_ctrl (
         end 
     endfunction
 
-    function [3:0] reg_ir_alu_op_ctrl(input [3:0] ir_type, input [2:0] funct3);
+    function [3:0] reg_ir_alu_op_ctrl(input [3:0] ir_type, input [2:0] funct3, input [6:0] funct7);
         begin
             case (funct3)
                 // ADD, SUB, ADDI

@@ -33,8 +33,6 @@ module wb_stage (
         input [31:0] pc4,
         input [31:0] z_
     );
-        reg is_load, is_jal, is_jalr, is_csr;
-
         begin
             case (ir_type)
                 `LOAD_IR: data_to_reg_prep = d;
