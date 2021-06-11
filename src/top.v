@@ -88,6 +88,7 @@ module top (
     wire [31:0] pc4_from_id;
     wire [31:0] data1_from_id, data2_from_id;
     wire [6:0] opcode_from_id;
+    wire [3:0] ir_type_from_id;
     wire [6:0] funct7_from_id;
     wire [2:0] funct3_from_id;
     wire [4:0] rs2_from_id, rd_from_id;
@@ -316,6 +317,8 @@ module top (
         .csr_addr_out(csr_addr_from_id),
         .opcode_in(opcode_id),
         .opcode_out(opcode_from_id),
+        .ir_type_in(ir_type_from_if),
+        .ir_type_out(ir_type_from_id),
         .imm_in(imm_id),
         .imm_out(imm_from_id),
         .z_in(z_id),
@@ -330,7 +333,7 @@ module top (
 
     // EX
     ex_stage ex_stage_inst(
-        .opcode(opcode_from_id),
+        .ir_type(ir_type_from_id),
         .funct3(funct3_from_id),
         .funct7(funct7_from_id),
         .pc(pc_from_id),
