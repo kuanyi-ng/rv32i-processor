@@ -1,5 +1,5 @@
 `include "constants/ir_type.v"
-// check opcode to determine the type of instruction
+// check ir_type to determine the type of instruction
 //
 // LUI      : x[rd] <- C => main_data
 // AUIPC    : x[rd] <- C => main_data

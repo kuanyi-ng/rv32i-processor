@@ -23,7 +23,7 @@ module interlock_u (
     // Function
     //
 
-    function dmem_interlock_ctrl(input dmem_ack_n, input [6:0] opcode);
+    function dmem_interlock_ctrl(input dmem_ack_n, input [3:0] ir_type);
         reg is_load, is_store;
 
         begin
