@@ -126,6 +126,7 @@ module top (
 
     // MEM-WB
     wire [6:0] opcode_from_mem;
+    wire [3:0] ir_type_from_mem;
     wire [31:0] pc4_from_mem;
     wire [31:0] c_from_mem;
     wire [31:0] d_from_mem;
@@ -428,6 +429,8 @@ module top (
         .csr_addr_out(csr_wr_addr),
         .opcode_in(opcode_from_ex),
         .opcode_out(opcode_from_mem),
+        .ir_type_in(ir_type_from_ex),
+        .ir_type_out(ir_type_from_mem),
         .wr_reg_n_in(wr_reg_n_from_ex),
         .wr_reg_n_out(wr_n),
         .wr_csr_n_in(wr_csr_n_from_ex),
@@ -436,8 +439,7 @@ module top (
 
     // WB
     wb_stage wb_stage_inst(
-        .funct3(funct3_from_mem),
-        .opcode(opcode_from_mem),
+        .ir_type(ir_type_from_mem),
         .c(c_from_mem),
         .d(d_from_mem),
         .pc4(pc4_from_mem),
