@@ -1,8 +1,8 @@
-`include "constants/opcode.v"
+`include "constants/ir_type.v"
 `include "constants/mem_access_size.v"
 
 module mem_ctrl (
-    input [6:0] opcode,
+    input [3:0] ir_type,
     input [2:0] funct3,
     input flush,
 
@@ -15,8 +15,8 @@ module mem_ctrl (
     // Main
     //
 
-    wire is_load = (opcode == `LOAD_OP);
-    wire is_store = (opcode == `STORE_OP);
+    wire is_load = (ir_type == `LOAD_IR);
+    wire is_store = (ir_type == `STORE_IR);
 
     // NOTE: tried to simplify by
     // assign access_size = funct3[1:0];

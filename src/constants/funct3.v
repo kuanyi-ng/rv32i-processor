@@ -6,4 +6,9 @@
 `define SR_FUNCT3 3'b101
 `define OR_FUNCT3 3'b110
 `define AND_FUNCT3 3'b111
-`define SYSTEM_CALL_FUNCT3 3'b000
+`define JALR_FUNCT3 3'b000
+`define SB_FUNCT3 3'b000
+`define SH_FUNCT3 3'b001
+`define SW_FUNCT3 3'b010
+`define CSRRS_FUNCT3 3'b010
+`define SYS_CALL_FUNCT3 3'b000

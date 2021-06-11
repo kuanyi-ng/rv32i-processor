@@ -28,8 +28,8 @@ module id_ex_regs (
     input [11:0] csr_addr_in,
     output [11:0] csr_addr_out,
 
-    input [6:0] opcode_in,
-    output [6:0] opcode_out,
+    input [3:0] ir_type_in,
+    output [3:0] ir_type_out,
 
     input [31:0] imm_in,
     output [31:0] imm_out,
@@ -54,7 +54,7 @@ module id_ex_regs (
     reg [2:0] funct3;
     reg [4:0] rs2, rd;
     reg [11:0] csr_addr;
-    reg [6:0] opcode;
+    reg [3:0] ir_type;
     reg [31:0] imm;
     reg [31:0] z_;
     reg wr_reg_n;
@@ -70,13 +70,13 @@ module id_ex_regs (
             pc4 <= 32'bx;
             data1 <= 32'bx;
             data2 <= 32'bx;
-            funct7 <= 7'bx;
-            funct3 <= 3'bx;
-            rs2 <= 5'bx;
-            rd <= 5'bx;
+            funct7 <= 7'bx; // TODO: change to NOP
+            funct3 <= 3'bx; // TODO: change to NOP
+            rs2 <= 5'bx; // TODO: change to NOP
+            rd <= 5'bx; // TODO: change to NOP
             csr_addr <= 12'bx;
-            opcode <= 7'bx;
-            imm <= 32'bx;
+            ir_type <= 3'bx;
+            imm <= 32'bx; // TODO: change to NOP
             z_ <= 32'bx;
             wr_reg_n <= 1'b1;   // default not to write
             wr_csr_n <= 1'b1;   // default not to write
@@ -92,7 +92,7 @@ module id_ex_regs (
             rs2 <= rs2;
             rd <= rd;
             csr_addr <= csr_addr;
-            opcode <= opcode;
+            ir_type <= ir_type;
             imm <= imm;
             z_ <= z_;
             // in order to prevent double detection of stall,
@@ -111,7 +111,7 @@ module id_ex_regs (
             rs2 <= rs2_in;
             rd <= rd_in;
             csr_addr <= csr_addr_in;
-            opcode <= opcode_in;
+            ir_type <= ir_type_in;
             imm <= imm_in;
             z_ <= z_in;
             wr_reg_n <= wr_reg_n_in;
@@ -129,7 +129,7 @@ module id_ex_regs (
     assign rs2_out = rs2;
     assign csr_addr_out = csr_addr;
     assign rd_out = rd;
-    assign opcode_out = opcode;
+    assign ir_type_out = ir_type;
     assign imm_out = imm;
     assign z_out = z_;
     assign wr_reg_n_out = wr_reg_n;

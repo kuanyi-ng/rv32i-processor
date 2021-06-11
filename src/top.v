@@ -18,6 +18,7 @@
 `include "if_id_regs.v"
 `include "if_stage.v"
 `include "interlock_u.v"
+`include "ir_type_converter.v"
 `include "mem_stage.v"
 `include "mem_wb_regs.v"
 `include "pc_reg.v"
@@ -55,18 +56,19 @@ module top (
     wire [31:0] current_pc;
     wire [31:0] next_pc;
     wire [31:0] pc4_if;
+    wire [3:0] ir_type_if;
 
     // IF-ID
     wire [31:0] pc_from_if;
     wire [31:0] pc4_from_if;
     wire [31:0] ir_from_if;
+    wire [3:0] ir_type_from_if;
     wire flush_from_if;
 
     // ID
     wire [2:0] funct3_id;
     wire [4:0] rd1_addr, rd2_addr, rd_id;
     wire [6:0] funct7_id;
-    wire [6:0] opcode_id;
     wire [11:0] csr_addr_id;
     wire [31:0] data1_regfile, data2_regfile;
     wire [31:0] data1_id, data2_id;
@@ -84,7 +86,7 @@ module top (
     wire [31:0] pc_from_id;
     wire [31:0] pc4_from_id;
     wire [31:0] data1_from_id, data2_from_id;
-    wire [6:0] opcode_from_id;
+    wire [3:0] ir_type_from_id;
     wire [6:0] funct7_from_id;
     wire [2:0] funct3_from_id;
     wire [4:0] rs2_from_id, rd_from_id;
@@ -104,7 +106,7 @@ module top (
     // EX-MEM
     wire [2:0] funct3_from_ex;
     wire [4:0] rd_from_ex;
-    wire [6:0] opcode_from_ex;
+    wire [3:0] ir_type_from_ex;
     wire [11:0] csr_addr_from_ex;
     wire [31:0] pc4_from_ex;
     wire [31:0] b_from_ex;
@@ -120,7 +122,7 @@ module top (
     wire [31:0] d_mem;
 
     // MEM-WB
-    wire [6:0] opcode_from_mem;
+    wire [3:0] ir_type_from_mem;
     wire [31:0] pc4_from_mem;
     wire [31:0] c_from_mem;
     wire [31:0] d_from_mem;
@@ -198,6 +200,12 @@ module top (
     );
     assign IAD = current_pc;
 
+    ir_type_converter ir_type_convert_inst(
+        .opcode(IDT[6:0]),
+        .funct3(IDT[14:12]),
+        .ir_type(ir_type_if)
+    );
+
     if_flush_picker if_flush_picker_inst(
         .e_raised(e_raised),
         .flush_from_flush_u(flush),
@@ -216,6 +224,8 @@ module top (
         .pc4_out(pc4_from_if),
         .ir_in(IDT),
         .ir_out(ir_from_if),
+        .ir_type_in(ir_type_if),
+        .ir_type_out(ir_type_from_if),
         .flush_in(flush_if),
         .flush_out(flush_from_if),
         .i_addr_misaligned_in(i_addr_misaligned_if),
@@ -225,11 +235,11 @@ module top (
     // ID
     id_stage id_stage_inst(
         .ir(ir_from_if),
+        .ir_type(ir_type_from_if),
         .is_e_cause_eq_ecall(is_e_cause_eq_ecall),
         .rs1(rd1_addr),
         .rs2(rd2_addr),
         .rd(rd_id),
-        .opcode(opcode_id),
         .funct3(funct3_id),
         .funct7(funct7_id),
         .csr_addr(csr_addr_id),
@@ -302,8 +312,8 @@ module top (
         .rd_out(rd_from_id),
         .csr_addr_in(csr_addr_id),
         .csr_addr_out(csr_addr_from_id),
-        .opcode_in(opcode_id),
-        .opcode_out(opcode_from_id),
+        .ir_type_in(ir_type_from_if),
+        .ir_type_out(ir_type_from_id),
         .imm_in(imm_id),
         .imm_out(imm_from_id),
         .z_in(z_id),
@@ -318,7 +328,7 @@ module top (
 
     // EX
     ex_stage ex_stage_inst(
-        .opcode(opcode_from_id),
+        .ir_type(ir_type_from_id),
         .funct3(funct3_from_id),
         .funct7(funct7_from_id),
         .pc(pc_from_id),
@@ -362,8 +372,8 @@ module top (
         .rd_out(rd_from_ex),
         .csr_addr_in(csr_addr_from_id),
         .csr_addr_out(csr_addr_from_ex),
-        .opcode_in(opcode_from_id),
-        .opcode_out(opcode_from_ex),
+        .ir_type_in(ir_type_from_id),
+        .ir_type_out(ir_type_from_ex),
         .wr_reg_n_in(wr_reg_n_from_id),
         .wr_reg_n_out(wr_reg_n_from_ex),
         .wr_csr_n_in(wr_csr_n_from_id),
@@ -375,7 +385,7 @@ module top (
     // MEM
     mem_stage mem_stage_inst(
         .data_from_mem(data_from_mem),
-        .opcode(opcode_from_ex),
+        .ir_type(ir_type_from_ex),
         .funct3(funct3_from_ex),
         .b(b_from_ex),
         .flush(flush_from_ex),
@@ -408,8 +418,8 @@ module top (
         .rd_out(wr_addr),
         .csr_addr_in(csr_addr_from_ex),
         .csr_addr_out(csr_wr_addr),
-        .opcode_in(opcode_from_ex),
-        .opcode_out(opcode_from_mem),
+        .ir_type_in(ir_type_from_ex),
+        .ir_type_out(ir_type_from_mem),
         .wr_reg_n_in(wr_reg_n_from_ex),
         .wr_reg_n_out(wr_n),
         .wr_csr_n_in(wr_csr_n_from_ex),
@@ -418,8 +428,7 @@ module top (
 
     // WB
     wb_stage wb_stage_inst(
-        .funct3(funct3_from_mem),
-        .opcode(opcode_from_mem),
+        .ir_type(ir_type_from_mem),
         .c(c_from_mem),
         .d(d_from_mem),
         .pc4(pc4_from_mem),
@@ -466,10 +475,10 @@ module top (
         .wr_reg_n_in_ex(wr_reg_n_from_id),
         .rs2_in_ex(rs2_from_id),
         .rd_in_ex(rd_from_id),
-        .opcode_in_ex(opcode_from_id),
+        .ir_type_in_ex(ir_type_from_id),
         .wr_reg_n_in_mem(wr_reg_n_from_ex),
         .rd_in_mem(rd_from_ex),
-        .opcode_in_mem(opcode_from_ex),
+        .ir_type_in_mem(ir_type_from_ex),
         .forward_data1(forward_data1),
         .forward_data2(forward_data2),
         .forward_b(forward_b)
@@ -478,10 +487,10 @@ module top (
     csr_forward_u csr_forward_u_inst(
         .csr_addr_in_id(csr_addr_id),
         .csr_addr_in_ex(csr_addr_from_id),
-        .opcode_in_ex(opcode_from_id),
+        .ir_type_in_ex(ir_type_from_id),
         .wr_csr_n_in_ex(wr_csr_n_from_id),
         .csr_addr_in_mem(csr_addr_from_ex),
-        .opcode_in_mem(opcode_from_ex),
+        .ir_type_in_mem(ir_type_from_ex),
         .wr_csr_n_in_mem(wr_csr_n_from_ex),
         .forward_z(forward_z)
     );
@@ -490,7 +499,7 @@ module top (
         .main_data(c_ex),
         .sub_data(pc4_from_id),
         .csr_data(z_from_id),
-        .opcode(opcode_from_id),
+        .ir_type(ir_type_from_id),
         .funct3(funct3_from_id),
         .data_to_forward(data_forwarded_from_ex)
     );
@@ -499,7 +508,7 @@ module top (
         .main_data(c_from_ex),
         .sub_data(d_mem),
         .csr_data(z_from_ex),
-        .opcode(opcode_from_ex),
+        .ir_type(ir_type_from_ex),
         .funct3(funct3_from_ex),
         .data_to_forward(data_forwarded_from_mem)
     );
@@ -508,10 +517,10 @@ module top (
     stall_detector stall_detector_inst(
         .rs1(rd1_addr),
         .rs2(rd2_addr),
-        .opcode_in_id(opcode_id),
+        .ir_type_in_id(ir_type_from_if),
         .wr_reg_n_in_ex(wr_reg_n_from_id),
         .rd_in_ex(rd_from_id),
-        .opcode_in_ex(opcode_from_id),
+        .ir_type_in_ex(ir_type_from_id),
         .stall(stall)
     );
 
@@ -525,7 +534,7 @@ module top (
     interlock_u interlock_u_inst(
         .imem_ack_n(ACKI_n),
         .dmem_ack_n(ACKD_n),
-        .opcode(opcode_from_ex),
+        .ir_type(ir_type_from_ex),
         .interlock(interlock)
     );
 

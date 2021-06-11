@@ -4,7 +4,7 @@
 
 module ex_stage (
     // inputs from ID stage
-    input [6:0] opcode,
+    input [3:0] ir_type,
     input [2:0] funct3,
     input [6:0] funct7,
     input [31:0] pc,
@@ -24,7 +24,7 @@ module ex_stage (
     wire [2:0] branch_alu_op;
 
     ex_ctrl ex_ctrl_inst(
-        .opcode(opcode),
+        .ir_type(ir_type),
         .funct3(funct3),
         .funct7(funct7),
         .data1(data1),
