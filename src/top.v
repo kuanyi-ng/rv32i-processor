@@ -486,10 +486,10 @@ module top (
         .wr_reg_n_in_ex(wr_reg_n_from_id),
         .rs2_in_ex(rs2_from_id),
         .rd_in_ex(rd_from_id),
-        .opcode_in_ex(opcode_from_id),
+        .ir_type_in_ex(ir_type_from_id),
         .wr_reg_n_in_mem(wr_reg_n_from_ex),
         .rd_in_mem(rd_from_ex),
-        .opcode_in_mem(opcode_from_ex),
+        .ir_type_in_mem(ir_type_from_ex),
         .forward_data1(forward_data1),
         .forward_data2(forward_data2),
         .forward_b(forward_b)
