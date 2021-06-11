@@ -498,10 +498,10 @@ module top (
     csr_forward_u csr_forward_u_inst(
         .csr_addr_in_id(csr_addr_id),
         .csr_addr_in_ex(csr_addr_from_id),
-        .opcode_in_ex(opcode_from_id),
+        .ir_type_in_ex(ir_type_from_id),
         .wr_csr_n_in_ex(wr_csr_n_from_id),
         .csr_addr_in_mem(csr_addr_from_ex),
-        .opcode_in_mem(opcode_from_ex),
+        .ir_type_in_mem(ir_type_from_ex),
         .wr_csr_n_in_mem(wr_csr_n_from_ex),
         .forward_z(forward_z)
     );
