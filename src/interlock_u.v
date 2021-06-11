@@ -1,4 +1,4 @@
-`include "constants/opcode.v"
+`include "constants/ir_type.v"
 
 // interlock pipeline when memory access is not completed yet.
 // when accessing the memory, the processor will receive acknowledge signals
@@ -8,7 +8,7 @@
 module interlock_u (
     input imem_ack_n,   // 0: succeed, 1: still accessing
     input dmem_ack_n,   // 0: succeed, 1: still accessing
-    input [6:0] opcode, // opcode from MEM Stage
+    input [3:0] ir_type, // ir_type from MEM Stage
 
     output interlock
 );
@@ -17,7 +17,7 @@ module interlock_u (
     // Main
     //
 
-    assign interlock = imem_ack_n || dmem_interlock_ctrl(dmem_ack_n, opcode);
+    assign interlock = imem_ack_n || dmem_interlock_ctrl(dmem_ack_n, ir_type);
 
     //
     // Function
@@ -27,8 +27,8 @@ module interlock_u (
         reg is_load, is_store;
 
         begin
-            is_load = (opcode == `LOAD_OP);
-            is_store = (opcode == `STORE_OP);
+            is_load = (ir_type == `LOAD_IR);
+            is_store = (ir_type == `STORE_IR);
 
             // only interlock when memory access doesn't complete
             // for Load or Store instructions

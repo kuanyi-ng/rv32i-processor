@@ -545,7 +545,7 @@ module top (
     interlock_u interlock_u_inst(
         .imem_ack_n(ACKI_n),
         .dmem_ack_n(ACKD_n),
-        .opcode(opcode_from_ex),
+        .ir_type(ir_type_from_ex),
         .interlock(interlock)
     );
 
