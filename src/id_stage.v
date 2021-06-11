@@ -1,7 +1,6 @@
 `include "constants/ir_type.v"
 `include "constants/funct3.v"
 
-`include "ir_splitter.v"
 `include "imm_extractor.v"
 
 module id_stage (
@@ -18,7 +17,6 @@ module id_stage (
 
     // outputs to EX stage
     output [4:0] rd,
-    output [6:0] opcode,
     output [2:0] funct3,
     output [6:0] funct7,
     output [11:0] csr_addr,
@@ -46,17 +44,15 @@ module id_stage (
     // Main
     //
 
+    wire [4:0] rs1 = ir[19:15];
+    wire [4:0] rs2 = ir[24:20];
+    wire [4:0] rd = ir[11:7];
+    wire [2:0] funct3 = ir[14:12];
+    wire [6:0] funct7 = ir[31:25];
+    wire [11:0] csr_addr = ir[31:20];
+
     wire [11:0] temp_csr_addr;
-    ir_splitter ir_splitter_inst(
-        .ir(ir),
-        .opcode(opcode),
-        .rs1(rs1),
-        .rs2(rs2),
-        .rd(rd),
-        .funct3(funct3),
-        .funct7(funct7),
-        .csr_addr(temp_csr_addr)
-    );
+
     // change csr_addr to mepc when is_mret is true
     // this will enable csr_forwarding value of mepc
     assign csr_addr = (is_mret) ? MEPC_ADDR : temp_csr_addr;
