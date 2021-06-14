@@ -20,12 +20,12 @@ module u_jump_predictor #(
     input [31:0] pc_in_ex,
     input [3:0] ir_type_in_ex,
     input [31:0] jump_addr_if_taken,    // c_ex
-    input predicted_jump,
+    input is_prediction_wrong,
     input jump_result,
 
     // Output to IF Stage
     output u_jump,
-    output [31:0] prediction_addr
+    output [31:0] addr_prediction
 );
 
     // Entries of table
@@ -75,7 +75,7 @@ module u_jump_predictor #(
         endcase 
     end
     assign u_jump = (is_u_jump_ir_in_if) ? temp_u_jump : 1'b0;
-    assign prediction_addr = target_addr;
+    assign addr_prediction = target_addr;
 
     //
     // Write (Synchronous)
@@ -83,7 +83,7 @@ module u_jump_predictor #(
 
     wire is_u_jump_ir_in_ex = is_u_jump_ir_ctrl(ir_type_in_ex);
     wire [11:0] write_entry_id = entry_id_ctrl(pc_in_ex);
-    wire update_entry = update_entry_ctrl(predicted_jump, jump_result);
+    wire update_entry = is_u_jump_ir_in_ex && is_prediction_wrong;
 
     always @(negedge clk) begin
         if (update_entry) begin
@@ -109,12 +109,6 @@ module u_jump_predictor #(
     function [11:0] entry_id_ctrl(input [31:0] pc);
         begin
             entry_id_ctrl = { pc[28], pc[12:2] };
-        end
-    endfunction
-
-    function update_entry_ctrl(input predicted_jump, input jump_result);
-        begin
-            update_entry_ctrl = (predicted_jump != jump_result);
         end
     endfunction
 
