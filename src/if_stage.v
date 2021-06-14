@@ -2,11 +2,17 @@
 `include "if_ctrl.v"
 
 module if_stage (
+    // Inputs from IF Stage
     input [31:0] current_pc,
-    input [31:0] c,
-    input jump,
+    input jump_prediction,
+    input [31:0] addr_prediction,
+    // Inputs from ID Stage
     input e_raised,
     input [31:0] e_handling_addr,
+    // Inputs from EX Stage
+    input [31:0] jump_addr,
+    input [31:0] c,
+    input jump,
 
     output [31:0] pc4,
     output [31:0] next_pc,
@@ -20,10 +26,13 @@ module if_stage (
 
     if_ctrl if_ctrl_inst(
         .pc4(pc4),
-        .c(c),
-        .jump(jump),
+        .jump_prediction(jump_prediction),
+        .addr_prediction(addr_prediction),
         .e_raised(e_raised),
         .e_handling_addr(e_handling_addr),
+        .jump_addr(jump_addr),
+        .c(c),
+        .jump(jump),
         .next_pc(next_pc)
     );
     
