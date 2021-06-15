@@ -1,4 +1,5 @@
 `include "constants/ir_type.v"
+`include "constants/predictor_state.v"
 
 // Unconditional Jump Predictor
 //
@@ -37,10 +38,8 @@ module u_jump_predictor #(
     //   - pc[NUM_BITS+1:2] ( 2^(NUM_BITS-1) entries each mode)
     //
     // What to store?
-    // init [33] | state [32] | target_addr [31:0]
-    // - init: whether target_addr's value is available or not
-    // - state: state of 1-bit predictor for this entry
-    //   - take: 1, don't take: 0
+    // state [33:32] | target_addr [31:0]
+    // - state: state of 2-bit predictor for this entry
     // - target_addr: addr to jump to when state == take
     reg [33:0] entries[0:TABLE_SIZE-1];
 
@@ -51,38 +50,29 @@ module u_jump_predictor #(
     wire is_u_jump_ir_in_if = is_u_jump_ir_ctrl(ir_type_in_if);
     wire [NUM_BITS-1:0] read_entry_id = entry_id_ctrl(pc_in_if);
 
-    reg init, state, temp_u_jump;
+    reg temp_u_jump;
+    reg [1:0] state;
     reg [31:0] target_addr, temp_addr_prediction;
     always @(*) begin
-        { init, state, target_addr } = entries[read_entry_id];
+        { state, target_addr } = entries[read_entry_id];
 
-        // init | state | u_jump
-        // 0    | 0     | 0
-        // 0    | 1     | 0 (not init yet)
-        // 1    | 0     | 0
-        // 1    | 1     | 1
-        case ({ init, state })
-            2'b00,
-            2'b01: begin
-                temp_u_jump = 1'b0;
-                temp_addr_prediction = pc4_in_if; // maybe change this to pc4
-            end
-            2'b10: begin
+        case (state)
+            `STRONG_DONT_TAKE,
+            `WEAK_DONT_TAKE: begin
                 temp_u_jump = 1'b0;
                 temp_addr_prediction = pc4_in_if;
             end
-            2'b11: begin
+
+            `WEAK_TAKE,
+            `STRONG_TAKE: begin
                 temp_u_jump = 1'b1;
                 temp_addr_prediction = target_addr;
             end
 
-            // default added to handle cases where
-            // either init / state is 1'bx
             default: begin
                 temp_u_jump = 1'b0;
                 temp_addr_prediction = pc4_in_if;
-                // default to { not_init, not_take }
-                entries[read_entry_id][33:32] = { 1'b0, 1'b0 };
+                entries[read_entry_id][33:32] = 2'b01;
             end
         endcase
     end
@@ -96,14 +86,11 @@ module u_jump_predictor #(
     wire is_u_jump_ir_in_ex = is_u_jump_ir_ctrl(ir_type_in_ex);
     wire [NUM_BITS-1:0] write_entry_id = entry_id_ctrl(pc_in_ex);
     wire update_entry = is_u_jump_ir_in_ex && is_prediction_wrong;
-    wire next_state = next_state_ctrl(entries[write_entry_id][32], is_prediction_wrong);
+    wire [1:0] next_state = next_state_ctrl(entries[write_entry_id][32], is_prediction_wrong);
 
     always @(negedge clk) begin
         if (update_entry) begin
-            // update init to 1
-            // update state to jump_result (1-bit predictor)
-            // update target_addr to jump_addr_if_taken
-            entries[write_entry_id] <= { 1'b1, next_state, jump_addr_if_taken };
+            entries[write_entry_id] <= { next_state, jump_addr_if_taken };
         end else begin
             entries[write_entry_id] <= entries[write_entry_id];
         end
@@ -128,15 +115,21 @@ module u_jump_predictor #(
         end
     endfunction
 
-    function next_state_ctrl(input curr_state, input is_prediction_wrong);
-        // 1-bit predictor
+    function [1:0] next_state_ctrl(input curr_state, input is_prediction_wrong);
+        // 2-bits predictor
         begin
-            // curr_state   | is_prediction_wrong   | next_state
-            // 0            | 0                     | 0
-            // 0            | 1                     | 1
-            // 1            | 0                     | 1
-            // 1            | 1                     | 0
-            next_state_ctrl = (is_prediction_wrong) ? ~curr_state : curr_state;
+            case ({ curr_state, is_prediction_wrong })
+                { `STRONG_DONT_TAKE, 1'b0 }: next_state_ctrl = `STRONG_DONT_TAKE;
+                { `STRONG_DONT_TAKE, 1'b1 }: next_state_ctrl = `WEAK_DONT_TAKE;
+                { `WEAK_DONT_TAKE, 1'b0 }: next_state_ctrl = `STRONG_DONT_TAKE;
+                { `WEAK_DONT_TAKE, 1'b1 }: next_state_ctrl = `WEAK_TAKE;
+                { `WEAK_TAKE, 1'b0 }: next_state_ctrl = `STRONG_TAKE;
+                { `WEAK_TAKE, 1'b1 }: next_state_ctrl = `WEAK_DONT_TAKE;
+                { `STRONG_TAKE, 1'b0 }: next_state_ctrl = `STRONG_TAKE;
+                { `STRONG_TAKE, 1'b1 }: next_state_ctrl = `WEAK_TAKE;
+
+                default: next_state_ctrl = `WEAK_DONT_TAKE;
+            endcase
         end
     endfunction
 

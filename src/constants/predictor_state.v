@@ -1,0 +1,4 @@
+`define STRONG_TAKE 2'b11
+`define WEAK_TAKE 2'b10
+`define WEAK_DONT_TAKE 2'b01
+`define STRONG_DONT_TAKE 2'b00
