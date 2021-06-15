@@ -8,8 +8,8 @@ module u_jump_predictor #(
     // NOTE:
     // keep TABLE_SIZE <= 4096
     // TABLE_SIZE = 2 ^ NUM_BITS
-    parameter TABLE_SIZE = 4096,
-    parameter NUM_BITS = 12
+    parameter TABLE_SIZE = 32,
+    parameter NUM_BITS = 5
 ) (
     input clk,
 

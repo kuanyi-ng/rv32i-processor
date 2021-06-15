@@ -575,7 +575,10 @@ module top (
     );
 
     // Jump Prediction
-    u_jump_predictor u_jump_predictor_inst(
+    u_jump_predictor #(
+        .TABLE_SIZE(32),
+        .NUM_BITS(5)
+    ) u_jump_predictor_inst(
         .clk(clk),
         .pc_in_if(current_pc),
         .pc4_in_if(pc4_if),
