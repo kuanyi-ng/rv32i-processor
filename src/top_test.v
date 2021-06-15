@@ -1,7 +1,8 @@
 `timescale 1ns/1ps
-// `define IN_TOTAL 1000000    // load, store, p2, hello
-`define IN_TOTAL 1000000000     // bitcnts
+`define IN_TOTAL 1000000000
 `include "top.v"
+
+`include "constants/ir_type.v"
 
 module top_test;
    
@@ -46,20 +47,32 @@ module top_test;
    reg [BYTE_SIZE-1:0]   DATA_Imem[IMEM_START:IMEM_START + IMEM_SIZE];   // use in readmemh  (Instruction mem)       
    reg [BYTE_SIZE-1:0]   DATA_Dmem[DMEM_START:DMEM_START + DMEM_SIZE];   // use in readmemh (Data mem)
 
+    // Analysis
+    wire [3:0] ir_type_in_ex;
+    wire wrong_prediction;
+    wire is_jump_ir = (ir_type_in_ex == `JAL_IR) || (ir_type_in_ex == `JALR_IR) || (ir_type_in_ex == `BRANCH_IR);
+    integer num_jump_ir;
+    integer num_wrong_prediction;
+
    //*** module instantations ***//
-   top u_top_1(//Inputs
-               .clk(clk), .rst_n(rst),
-               .ACKD_n(ACKD_n), .ACKI_n(ACKI_n), 
-               .IDT(IDT), .OINT_n(OINT_n),
-      
-               //Outputs
-               .IAD(IAD), .DAD(DAD), 
-               .MREQ(MREQ), .WRITE(WRITE), 
-               .SIZE(SIZE), .IACK_n(IACK_n), 
-      
-               //Inout
-               .DDT(DDT)
-               );
+   top u_top_1(
+        // Inputs
+        .clk(clk), .rst_n(rst),
+        .ACKD_n(ACKD_n), .ACKI_n(ACKI_n),
+        .IDT(IDT), .OINT_n(OINT_n),
+
+        // Outputs
+        .IAD(IAD), .DAD(DAD),
+        .MREQ(MREQ), .WRITE(WRITE),
+        .SIZE(SIZE), .IACK_n(IACK_n),
+
+        // Analysis
+        .ir_type_from_id(ir_type_in_ex),
+        .jump_ex(wrong_prediction),
+
+        //Inout
+        .DDT(DDT)
+    );
    
      //*** clock generation ***//
      always begin
@@ -88,25 +101,35 @@ module top_test;
         rst = 1'b1;
         #1 rst = 1'b0;
         #CYCLE rst = 1'b1;
+
+        // analysis
+        num_jump_ir = 0;
+        num_wrong_prediction = 0;
      end
 
-     initial begin
+    initial begin
         #HALF_CYCLE;
         //*** data input loop ***//
         for (i = 0; i < `IN_TOTAL; i =i +1)
-          begin
+        begin
+            Iaddr = u_top_1.IAD;
+            fetch_task1;
 
-             Iaddr = u_top_1.IAD;            
-             fetch_task1;
+            if (is_jump_ir) begin
+                num_jump_ir = num_jump_ir + 1;
+                if (wrong_prediction) begin
+                    num_wrong_prediction = num_wrong_prediction + 1;
+                end
+            end
 
-             Daddr = u_top_1.DAD;
-             load_task1;
-             store_task1;
-             
-             // #(STB);
-             #CYCLE;
-             release DDT;
-          end // for (i = 0; i < `IN_TOTAL; i =i +1)
+            Daddr = u_top_1.DAD;
+            load_task1;
+            store_task1;
+
+            // #(STB);
+            #CYCLE;
+            release DDT;
+        end // for (i = 0; i < `IN_TOTAL; i =i +1)
 
         $display("\nReach IN_TOTAL.");
 
@@ -114,7 +137,7 @@ module top_test;
 
         $finish;
 
-     end // initial begin
+    end // initial begin
 
    //*** description for wave form ***//
    initial begin
@@ -246,30 +269,32 @@ module top_test;
       end
    endtask // store_task1
 
-   task dump_task1;
-      begin
-        Imem_data = $fopen("./Imem_out.dat");
-        for (i = IMEM_START; i <= IMEM_START + IMEM_SIZE; i = i+4)  // output data memory to Dmem_data (Dmem_out.dat)
-          begin
-             $fwrite(Imem_data, "%h :%h %h %h %h\n", i, DATA_Imem[i], DATA_Imem[i+1], DATA_Imem[i+2], DATA_Imem[i+3]);
-          end
-        $fclose(Imem_data);
-        Dmem_data = $fopen("./Dmem_out.dat");
-        for (i = DMEM_START; i <= DMEM_START + DMEM_SIZE; i = i+4)  // output data memory to Dmem_data (Dmem_out.dat)
-          begin
-             $fwrite(Dmem_data, "%h :%h %h %h %h\n", i, DATA_Dmem[i], DATA_Dmem[i+1], DATA_Dmem[i+2], DATA_Dmem[i+3]);
-          end
-        $fclose(Dmem_data);
+    task dump_task1;
+        begin
+            Imem_data = $fopen("./Imem_out.dat");
+            for (i = IMEM_START; i <= IMEM_START + IMEM_SIZE; i = i+4)  // output data memory to Dmem_data (Dmem_out.dat)
+                begin
+                    $fwrite(Imem_data, "%h :%h %h %h %h\n", i, DATA_Imem[i], DATA_Imem[i+1], DATA_Imem[i+2], DATA_Imem[i+3]);
+                end
+            $fclose(Imem_data);
+            Dmem_data = $fopen("./Dmem_out.dat");
+            for (i = DMEM_START; i <= DMEM_START + DMEM_SIZE; i = i+4)  // output data memory to Dmem_data (Dmem_out.dat)
+                begin
+                    $fwrite(Dmem_data, "%h :%h %h %h %h\n", i, DATA_Dmem[i], DATA_Dmem[i+1], DATA_Dmem[i+2], DATA_Dmem[i+3]);
+                end
+            $fclose(Dmem_data);
 
-        Reg_data = $fopen("./Reg_out.dat");
-        for (i =0; i < 32; i = i+1)  // output register to Reg_data (Reg_out.dat)
-          begin
-             Reg_temp = u_top_1.regfile_inst.u_DW_ram_2r_w_s_dff.mem >> (BIT_WIDTH * i);
-             $fwrite(Reg_data, "%d:%h\n", i, Reg_temp);
-          end
-        $fclose(Reg_data);
-      end
+            Reg_data = $fopen("./Reg_out.dat");
+            for (i =0; i < 32; i = i+1)  // output register to Reg_data (Reg_out.dat)
+                begin
+                    Reg_temp = u_top_1.regfile_inst.u_DW_ram_2r_w_s_dff.mem >> (BIT_WIDTH * i);
+                    $fwrite(Reg_data, "%d:%h\n", i, Reg_temp);
+                end
+            $fclose(Reg_data);
 
-   endtask // dump_task1
+            $display("num_jump_ir: %d, num_wrong_prediction: %d", num_jump_ir, num_wrong_prediction);
+        end
+
+    endtask // dump_task1
 
 endmodule // top_test

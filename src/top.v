@@ -40,6 +40,10 @@ module top (
     input [2:0] OINT_n,
     output IACK_n,
 
+    // Analysis
+    output [3:0] ir_type_from_id,
+    output jump_ex,
+
     // Data Memory
     output [31:0] DAD,  // Data Address Bus
     inout [31:0] DDT,   // Data Data Bus
@@ -87,7 +91,7 @@ module top (
     wire [31:0] pc_from_id;
     wire [31:0] pc4_from_id;
     wire [31:0] data1_from_id, data2_from_id;
-    wire [3:0] ir_type_from_id;
+    // wire [3:0] ir_type_from_id;
     wire [6:0] funct7_from_id;
     wire [2:0] funct3_from_id;
     wire [4:0] rs2_from_id, rd_from_id;
@@ -102,7 +106,7 @@ module top (
     wire [31:0] b_ex;
     wire [31:0] c_ex;
     wire jump_from_branch_alu;
-    wire jump_ex;
+    // wire jump_ex;
 
     // EX-MEM
     wire [2:0] funct3_from_ex;
