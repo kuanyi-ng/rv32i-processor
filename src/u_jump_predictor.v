@@ -25,7 +25,6 @@ module u_jump_predictor #(
     input [3:0] ir_type_in_ex,
     input [31:0] jump_addr_if_taken,    // c_ex
     input is_prediction_wrong,
-    input jump_result,
 
     // Output to IF Stage
     output u_jump,
@@ -87,6 +86,8 @@ module u_jump_predictor #(
             default: begin
                 temp_u_jump = 1'b0;
                 temp_addr_prediction = pc4_in_if;
+                // default to { not_init, not_take }
+                entries[read_entry_id][33:32] = { 1'b0, 1'b0 };
             end
         endcase
     end
@@ -100,13 +101,14 @@ module u_jump_predictor #(
     wire is_u_jump_ir_in_ex = is_u_jump_ir_ctrl(ir_type_in_ex);
     wire [NUM_BITS-1:0] write_entry_id = entry_id_ctrl(pc_in_ex);
     wire update_entry = is_u_jump_ir_in_ex && is_prediction_wrong;
+    wire next_state = next_state_ctrl(entries[write_entry_id][32], is_prediction_wrong);
 
     always @(negedge clk) begin
         if (update_entry) begin
             // update init to 1
             // update state to jump_result (1-bit predictor)
             // update target_addr to jump_addr_if_taken
-            entries[write_entry_id] <= { 1'b1, jump_result, jump_addr_if_taken };
+            entries[write_entry_id] <= { 1'b1, next_state, jump_addr_if_taken };
         end else begin
             entries[write_entry_id] <= entries[write_entry_id];
         end
@@ -125,6 +127,18 @@ module u_jump_predictor #(
     function [NUM_BITS-1:0] entry_id_ctrl(input [31:0] pc);
         begin
             entry_id_ctrl = { pc[28], pc[NUM_BITS:2] };
+        end
+    endfunction
+
+    function next_state_ctrl(input curr_state, input is_prediction_wrong);
+        // 1-bit predictor
+        begin
+            // curr_state   | is_prediction_wrong   | next_state
+            // 0            | 0                     | 0
+            // 0            | 1                     | 1
+            // 1            | 0                     | 1
+            // 1            | 1                     | 0
+            next_state_ctrl = (is_prediction_wrong) ? ~curr_state : curr_state;
         end
     endfunction
 

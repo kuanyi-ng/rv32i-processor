@@ -587,7 +587,6 @@ module top (
         .ir_type_in_ex(ir_type_from_id),
         .jump_addr_if_taken(c_ex),
         .is_prediction_wrong(jump_ex),
-        .jump_result(jump_from_branch_alu), // need to change name
         .u_jump(jump_prediction_if),
         .addr_prediction(addr_prediction_if)
     );
