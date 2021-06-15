@@ -13,6 +13,7 @@ module u_jump_predictor #(
     // Inputs from IF Stage
     // - used for read operation
     input [31:0] pc_in_if,
+    input [31:0] pc4_in_if,
     input [3:0] ir_type_in_if,
 
     // Inputs from EX Stage
@@ -54,7 +55,7 @@ module u_jump_predictor #(
     wire [11:0] read_entry_id = entry_id_ctrl(pc_in_if);
 
     reg init, state, temp_u_jump;
-    reg [31:0] target_addr;
+    reg [31:0] target_addr, temp_addr_prediction;
     always @(*) begin
         { init, state, target_addr } = entries[read_entry_id];
 
@@ -64,18 +65,30 @@ module u_jump_predictor #(
         // 1    | 0     | 0
         // 1    | 1     | 1
         case ({ init, state })
-            2'b00: temp_u_jump = 1'b0;
-            2'b01: temp_u_jump = 1'b0;
-            2'b10: temp_u_jump = 1'b0;
-            2'b11: temp_u_jump = 1'b1; 
+            2'b00,
+            2'b01: begin
+                temp_u_jump = 1'b0;
+                temp_addr_prediction = pc4_in_if; // maybe change this to pc4
+            end
+            2'b10: begin
+                temp_u_jump = 1'b0;
+                temp_addr_prediction = pc4_in_if;
+            end
+            2'b11: begin
+                temp_u_jump = 1'b1;
+                temp_addr_prediction = target_addr;
+            end
 
             // default added to handle cases where
             // either init / state is 1'bx
-            default: temp_u_jump = 1'b0;
-        endcase 
+            default: begin
+                temp_u_jump = 1'b0;
+                temp_addr_prediction = pc4_in_if;
+            end
+        endcase
     end
     assign u_jump = (is_u_jump_ir_in_if) ? temp_u_jump : 1'b0;
-    assign addr_prediction = target_addr;
+    assign addr_prediction = (is_u_jump_ir_in_if) ? temp_addr_prediction : pc4_in_if;
 
     //
     // Write (Synchronous)

@@ -578,6 +578,7 @@ module top (
     u_jump_predictor u_jump_predictor_inst(
         .clk(clk),
         .pc_in_if(current_pc),
+        .pc4_in_if(pc4_if),
         .ir_type_in_if(ir_type_if),
         .pc_in_ex(pc_from_id),
         .ir_type_in_ex(ir_type_from_id),
