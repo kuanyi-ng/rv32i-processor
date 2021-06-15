@@ -3,7 +3,7 @@
 `include "data_forward_helper.v"
 `include "data_forward_u.v"
 `include "ex_data_picker.v"
-`include "ex_jump_picker.v"
+`include "ex_jump_handler.v"
 `include "ex_mem_regs.v"
 `include "ex_stage.v"
 `include "exception_ctrl_u.v"
@@ -367,16 +367,17 @@ module top (
         .b_ex(b_ex)
     );
 
-    ex_jump_picker ex_jump_picker_inst(
+    ex_jump_handler ex_jump_handler_inst(
         .ir_type(ir_type_from_id),
         .jump_prediction(jump_prediction_from_id),
         .jump_from_branch_alu(jump_from_branch_alu),
         .addr_prediction(addr_prediction_from_id),
         .addr_from_alu(c_ex),
+        .pc4(pc4_from_id),
         .flush_from_id(flush_from_id),
-        .jump(jump_ex)
+        .jump(jump_ex),
+        .jump_addr(jump_address_ex)
     );
-    assign jump_address_ex = ((jump_prediction_from_id) && (!jump_from_branch_alu)) ? pc4_from_id : c_ex;
 
     // EX-MEM
     ex_mem_regs ex_mem_regs_inst(
