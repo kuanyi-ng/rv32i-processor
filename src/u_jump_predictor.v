@@ -102,8 +102,8 @@ module u_jump_predictor #(
 
     function is_u_jump_ir_ctrl(input [3:0] ir_type);
         begin
-            is_u_jump_ir_ctrl = (ir_type == `JAL_IR) || (ir_type == `JALR_IR);
-        end 
+            is_u_jump_ir_ctrl = (ir_type == `JAL_IR) || (ir_type == `JALR_IR) || (ir_type == `BRANCH_IR);
+        end
     endfunction
 
     function [11:0] entry_id_ctrl(input [31:0] pc);

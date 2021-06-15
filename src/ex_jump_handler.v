@@ -16,7 +16,7 @@ module ex_jump_handler (
     output [31:0] jump_addr
 );
 
-    wire is_jump_ir = (ir_type == `JAL_IR) || (ir_type == `JALR_IR);
+    wire is_jump_ir = (ir_type == `JAL_IR) || (ir_type == `JALR_IR) || (ir_type == `BRANCH_IR);
     wire is_jump_prediction_wrong = (jump_prediction != jump_from_branch_alu);
     wire is_addr_prediction_wrong = (addr_prediction != addr_from_alu);
 
@@ -51,7 +51,6 @@ module ex_jump_handler (
                 jump_ctrl = 1'b0;
             end else begin
                 if (is_jump_ir) begin
-                    // Only check prediction result if current instruction is an unconditional jump
                     jump_ctrl = (is_jump_prediction_wrong || is_addr_prediction_wrong);
                 end else begin
                     // Else just follow the Branch ALU result
