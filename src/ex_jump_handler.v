@@ -36,14 +36,7 @@ module ex_jump_handler (
         is_jump_prediction_wrong,
         is_addr_prediction_wrong
     );
-    assign jump_addr = jump_addr_ctrl(
-        is_jump_ir,
-        jump_from_branch_alu,
-        is_jump_prediction_wrong,
-        is_addr_prediction_wrong,
-        pc4,
-        addr_from_alu
-    );
+    assign jump_addr = (jump_from_branch_alu) ? addr_from_alu : pc4;
 
     //
     // Function
@@ -68,32 +61,5 @@ module ex_jump_handler (
                 end
             end
         end
-    endfunction
-
-    function [31:0] jump_addr_ctrl(
-        // doesn't take flush as parameter because it's not important
-        // any value can goes in jump_addr because it won't jump anyway.
-
-        input is_jump_ir,
-        input jump_from_branch_alu,
-        input is_jump_prediction_wrong,
-        input is_addr_prediction_wrong,
-        input [31:0] pc4,
-        input [31:0] c
-    );
-        begin
-            if (is_jump_ir) begin
-                // Check prediction result
-                if (is_addr_prediction_wrong) jump_addr_ctrl = c;
-                else if (is_jump_prediction_wrong) jump_addr_ctrl = (jump_from_branch_alu) ? c : pc4;
-                else jump_addr_ctrl = pc4;
-            end else begin
-                // If instruction is not jump instruction, (Branch instruction is handled here)
-                // then the next address should be pc4.
-                // (will not actually jump)
-                jump_addr_ctrl = (jump_from_branch_alu) ? c : pc4;
-            end
-        end
-        
     endfunction
 endmodule
