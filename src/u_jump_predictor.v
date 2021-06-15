@@ -33,13 +33,8 @@ module u_jump_predictor #(
 
     // Entries of table
     // Identifier of entries in table:
-    // - to differentiate pc user / machine memory
-    //   - pc[28]
-    //   - pc in hexdecimal is either 0xxx_xxxx or 1xxx_xxxx
-    //     for the amount of memory this processor has
-    //   - user: 1, machine: 0
     // - to differentiate instructions
-    //   - pc[NUM_BITS:2] ( 2^(NUM_BITS-1) entries each mode)
+    //   - pc[NUM_BITS+1:2] ( 2^(NUM_BITS-1) entries each mode)
     //
     // What to store?
     // init [33] | state [32] | target_addr [31:0]
@@ -126,7 +121,10 @@ module u_jump_predictor #(
 
     function [NUM_BITS-1:0] entry_id_ctrl(input [31:0] pc);
         begin
-            entry_id_ctrl = { pc[28], pc[NUM_BITS:2] };
+            // Differentiating between user and machine instruction doesn't help much
+            // when most of the instructions are user-level.
+            // Differentiating between them will make the prediction table usage down to 50%.
+            entry_id_ctrl = pc[NUM_BITS+1:2];
         end
     endfunction
 
