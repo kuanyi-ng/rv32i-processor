@@ -5,8 +5,11 @@
 // Table (Memory) are
 // Ansynchronous Read, Synchronous Write
 module u_jump_predictor #(
-    // NOTE: keep TABLE_SIZE <= 4096
-    parameter TABLE_SIZE = 4096
+    // NOTE:
+    // keep TABLE_SIZE <= 4096
+    // TABLE_SIZE = 2 ^ NUM_BITS
+    parameter TABLE_SIZE = 4096,
+    parameter NUM_BITS = 12
 ) (
     input clk,
 
@@ -37,7 +40,7 @@ module u_jump_predictor #(
     //     for the amount of memory this processor has
     //   - user: 1, machine: 0
     // - to differentiate instructions
-    //   - pc[12:2] (2048 entries for each mode)
+    //   - pc[NUM_BITS:2] ( 2^(NUM_BITS-1) entries each mode)
     //
     // What to store?
     // init [33] | state [32] | target_addr [31:0]
@@ -52,7 +55,7 @@ module u_jump_predictor #(
     //
 
     wire is_u_jump_ir_in_if = is_u_jump_ir_ctrl(ir_type_in_if);
-    wire [11:0] read_entry_id = entry_id_ctrl(pc_in_if);
+    wire [NUM_BITS-1:0] read_entry_id = entry_id_ctrl(pc_in_if);
 
     reg init, state, temp_u_jump;
     reg [31:0] target_addr, temp_addr_prediction;
@@ -95,7 +98,7 @@ module u_jump_predictor #(
     //
 
     wire is_u_jump_ir_in_ex = is_u_jump_ir_ctrl(ir_type_in_ex);
-    wire [11:0] write_entry_id = entry_id_ctrl(pc_in_ex);
+    wire [NUM_BITS-1:0] write_entry_id = entry_id_ctrl(pc_in_ex);
     wire update_entry = is_u_jump_ir_in_ex && is_prediction_wrong;
 
     always @(negedge clk) begin
@@ -119,9 +122,9 @@ module u_jump_predictor #(
         end
     endfunction
 
-    function [11:0] entry_id_ctrl(input [31:0] pc);
+    function [NUM_BITS-1:0] entry_id_ctrl(input [31:0] pc);
         begin
-            entry_id_ctrl = { pc[28], pc[12:2] };
+            entry_id_ctrl = { pc[28], pc[NUM_BITS:2] };
         end
     endfunction
 
