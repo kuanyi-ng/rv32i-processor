@@ -18,7 +18,17 @@ module ex_jump_handler (
 
     wire is_jump_ir = (ir_type == `JAL_IR) || (ir_type == `JALR_IR) || (ir_type == `BRANCH_IR);
     wire is_jump_prediction_wrong = (jump_prediction != jump_from_branch_alu);
-    wire is_addr_prediction_wrong = (addr_prediction != addr_from_alu);
+    // check if addr_prediction is wrong
+    // This is possible when 2 instructions (M, N) with different pc shares the same entry in prediction table.
+    // M has target_addr of O, while N has target_addr of P.
+    // If M's entry is initialized before N and has a state of 1,
+    // when instruction N is fetch, jump_prediction = 1, addr_prediction = O,
+    // even though the jump prediction is correct, execution jumped to the wrong addr.
+    // So fixes are required. => need to jump
+    //
+    // Don't really care about correctness of addr_prediction if jump_prediction = 0
+    // cause there's no risk of jumping to the wrong addr due to prediction.
+    wire is_addr_prediction_wrong = (jump_prediction == 1'b1) && (addr_prediction != addr_from_alu);
 
     assign jump = jump_ctrl(
         flush_from_id,
