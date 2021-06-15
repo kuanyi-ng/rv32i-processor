@@ -72,7 +72,7 @@ module u_jump_predictor #(
             default: begin
                 temp_u_jump = 1'b0;
                 temp_addr_prediction = pc4_in_if;
-                entries[read_entry_id][33:32] = 2'b01;
+                entries[read_entry_id][33:32] = `WEAK_DONT_TAKE;
             end
         endcase
     end
