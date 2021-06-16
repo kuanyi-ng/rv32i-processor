@@ -49,14 +49,7 @@ module id_stage (
     assign rd = ir[11:7];
     assign funct3 = ir[14:12];
     assign funct7 = ir[31:25];
-
-    wire [11:0] temp_csr_addr = ir[31:20];
-    // change csr_addr to mepc when is_mret is true
-    // this will enable csr_forwarding value of mepc
-    //
-    // can simplify this
-    // by wiring ir[31:20] to mepc in CSRs
-    assign csr_addr = (is_mret) ? MEPC_ADDR : temp_csr_addr;
+    assign csr_addr = ir[31:20];
 
     wire [2:0] imm_type;
     assign imm_type = imm_type_from(ir_type, funct3);
