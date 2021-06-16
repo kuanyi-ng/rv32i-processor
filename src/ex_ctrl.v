@@ -106,9 +106,9 @@ module ex_ctrl (
 
                 `STORE_IR: alu_op_ctrl = `ADD;
 
-                `REG_REG_IR: alu_op_ctrl = reg_ir_alu_op_ctrl(ir_type, funct3, funct7);
+                `REG_REG_IR: alu_op_ctrl = reg_ir_alu_op_ctrl(1'b0, funct3, funct7);
 
-                `REG_IMM_IR: alu_op_ctrl = reg_ir_alu_op_ctrl(ir_type, funct3, funct7);
+                `REG_IMM_IR: alu_op_ctrl = reg_ir_alu_op_ctrl(1'b1, funct3, funct7);
 
                 `CSR_IR: begin
                     if (funct3[1:0] == 2'b01) alu_op_ctrl = `CP_IN2;
@@ -125,14 +125,11 @@ module ex_ctrl (
         end 
     endfunction
 
-    function [3:0] reg_ir_alu_op_ctrl(input [3:0] ir_type, input [2:0] funct3, input [6:0] funct7);
+    function [3:0] reg_ir_alu_op_ctrl(input is_reg_imm_ir, input [2:0] funct3, input [6:0] funct7);
         begin
             case (funct3)
                 // ADD, SUB, ADDI
-                `ADD_FUNCT3: begin
-                    if (ir_type == `REG_IMM_IR) reg_ir_alu_op_ctrl = { 1'b0, funct3 };
-                    else reg_ir_alu_op_ctrl = { funct7[5], funct3 };
-                end
+                `ADD_FUNCT3: reg_ir_alu_op_ctrl = (is_reg_imm_ir) ? { 1'b0, funct3 } : { funct7[5], funct3 };
 
                 // SLL, SLLI
                 `SLL_FUNCT3: reg_ir_alu_op_ctrl = { 1'b0, funct3 };
