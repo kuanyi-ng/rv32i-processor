@@ -18,12 +18,9 @@ module mem_ctrl (
     wire is_load = (ir_type == `LOAD_IR);
     wire is_store = (ir_type == `STORE_IR);
 
-    // NOTE: tried to simplify by
-    // assign access_size = funct3[1:0];
-    // but didn't work
     assign access_size = access_size_ctrl(is_load, is_store, funct3);
-    assign write_to_data_mem = write_ctrl(is_store, flush);
-    assign require_mem_access = mem_access_ctrl(is_load, is_store);
+    assign write_to_data_mem = !flush && is_store;
+    assign require_mem_access = (is_load || is_store);
 
     //
     // Functions
@@ -52,28 +49,4 @@ module mem_ctrl (
         end
     endfunction
 
-    function write_ctrl(input is_store, input flush);
-        begin
-            // don't write when flush
-            if (flush) write_ctrl = 1'b0;
-            // only Store Instructions write to mem
-            else if (is_store) write_ctrl = 1'b1;
-            else write_ctrl = 1'b0;
-
-            // current implementation has smaller area than
-            // write_ctrl = is_store && !flush
-            // which produce the same truth table
-        end
-    endfunction
-
-    function mem_access_ctrl(input is_load, input is_store);
-        begin
-            if (is_load || is_store) mem_access_ctrl = 1'b1;
-            else mem_access_ctrl = 1'b0;
-
-            // current implementation has smaller area than
-            // mem_access_ctrl = is_load || is_store
-            // which produce the same truth table
-        end
-    endfunction
 endmodule
