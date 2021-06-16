@@ -497,7 +497,6 @@ module top (
         .sub_data(pc4_from_id),
         .csr_data(z_from_id),
         .ir_type(ir_type_from_id),
-        .funct3(funct3_from_id),
         .data_to_forward(data_forwarded_from_ex)
     );
 
@@ -506,7 +505,6 @@ module top (
         .sub_data(d_mem),
         .csr_data(z_from_ex),
         .ir_type(ir_type_from_ex),
-        .funct3(funct3_from_ex),
         .data_to_forward(data_forwarded_from_mem)
     );
 
