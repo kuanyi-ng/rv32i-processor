@@ -56,9 +56,14 @@ module csr_forward_u (
 
             // if csr is updated by both instructions (prev and prev_prev)
             // forward the value updated by prev instruction as it's the latest value.
-            if (csr_updated_by_prev) forward_z_ctrl = 2'b01;
-            else if (csr_updated_by_prev_prev) forward_z_ctrl = 2'b10;
-            else forward_z_ctrl = 2'b00;
+            case ({ csr_updated_by_prev, csr_updated_by_prev_prev })
+                2'b00: forward_z_ctrl = 2'b00;
+
+                2'b01: forward_z_ctrl = 2'b10;
+
+                2'b10,
+                2'b11: forward_z_ctrl = 2'b01;
+            endcase
         end
     endfunction
 endmodule

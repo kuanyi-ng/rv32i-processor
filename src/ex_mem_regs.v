@@ -1,3 +1,5 @@
+`include "constants/pipeline_regs_default.v"
+
 module ex_mem_regs (
     input clk,
     input rst_n,
@@ -51,17 +53,17 @@ module ex_mem_regs (
 
     always @(posedge clk or negedge rst_n) begin
         if (!rst_n) begin
-            pc4 <= 32'bx;
-            b <= 32'bx;
-            c <= 32'bx;
-            z_ <= 32'bx;
-            funct3 <= 3'bx;
-            rd <= 5'bx;
-            csr_addr <= 12'bx;
-            ir_type <= 4'bx;
-            wr_reg_n <= 1'b1;   // default not to write
-            wr_csr_n <= 1'b1;   // default not to write
-            flush <= 1'b0;      // default not to flush
+            pc4 <= `DEFAULT_PC4;
+            b <= `DEFAULT_B;
+            c <= `DEFAULT_C;
+            z_ <= `DEFAULT_Z;
+            funct3 <= `DEFAULT_FUNCT3;
+            rd <= `DEFAULT_REG;
+            csr_addr <= `DEFAULT_CSR_ADDR;
+            ir_type <= `DEFAULT_IR_TYPE;
+            wr_reg_n <= `DEFAULT_WR_N;
+            wr_csr_n <= `DEFAULT_WR_N;
+            flush <= `DEFAULT_FLUSH;
         end else if (interlock) begin
             pc4 <= pc4;
             b <= b;

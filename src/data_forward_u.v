@@ -68,33 +68,26 @@ module data_forward_u (
 
         begin
             is_load_in_ex = (ir_type_in_ex == `LOAD_IR);
-            rs_updated_by_prev = (!wr_reg_n_in_ex) && (rs == rd_in_ex);
-            rs_updated_by_prev_prev = (!wr_reg_n_in_mem) && (rs == rd_in_mem);
+            rs_updated_by_prev = (!wr_reg_n_in_ex) && (rs == rd_in_ex) && (rs != 5'b00000);
+            rs_updated_by_prev_prev = (!wr_reg_n_in_mem) && (rs == rd_in_mem) && (rs != 5'b00000);
 
-            if (rs == 5'b00000) begin
-                // if data read from x[0], don't forward
-                // as x[0] is always 0
-                forward_ctrl = 2'b00;
-            end else if ((!rs_updated_by_prev) && (!rs_updated_by_prev_prev)) begin
+            case ({ rs_updated_by_prev, rs_updated_by_prev_prev })
                 // if data in x[rs] is not updated, don't forward
-                forward_ctrl = 2'b00;
-            end else if (rs_updated_by_prev) begin
+                2'b00: forward_ctrl = 2'b00;
+
+                // x[rs] is updated by the instruction in MEM (previous previuos instructions)
+                2'b01: forward_ctrl = 2'b10;
+
                 // x[rs] is updated by the instruciton in EX (previous instructions)
                 // even if x[rs] is updated by the instruction in MEM (previous previous instructions)
                 // the value updated by instruction in EX will be the latest value.
-                // that's why we check rs_updated_by_prev first, then check rs_updated_by_prev_prev
                 //
-                // however, only forward data from EX stage if the instruction in EX stage
+                // However, only forward data from EX stage if the instruction in EX stage
                 // is not a load instruction as the data from load instruction wil
                 // only be available in MEM stage
-                forward_ctrl = (is_load_in_ex) ? 2'b00 : 2'b01;
-            end else if (rs_updated_by_prev_prev) begin
-                // x[rs] is updated by the instruction in MEM (previous previuos instructions)
-                forward_ctrl = 2'b10;
-            end else begin
-                // NOTE: not sure what actually happen to got here
-                forward_ctrl = 2'b00;
-            end   
+                2'b10,
+                2'b11: forward_ctrl = (is_load_in_ex) ? 2'b00 : 2'b01;
+            endcase
         end
     endfunction
 
@@ -108,11 +101,9 @@ module data_forward_u (
 
         begin
             is_load_in_mem = (ir_type_in_mem == `LOAD_IR);
-            rs2_updated_by_prev = (!wr_reg_n_in_mem) && (rs2_in_ex == rd_in_mem);
+            rs2_updated_by_prev = (!wr_reg_n_in_mem) && (rs2_in_ex == rd_in_mem) && (rs2_in_ex != 5'b00000);
 
-            if (rs2_in_ex == 5'b00000) forward_b_ctrl = 1'b0;
-            else if (rs2_updated_by_prev && is_load_in_mem) forward_b_ctrl = 1'b1;
-            else forward_b_ctrl = 1'b0;
+            forward_b_ctrl = (rs2_updated_by_prev && is_load_in_mem);
         end
     endfunction
     

@@ -20,7 +20,6 @@ module data_forward_helper
     input [31:0] sub_data,
     input [31:0] csr_data,
     input [3:0] ir_type,
-    input [2:0] funct3,
 
     output [31:0] data_to_forward
 );
@@ -33,7 +32,6 @@ module data_forward_helper
         sub_data,
         csr_data,
         ir_type,
-        funct3,
         IS_MEM_STAGE
     );
 
@@ -46,24 +44,26 @@ module data_forward_helper
         input [31:0] sub,
         input [31:0] csr,
         input [3:0] ir_type,
-        input [2:0] funct3,
         input is_mem_stage
     );
         // NOTE: don't forward data from EX stage
         // if the instruction executing in EX stage is a load instruction.
         begin
             case (ir_type)
-                `LUI_IR: prep_data_to_forward = main;
-                `AUIPC_IR: prep_data_to_forward = main;
-                `REG_IMM_IR: prep_data_to_forward = main;
+                `LUI_IR,
+                `AUIPC_IR,
+                `REG_IMM_IR,
                 `REG_REG_IR: prep_data_to_forward = main;
-                `JAL_IR: prep_data_to_forward = sub;
+
+                `JAL_IR,
                 `JALR_IR: prep_data_to_forward = sub;
+
                 `CSR_IR: prep_data_to_forward = csr;
-                `LOAD_IR: prep_data_to_forward = (is_mem_stage) ? sub : 32'bx;
+
+                `LOAD_IR: prep_data_to_forward = (is_mem_stage) ? sub : 32'b0;
 
                 // default includes Store, Branch Instruction
-                default: prep_data_to_forward = 32'bx;
+                default: prep_data_to_forward = 32'b0;
             endcase
         end
     endfunction

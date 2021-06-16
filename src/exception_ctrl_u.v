@@ -1,4 +1,5 @@
 `include "constants/exception_cause.v"
+`include "constants/pipeline_regs_default.v"
 
 module exception_ctrl_u (
     // Program Counter
@@ -28,9 +29,9 @@ module exception_ctrl_u (
     // Main
     //
 
-    assign e_raised = e_cause != `NOT_EXCEPTION;
+    assign e_raised = (e_cause != `NOT_EXCEPTION);
     assign e_cause = cause_ctrl(i_addr_misaligned, is_illegal_ir, is_ecall, flush);
-    assign e_pc = epc_ctrl(e_cause, pc_in_id);
+    assign e_pc = (e_raised) ? pc_in_id : `DEFAULT_PC;
     assign e_tval = tval_ctrl(e_cause, pc_in_id, ir_in_id);
 
     //
@@ -67,17 +68,22 @@ module exception_ctrl_u (
             // 1            |   1                   |   I_ADDR_MISALIGNMENT
             //
             // So we check for i_addr_misaligned first here.
-            else if (i_addr_misaligned) cause_ctrl = `I_ADDR_MISALIGNMENT;
-            else if (is_illegal_ir) cause_ctrl = `ILLEGAL_IR;
-            else if (is_ecall) cause_ctrl = `ECALL;
-            else cause_ctrl = `NOT_EXCEPTION;
-        end
-    endfunction
+            else begin
+                case ({ is_illegal_ir, i_addr_misaligned, is_ecall })
+                    3'b000: cause_ctrl = `NOT_EXCEPTION;
 
-    function [31:0] epc_ctrl(input [1:0] cause, input [31:0] pc);
-        begin
-            if (cause == `NOT_EXCEPTION) epc_ctrl = 32'h0001_0000;
-            else epc_ctrl = pc;
+                    3'b001: cause_ctrl = `ECALL;
+
+                    3'b010,
+                    3'b011: cause_ctrl = `I_ADDR_MISALIGNMENT;
+
+                    3'b100,
+                    3'b101: cause_ctrl = `ILLEGAL_IR;
+
+                    3'b110,
+                    3'b111: cause_ctrl = `I_ADDR_MISALIGNMENT;
+                endcase
+            end
         end
     endfunction
 

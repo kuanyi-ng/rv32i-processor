@@ -1,6 +1,6 @@
 `include "constants/ir_type.v"
 `include "constants/funct3.v"
-
+`include "constants/imm_type.v"
 `include "imm_extractor.v"
 
 module id_stage (
@@ -44,38 +44,27 @@ module id_stage (
     // Main
     //
 
-    wire [4:0] rs1 = ir[19:15];
-    wire [4:0] rs2 = ir[24:20];
-    wire [4:0] rd = ir[11:7];
-    wire [2:0] funct3 = ir[14:12];
-    wire [6:0] funct7 = ir[31:25];
-    wire [11:0] temp_csr_addr = ir[31:20];
+    assign is_mret = (ir == MRET_IR);
+    assign is_ecall = (ir == ECALL_IR);
 
-    // change csr_addr to mepc when is_mret is true
-    // this will enable csr_forwarding value of mepc
-    assign csr_addr = (is_mret) ? MEPC_ADDR : temp_csr_addr;
+    assign rs1 = ir[19:15];
+    assign rs2 = ir[24:20];
+    assign rd = ir[11:7];
+    assign funct3 = ir[14:12];
+    assign funct7 = ir[31:25];
+    assign csr_addr = ir[31:20];
 
-    wire [2:0] imm_type;
-    assign imm_type = imm_type_from(ir_type, funct3);
+    wire is_return_from_ecall = (is_mret && is_e_cause_eq_ecall);
+    wire [3:0] imm_type = imm_type_from(ir_type, funct3, is_return_from_ecall);
 
-    wire [31:0] temp_imm;
     imm_extractor imm_extractor_inst(
         .in(ir),
         .imm_type(imm_type),
-        .out(temp_imm)
+        .out(imm)
     );
-    // Calculation of Jump (return) address for MRET
-    // if it's returning from ecall: jump to mepc + 4
-    // else (other type of exception) jump to mepc
-    //
-    // When is_mret is true, temp_imm will be 32'h0
-    assign imm = (is_mret && is_e_cause_eq_ecall) ? 32'h4 : temp_imm;
 
-    assign wr_reg_n = wr_reg_n_ctrl(ir_type, rd, funct3, is_illegal_ir);
+    assign wr_reg_n = wr_reg_n_ctrl(ir_type, rd, is_illegal_ir);
     assign wr_csr_n = wr_csr_n_ctrl(ir_type, funct3, rs1, is_illegal_ir);
-
-    assign is_mret = (ir == MRET_IR);
-    assign is_ecall = (ir == ECALL_IR);
 
     assign is_illegal_ir = illegal_ir_check(ir_type, funct3, funct7, is_mret, is_ecall);
 
@@ -83,7 +72,7 @@ module id_stage (
     // Functions
     //
 
-    function [2:0] imm_type_from(input [3:0] ir_type, input [2:0] funct3);
+    function [3:0] imm_type_from(input [3:0] ir_type, input [2:0] funct3, input is_return_from_ecall);
         begin
             case (ir_type)
                 `LUI_IR: imm_type_from = `U_IMM;
@@ -102,29 +91,30 @@ module id_stage (
                     else imm_type_from = `I_IMM;
                 end
                 `CSR_IR: imm_type_from = `CSR_IMM;
-                `SYS_CALL_IR: imm_type_from = `CSR_IMM;
+                `SYS_CALL_IR: imm_type_from = (is_return_from_ecall) ? `RETURN_FROM_ECALL_IMM : `CSR_IMM;
                 default: imm_type_from = `DEFAULT_IMM;
             endcase
         end
    endfunction
 
-   function wr_reg_n_ctrl(input [3:0] ir_type, input [4:0] rd, input [2:0] funct3, input is_illegal_ir);
+   function wr_reg_n_ctrl(input [3:0] ir_type, input [4:0] rd, input is_illegal_ir);
         // 0: write, 1: don't write
         begin
             // Don't update when IR is illegal
-            if (is_illegal_ir) wr_reg_n_ctrl = 1'b1;
-            // don't allow write to x0 (always 0)
-            else if (rd == 5'b00000) wr_reg_n_ctrl = 1'b1;
-            else begin
+            // Don't allow write to x0 (always 0)
+            if (is_illegal_ir || (rd == 5'b00000)) begin
+                wr_reg_n_ctrl = 1'b1;
+            end else begin
                 case (ir_type)
-                    `LUI_IR: wr_reg_n_ctrl = 1'b0;
-                    `AUIPC_IR: wr_reg_n_ctrl = 1'b0;
-                    `REG_IMM_IR: wr_reg_n_ctrl = 1'b0;
-                    `REG_REG_IR: wr_reg_n_ctrl = 1'b0;
-                    `LOAD_IR: wr_reg_n_ctrl = 1'b0;
-                    `JAL_IR: wr_reg_n_ctrl = 1'b0;
-                    `JALR_IR: wr_reg_n_ctrl = 1'b0;
+                    `LUI_IR,
+                    `AUIPC_IR,
+                    `REG_IMM_IR,
+                    `REG_REG_IR,
+                    `LOAD_IR,
+                    `JAL_IR,
+                    `JALR_IR,
                     `CSR_IR: wr_reg_n_ctrl = 1'b0;
+
                     default: wr_reg_n_ctrl = 1'b1;
                 endcase
             end
@@ -132,19 +122,21 @@ module id_stage (
     endfunction
 
     function wr_csr_n_ctrl(input [3:0] ir_type, input [2:0] funct3, input [4:0] rs1, input is_illegal_ir);
-        reg is_csr_ir, is_csrr_ir;
+        reg is_csr_ir;
 
         begin
             is_csr_ir = (ir_type == `CSR_IR);
-            is_csrr_ir = (ir_type == `CSR_IR) && (funct3 == `CSRRS_FUNCT3) && (rs1 == 5'b00000);
 
             // Don't update when IR is illegal
             if (is_illegal_ir) wr_csr_n_ctrl = 1'b1;
-            // Don't update when it's CSRR (pseudo-instruction for CSRRS rd, csr, x0)
-            else if (is_csrr_ir) wr_csr_n_ctrl = 1'b1;
             // CSR instructions share the same opcode with ecall, ebreak instructions
             // ecall and ebreak have funct3 of 000 while CSR instruction doesn't
-            else if (is_csr_ir) wr_csr_n_ctrl = 1'b0;
+            else if (is_csr_ir) begin
+                // Don't update when it's CSRR (pseudo-instruction for CSRRS rd, csr, x0)
+                // is_csrr_ir = (ir_type == `CSR_IR) && (funct3 == `CSRRS_FUNCT3) && (rs1 == 5'b00000)
+                // CSRR doesn't update csr
+                wr_csr_n_ctrl = (funct3 == `CSRRS_FUNCT3) && (rs1 == 5'b00000) ? 1'b1 : 1'b0;
+            end
             else wr_csr_n_ctrl = 1'b1;
         end
     endfunction

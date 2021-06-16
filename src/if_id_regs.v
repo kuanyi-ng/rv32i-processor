@@ -1,4 +1,4 @@
-`include "constants/ir_type.v"
+`include "constants/pipeline_regs_default.v"
 
 module if_id_regs (
     input clk,
@@ -34,16 +34,17 @@ module if_id_regs (
 
     localparam [31:0] NOP_IR = { 12'b0, 5'b0, 3'b0, 5'b0, 7'b0010011 };
 
+    wire stall_or_interlock = (stall || interlock);
     always @(posedge clk or negedge rst_n) begin
         if (!rst_n) begin
             // reset
-            pc <= 32'bx;
-            pc4 <= 32'bx;
+            pc <= `DEFAULT_PC;
+            pc4 <= `DEFAULT_PC4;
             ir <= NOP_IR;
-            ir_type <= `REG_IMM_IR; // NOP
-            flush <= 1'b0;  // default not to flush
+            ir_type <= `DEFAULT_IR_TYPE;
+            flush <= `DEFAULT_FLUSH;
             i_addr_misaligned <= 1'b0; // default for no misalignment
-        end else if (stall || interlock) begin
+        end else if (stall_or_interlock) begin
             // holds the same value when stall or interlock
             pc <= pc;
             pc4 <= pc4;

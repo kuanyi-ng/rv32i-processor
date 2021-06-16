@@ -1,3 +1,5 @@
+`include "constants/funct3.v"
+
 module ld_converter (
     input [31:0] in,    // data read from memory
     input [2:0] funct3,
@@ -19,25 +21,20 @@ module ld_converter (
         // - size: byte => 0000_00xx
         begin
             case (funct3)
-                // LB
                 // out: sext(xy) where xy is from { ab, cd, ef, gh }
-                3'b000: prep_ld_data = ld_ext_b(in, 1'b1);
+                `LB_FUNCT3: prep_ld_data = ld_ext_b(in, 1'b1);
 
-                // LH
                 // out: sext(wxyz) where wxyz is from { abcd, efgh }
-                3'b001: prep_ld_data = ld_ext_h(in, 1'b1);
+                `LH_FUNCT3: prep_ld_data = ld_ext_h(in, 1'b1);
 
-                // LW
                 // out: abcd_efgh
-                3'b010: prep_ld_data = in;
+                `LW_FUNCT3: prep_ld_data = in;
 
-                // LBU
                 // out: ext(xy) where xy is from { ab, cd, ef, gh }
-                3'b100: prep_ld_data = ld_ext_b(in, 1'b0);
+                `LBU_FUNCT3: prep_ld_data = ld_ext_b(in, 1'b0);
 
-                // LHU
                 // out: ext(wxyz) where wxyz is from { abcd, efgh }
-                3'b101: prep_ld_data = ld_ext_h(in, 1'b0);
+                `LHU_FUNCT3: prep_ld_data = ld_ext_h(in, 1'b0);
 
                 // default: in (doesn't perform any operations)
                 default: prep_ld_data = in;

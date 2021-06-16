@@ -46,6 +46,12 @@ module csrs (
 
     localparam [11:0] mstatus_addr = 12'h300;
     localparam [11:0] misa_addr = 12'h301;
+    // medeleg registers doesn't actually exist.
+    // In mret's ir, ir[31:20] points to medeleg but
+    // the value required is available from mepc.
+    //
+    // Trying to access medeleg_addr will give the value of mepc.
+    localparam [11:0] medeleg_addr = 12'h302;
     localparam [11:0] mie_addr = 12'h304;
     localparam [11:0] mtvec_addr = 12'h305;
     localparam [11:0] mcounteren_addr = 12'h306;
@@ -246,6 +252,7 @@ module csrs (
 
                 mscratch_addr: csr_out = mscratch;
 
+                medeleg_addr,
                 mepc_addr: csr_out = mepc;
 
                 mcause_addr: csr_out = mcause;

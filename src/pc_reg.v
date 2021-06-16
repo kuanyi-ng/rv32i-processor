@@ -1,3 +1,5 @@
+`include "constants/pipeline_regs_default.v"
+
 module pc_reg (
     input clk,
     input rst_n,
@@ -7,15 +9,13 @@ module pc_reg (
     input [31:0] pc_in,
     output [31:0] pc_out
 );
-
-    localparam [31:0] default_pc = 32'h0001_0000;
-
     reg [31:0] pc;
+
+    wire stall_or_interlock = (stall || interlock);
     
     always @(posedge clk or negedge rst_n) begin
-        if (!rst_n) pc <= default_pc;
-        else if (stall) pc <= pc;
-        else if (interlock) pc <= pc;
+        if (!rst_n) pc <= `DEFAULT_PC;
+        else if (stall_or_interlock) pc <= pc;
         else pc <= pc_in;
     end
 

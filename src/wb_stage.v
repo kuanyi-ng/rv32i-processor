@@ -36,9 +36,12 @@ module wb_stage (
         begin
             case (ir_type)
                 `LOAD_IR: data_to_reg_prep = d;
-                `JAL_IR: data_to_reg_prep = pc4;
+
+                `JAL_IR,
                 `JALR_IR: data_to_reg_prep = pc4;
+
                 `CSR_IR: data_to_reg_prep = z_;
+
                 default: data_to_reg_prep = c;
             endcase
         end

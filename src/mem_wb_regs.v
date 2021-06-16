@@ -1,3 +1,5 @@
+`include "constants/pipeline_regs_default.v"
+
 module mem_wb_regs (
     input clk,
     input rst_n,
@@ -14,9 +16,6 @@ module mem_wb_regs (
 
     input [31:0] z_in,
     output [31:0] z_out,
-
-    input [2:0] funct3_in,
-    output [2:0] funct3_out,
 
     input [4:0] rd_in,
     output [4:0] rd_out,
@@ -38,7 +37,6 @@ module mem_wb_regs (
     reg [31:0] c;
     reg [31:0] d;
     reg [31:0] z_;
-    reg [2:0] funct3;
     reg [4:0] rd;
     reg [11:0] csr_addr;
     reg [3:0] ir_type;
@@ -47,23 +45,21 @@ module mem_wb_regs (
 
     always @(posedge clk or negedge rst_n) begin
         if (!rst_n) begin
-            pc4 <= 32'bx;
-            c <= 32'bx;
-            d <= 32'bx;
-            z_ <= 32'bx;
-            funct3 <= 3'bx;
-            rd <= 5'bx;
-            csr_addr <= 12'bx;
-            ir_type <= 4'bx;
-            wr_reg_n <= 1'b1; // default not to write
-            wr_csr_n <= 1'b1; // default not to write
+            pc4 <= `DEFAULT_PC4;
+            c <= `DEFAULT_C;
+            d <= `DEFAULT_D;
+            z_ <= `DEFAULT_Z;
+            rd <= `DEFAULT_REG;
+            csr_addr <= `DEFAULT_CSR_ADDR;
+            ir_type <= `DEFAULT_IR_TYPE;
+            wr_reg_n <= `DEFAULT_WR_N;
+            wr_csr_n <= `DEFAULT_WR_N;
         end else if (interlock) begin
             // holds the same value when interlock
             pc4 <= pc4;
             c <= c;
             d <= d;
             z_ <= z_;
-            funct3 <= funct3;
             rd <= rd;
             csr_addr <= csr_addr;
             ir_type <= ir_type;
@@ -74,7 +70,6 @@ module mem_wb_regs (
             c <= c_in;
             d <= d_in;
             z_ <= z_in;
-            funct3 <= funct3_in;
             rd <= rd_in;
             csr_addr <= csr_addr_in;
             ir_type <= ir_type_in;
@@ -87,7 +82,6 @@ module mem_wb_regs (
     assign c_out = c;
     assign d_out = d;
     assign z_out = z_;
-    assign funct3_out = funct3;
     assign rd_out = rd;
     assign csr_addr_out = csr_addr;
     assign ir_type_out = ir_type;
