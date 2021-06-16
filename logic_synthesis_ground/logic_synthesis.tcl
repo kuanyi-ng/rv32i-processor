@@ -21,6 +21,9 @@ elaborate rf32x32
 analyze -format verilog ./csr_reg.v
 elaborate csr_reg
 
+analyze -format verilog ./jump_predictor.v
+elaborate jump_predictor
+
 analyze -format verilog ./top.v
 elaborate top
 
@@ -40,7 +43,7 @@ set_max_area 0
 set_max_fanout 64 [current_design]
 
 # Create Clock
-create_clock -period 10.00 -w { 0 5.0 } clk
+create_clock -period 10.00 clk
 set_clock_uncertainty -setup 0.0 [get_clock clk]
 set_clock_uncertainty -hold 0.0 [get_clock clk]
 set_input_delay 0.0 -clock clk [remove_from_collection [all_inputs] clk]

@@ -27,13 +27,15 @@ set_max_area 0
 set_max_fanout 64 [current_design]
 
 # Start Logical Synthesis
-ungroup -all -flatten
-compile -incremental -area_effort high
+compile
+# ungroup -all -flatten
+compile -incremental -map_effort high -area_effort high
 
 # Check Design
 check_design
 
 # Show results
+report_cell
 report_area
 report_constraint -verbose
 report_reference

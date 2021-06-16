@@ -46,7 +46,13 @@ module id_ex_regs (
     output wr_csr_n_out,
 
     input flush_in,
-    output flush_out
+    output flush_out,
+
+    input jump_prediction_in,
+    output jump_prediction_out,
+
+    input [31:0] addr_prediction_in,
+    output [31:0] addr_prediction_out
 );
 
     reg [31:0] pc;
@@ -62,6 +68,8 @@ module id_ex_regs (
     reg wr_reg_n;
     reg wr_csr_n;
     reg flush;
+    reg jump_prediction;
+    reg [31:0] addr_prediction;
 
     wire stall_or_interlock = stall || interlock;
 
@@ -103,6 +111,8 @@ module id_ex_regs (
             wr_reg_n <= 1'b1;
             wr_csr_n <= 1'b1;
             flush <= flush;
+            jump_prediction <= jump_prediction;
+            addr_prediction <= addr_prediction;
         end else begin
             pc <= pc_in;
             pc4 <= pc4_in;
@@ -119,6 +129,8 @@ module id_ex_regs (
             wr_reg_n <= wr_reg_n_in;
             wr_csr_n <= wr_csr_n_in;
             flush <= flush_in;
+            jump_prediction <= jump_prediction_in;
+            addr_prediction <= addr_prediction_in;
         end
     end
 
@@ -137,5 +149,7 @@ module id_ex_regs (
     assign wr_reg_n_out = wr_reg_n;
     assign wr_csr_n_out = wr_csr_n;
     assign flush_out = flush;
+    assign jump_prediction_out = jump_prediction;
+    assign addr_prediction_out = addr_prediction;
     
 endmodule

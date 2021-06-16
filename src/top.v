@@ -3,7 +3,7 @@
 `include "data_forward_helper.v"
 `include "data_forward_u.v"
 `include "ex_data_picker.v"
-`include "ex_jump_picker.v"
+`include "ex_jump_handler.v"
 `include "ex_mem_regs.v"
 `include "ex_stage.v"
 `include "exception_ctrl_u.v"
@@ -24,6 +24,7 @@
 `include "pc_reg.v"
 `include "rf32x32.v"
 `include "stall_detector.v"
+`include "jump_predictor.v"
 `include "wb_stage.v"
 
 module top (
@@ -38,6 +39,10 @@ module top (
     // Interuption
     input [2:0] OINT_n,
     output IACK_n,
+
+    // Analysis
+    output [3:0] ir_type_from_id,
+    output jump_ex,
 
     // Data Memory
     output [31:0] DAD,  // Data Address Bus
@@ -86,7 +91,7 @@ module top (
     wire [31:0] pc_from_id;
     wire [31:0] pc4_from_id;
     wire [31:0] data1_from_id, data2_from_id;
-    wire [3:0] ir_type_from_id;
+    // wire [3:0] ir_type_from_id;
     wire [6:0] funct7_from_id;
     wire [2:0] funct3_from_id;
     wire [4:0] rs2_from_id, rd_from_id;
@@ -101,7 +106,7 @@ module top (
     wire [31:0] b_ex;
     wire [31:0] c_ex;
     wire jump_from_branch_alu;
-    wire jump_ex;
+    // wire jump_ex;
 
     // EX-MEM
     wire [2:0] funct3_from_ex;
@@ -173,6 +178,15 @@ module top (
     wire [31:0] trap_vector_addr;
     wire is_e_cause_eq_ecall;
 
+    // Jump Prediction
+    wire jump_prediction_if;
+    wire jump_prediction_from_if;
+    wire jump_prediction_from_id;
+    wire [31:0] addr_prediction_if;
+    wire [31:0] addr_prediction_from_if;
+    wire [31:0] addr_prediction_from_id;
+    wire [31:0] jump_address_ex;
+
     //
     // Modules Instantiation
     //
@@ -189,10 +203,13 @@ module top (
 
     if_stage if_stage_inst(
         .current_pc(current_pc),
-        .c(c_ex),
-        .jump(jump_ex),
+        .jump_prediction(jump_prediction_if),
+        .addr_prediction(addr_prediction_if),
         .e_raised(e_raised),
         .e_handling_addr(trap_vector_addr),
+        .jump_addr(jump_address_ex),
+        .c(c_ex),
+        .jump(jump_ex),
         .pc4(pc4_if),
         .next_pc(next_pc),
         .i_addr_misaligned(i_addr_misaligned_if)
@@ -228,7 +245,11 @@ module top (
         .flush_in(flush_if),
         .flush_out(flush_from_if),
         .i_addr_misaligned_in(i_addr_misaligned_if),
-        .i_addr_misaligned_out(i_addr_misaligned_from_if)
+        .i_addr_misaligned_out(i_addr_misaligned_from_if),
+        .jump_prediction_in(jump_prediction_if), // probably wrong
+        .jump_prediction_out(jump_prediction_from_if),
+        .addr_prediction_in(addr_prediction_if),
+        .addr_prediction_out(addr_prediction_from_if)
     );
 
     // ID
@@ -322,7 +343,11 @@ module top (
         .wr_csr_n_in(wr_csr_n_id),
         .wr_csr_n_out(wr_csr_n_from_id),
         .flush_in(flush_id),
-        .flush_out(flush_from_id)
+        .flush_out(flush_from_id),
+        .jump_prediction_in(jump_prediction_from_if),
+        .jump_prediction_out(jump_prediction_from_id),
+        .addr_prediction_in(addr_prediction_from_if),
+        .addr_prediction_out(addr_prediction_from_id)
     );
 
     // EX
@@ -346,10 +371,16 @@ module top (
         .b_ex(b_ex)
     );
 
-    ex_jump_picker ex_jump_picker_inst(
+    ex_jump_handler ex_jump_handler_inst(
+        .ir_type(ir_type_from_id),
+        .jump_prediction(jump_prediction_from_id),
         .jump_from_branch_alu(jump_from_branch_alu),
+        .addr_prediction(addr_prediction_from_id),
+        .addr_from_alu(c_ex),
+        .pc4(pc4_from_id),
         .flush_from_id(flush_from_id),
-        .jump(jump_ex)
+        .jump(jump_ex),
+        .jump_addr(jump_address_ex)
     );
 
     // EX-MEM
@@ -545,6 +576,23 @@ module top (
         .e_cause(e_cause),
         .e_pc(e_pc),
         .e_tval(e_tval)
+    );
+
+    // Jump Prediction
+    jump_predictor #(
+        .TABLE_SIZE(32),
+        .NUM_BITS(5)
+    ) jump_predictor_inst(
+        .clk(clk),
+        .pc_in_if(current_pc),
+        .pc4_in_if(pc4_if),
+        .ir_type_in_if(ir_type_if),
+        .pc_in_ex(pc_from_id),
+        .ir_type_in_ex(ir_type_from_id),
+        .jump_addr_if_taken(c_ex),
+        .is_prediction_wrong(jump_ex),
+        .jump_prediction(jump_prediction_if),
+        .addr_prediction(addr_prediction_if)
     );
 
 endmodule
