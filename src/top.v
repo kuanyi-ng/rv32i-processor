@@ -8,11 +8,9 @@
 `include "ex_stage.v"
 `include "exception_ctrl_u.v"
 `include "flush_u.v"
-`include "id_data_picker.v"
 `include "id_ex_regs.v"
 `include "id_flush_picker.v"
 `include "id_stage.v"
-`include "id_wr_n_picker.v"
 `include "id_z_picker.v"
 `include "if_flush_picker.v"
 `include "if_id_regs.v"
@@ -22,6 +20,7 @@
 `include "mem_stage.v"
 `include "mem_wb_regs.v"
 `include "pc_reg.v"
+`include "post_id_stage.v"
 `include "rf32x32.v"
 `include "stall_detector.v"
 `include "jump_predictor.v"
@@ -77,11 +76,10 @@ module top (
     wire [11:0] csr_addr_id;
     wire [31:0] data1_regfile, data2_regfile;
     wire [31:0] data1_id, data2_id;
+    wire [31:0] in1_id, in2_id;
     wire [31:0] imm_id;
     wire [31:0] z_csrs;
     wire [31:0] z_id;
-    wire wr_reg_n_id_stage;
-    wire wr_csr_n_id_stage;
     wire wr_reg_n_id;
     wire wr_csr_n_id;
     wire is_mret_id;
@@ -91,12 +89,12 @@ module top (
     wire [31:0] pc_from_id;
     wire [31:0] pc4_from_id;
     wire [31:0] data1_from_id, data2_from_id;
+    wire [31:0] in1_from_id, in2_from_id;
     // wire [3:0] ir_type_from_id;
     wire [6:0] funct7_from_id;
     wire [2:0] funct3_from_id;
     wire [4:0] rs2_from_id, rd_from_id;
     wire [11:0] csr_addr_from_id;
-    wire [31:0] imm_from_id;
     wire [31:0] z_from_id;
     wire wr_reg_n_from_id;
     wire wr_csr_n_from_id;
@@ -256,6 +254,7 @@ module top (
     id_stage id_stage_inst(
         .ir(ir_from_if),
         .ir_type(ir_type_from_if),
+        .flush(flush_id),
         .is_e_cause_eq_ecall(is_e_cause_eq_ecall),
         .rs1(rd1_addr),
         .rs2(rd2_addr),
@@ -264,22 +263,11 @@ module top (
         .funct7(funct7_id),
         .csr_addr(csr_addr_id),
         .imm(imm_id),
-        .wr_reg_n(wr_reg_n_id_stage),
-        .wr_csr_n(wr_csr_n_id_stage),
+        .wr_reg_n(wr_reg_n_id),
+        .wr_csr_n(wr_csr_n_id),
         .is_mret(is_mret_id),
         .is_ecall(is_ecall_id),
         .is_illegal_ir(is_illegal_ir_id)
-    );
-
-    id_data_picker id_data_picker_inst(
-        .data1_from_regfile(data1_regfile),
-        .data2_from_regfile(data2_regfile),
-        .data_forwarded_from_ex(data_forwarded_from_ex),
-        .data_forwarded_from_mem(data_forwarded_from_mem),
-        .forward_data1(forward_data1),
-        .forward_data2(forward_data2),
-        .data1_id(data1_id),
-        .data2_id(data2_id)
     );
 
     id_flush_picker id_flush_picker_inst(
@@ -288,24 +276,30 @@ module top (
         .flush_out(flush_id)
     );
 
-    id_wr_n_picker id_wr_reg_n_picker_inst(
-        .wr_n_in(wr_reg_n_id_stage),
-        .flush_id(flush_id),
-        .wr_n_out(wr_reg_n_id)
-    );
-
-    id_wr_n_picker id_wr_csr_n_picker_inst(
-        .wr_n_in(wr_csr_n_id_stage),
-        .flush_id(flush_id),
-        .wr_n_out(wr_csr_n_id)
-    );
-
     id_z_picker id_z_picker_inst(
         .z_from_csr(z_csrs),
         .z_from_ex(c_ex),
         .z_from_mem(c_from_ex),
         .forward_z(forward_z),
         .z_id(z_id)
+    );
+
+    post_id_stage post_id_stage_inst(
+        .ir_type(ir_type_from_if),
+        .funct3(funct3_id),
+        .pc(pc_from_if),
+        .imm(imm_id),
+        .z_(z_id),
+        .data1_regfile(data1_regfile),
+        .data2_regfile(data2_regfile),
+        .data_forwarded_from_ex(data_forwarded_from_ex),
+        .data_forwarded_from_mem(data_forwarded_from_mem),
+        .forward_data1(forward_data1),
+        .forward_data2(forward_data2),
+        .in1(in1_id),
+        .in2(in2_id),
+        .data1(data1_id),
+        .data2(data2_id)
     );
 
     // ID-EX
@@ -334,8 +328,6 @@ module top (
         .csr_addr_out(csr_addr_from_id),
         .ir_type_in(ir_type_from_if),
         .ir_type_out(ir_type_from_id),
-        .imm_in(imm_id),
-        .imm_out(imm_from_id),
         .z_in(z_id),
         .z_out(z_from_id),
         .wr_reg_n_in(wr_reg_n_id),
@@ -347,7 +339,11 @@ module top (
         .jump_prediction_in(jump_prediction_from_if),
         .jump_prediction_out(jump_prediction_from_id),
         .addr_prediction_in(addr_prediction_from_if),
-        .addr_prediction_out(addr_prediction_from_id)
+        .addr_prediction_out(addr_prediction_from_id),
+        .in1_in(in1_id),
+        .in1_out(in1_from_id),
+        .in2_in(in2_id),
+        .in2_out(in2_from_id)
     );
 
     // EX
@@ -355,11 +351,10 @@ module top (
         .ir_type(ir_type_from_id),
         .funct3(funct3_from_id),
         .funct7(funct7_from_id),
-        .pc(pc_from_id),
-        .data1(data1_from_id),
-        .data2(data2_from_id),
-        .imm(imm_from_id),
-        .z_(z_from_id),
+        .alu_in1(in1_from_id),
+        .alu_in2(in2_from_id),
+        .branch_alu_in1(data1_from_id),
+        .branch_alu_in2(data2_from_id),
         .jump(jump_from_branch_alu),
         .c(c_ex)
     );
