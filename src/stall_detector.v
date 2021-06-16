@@ -49,38 +49,41 @@ module stall_detector (
         // but not for the other case, so pipeline stall is needed.
         // 
         reg is_store_in_id, is_load_in_ex;
-        reg rs1_is_zero, rs2_is_zero;
         reg rs1_updated, rs2_updated;
 
         begin
             is_store_in_id = (ir_type_in_id == `STORE_IR);
             is_load_in_ex = (ir_type_in_ex == `LOAD_IR);
-            rs1_is_zero = (rs1 == 5'b00000);
-            rs2_is_zero = (rs2 == 5'b00000);
-            rs1_updated = (!wr_reg_n_in_ex) && (rs1 == rd_in_ex);
-            rs2_updated = (!wr_reg_n_in_ex) && (rs2 == rd_in_ex);
+            // register is updated if all the following are true
+            // - it will be overwritten
+            //   - wr_reg_n == 1'b0
+            //   - rs == rd
+            // - rs is not x0
+            rs1_updated = (!wr_reg_n_in_ex) && (rs1 == rd_in_ex) && (rs1 != 5'b00000);
+            rs2_updated = (!wr_reg_n_in_ex) && (rs2 == rd_in_ex) && (rs2 != 5'b00000);
 
             if ((!rs1_updated) && (!rs2_updated)) begin
                 stall_ctrl = 1'b0;
-            end else if ((is_load_in_ex) && (is_store_in_id)) begin
-                // latest value for rs2 (in EX stage) of Store instruction
-                // can be forwarded from MEM stage of Load instruction
-                // 
-                // possible values of rs1_update, rs2_updated:
-                // (0, 0): don't stall (handled by previous case)
-                // (0, 1): don't stall
-                // (1, 0): stall
-                // (1, 1): stall
-                stall_ctrl = rs1_updated;
-            end else if ((is_load_in_ex) && (!is_store_in_id)) begin
-                // condition for stall:
-                // - rs1 is not zero and rs1 is updated
-                // - rs2 is not zero and rs2 is updated
-                stall_ctrl = (!rs1_is_zero && rs1_updated) || (!rs2_is_zero && rs2_updated);
             end else begin
-                // don't need to stall if it's not load instruction in EX stage
-                // (probably) all cases can be handled by data forwarding.
-                stall_ctrl = 1'b0;
+                case ({ is_load_in_ex, is_store_in_id })
+                    2'b11: begin
+                        // latest value for rs2 (in EX stage) of Store instruction
+                        // can be forwarded from MEM stage of Load instruction
+                        //
+                        // possible values of rs1_update, rs2_updated:
+                        // (0, 0): don't stall (handled by previous case)
+                        // (0, 1): don't stall
+                        // (1, 0): stall
+                        // (1, 1): stall
+                        stall_ctrl = rs1_updated;
+                    end
+
+                    2'b10: stall_ctrl = rs1_updated || rs2_updated;
+
+                    // don't need to stall if it's not load instruction in EX stage
+                    // (probably) all cases can be handled by data forwarding.
+                    default: stall_ctrl = 1'b0;
+                endcase
             end
         end
     endfunction
