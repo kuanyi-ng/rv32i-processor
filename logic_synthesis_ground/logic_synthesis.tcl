@@ -51,8 +51,8 @@ derive_clocks
 
 # Start Logical Synthesis
 compile
-ungroup -all -flatten
-compile -incremental -map_effort high -area_effort high
+# ungroup -all -flatten
+compile -incremental -map_effort high -area_effort high -incremental_mapping
 # compile -map_effort medium -area_effort high -incremental_mapping
 
 # Check Design
@@ -60,6 +60,7 @@ check_design
 
 # Show results
 report_timing -net
+report_cell
 report_area
 report_power
 report_constraint -all_violators
