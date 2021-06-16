@@ -24,7 +24,7 @@
 `include "pc_reg.v"
 `include "rf32x32.v"
 `include "stall_detector.v"
-`include "u_jump_predictor.v"
+`include "jump_predictor.v"
 `include "wb_stage.v"
 
 module top (
@@ -579,10 +579,10 @@ module top (
     );
 
     // Jump Prediction
-    u_jump_predictor #(
+    jump_predictor #(
         .TABLE_SIZE(32),
         .NUM_BITS(5)
-    ) u_jump_predictor_inst(
+    ) jump_predictor_inst(
         .clk(clk),
         .pc_in_if(current_pc),
         .pc4_in_if(pc4_if),
@@ -591,7 +591,7 @@ module top (
         .ir_type_in_ex(ir_type_from_id),
         .jump_addr_if_taken(c_ex),
         .is_prediction_wrong(jump_ex),
-        .u_jump(jump_prediction_if),
+        .jump_prediction(jump_prediction_if),
         .addr_prediction(addr_prediction_if)
     );
 

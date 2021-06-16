@@ -5,7 +5,7 @@
 //
 // Table (Memory) are
 // Ansynchronous Read, Synchronous Write
-module u_jump_predictor #(
+module jump_predictor #(
     // NOTE:
     // keep TABLE_SIZE <= 4096
     // TABLE_SIZE = 2 ^ NUM_BITS
@@ -28,7 +28,7 @@ module u_jump_predictor #(
     input is_prediction_wrong,
 
     // Output to IF Stage
-    output u_jump,
+    output jump_prediction,
     output [31:0] addr_prediction
 );
 
@@ -76,7 +76,7 @@ module u_jump_predictor #(
             end
         endcase
     end
-    assign u_jump = (is_u_jump_ir_in_if) ? temp_u_jump : 1'b0;
+    assign jump_prediction = (is_u_jump_ir_in_if) ? temp_u_jump : 1'b0;
     assign addr_prediction = (is_u_jump_ir_in_if) ? temp_addr_prediction : pc4_in_if;
 
     //
