@@ -58,7 +58,7 @@ module ex_mem_regs (
             c <= `DEFAULT_C;
             z_ <= `DEFAULT_Z;
             funct3 <= `DEFAULT_FUNCT3;
-            rd <= `DEFAULT_RD;
+            rd <= `DEFAULT_REG;
             csr_addr <= `DEFAULT_CSR_ADDR;
             ir_type <= `DEFAULT_IR_TYPE;
             wr_reg_n <= `DEFAULT_WR_N;

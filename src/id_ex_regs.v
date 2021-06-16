@@ -1,3 +1,5 @@
+`include "constants/pipeline_regs_default.v"
+
 module id_ex_regs (
     input clk,
     input rst_n,
@@ -66,21 +68,21 @@ module id_ex_regs (
     always @(posedge clk or negedge rst_n) begin
         if (!rst_n) begin
             // reset
-            pc <= 32'bx;
-            pc4 <= 32'bx;
-            data1 <= 32'bx;
-            data2 <= 32'bx;
-            funct7 <= 7'bx; // TODO: change to NOP
-            funct3 <= 3'bx; // TODO: change to NOP
-            rs2 <= 5'bx; // TODO: change to NOP
-            rd <= 5'bx; // TODO: change to NOP
-            csr_addr <= 12'bx;
-            ir_type <= 3'bx;
-            imm <= 32'bx; // TODO: change to NOP
-            z_ <= 32'bx;
-            wr_reg_n <= 1'b1;   // default not to write
-            wr_csr_n <= 1'b1;   // default not to write
-            flush <= 1'b0;      // default not to flush
+            pc <= `DEFAULT_PC;
+            pc4 <= `DEFAULT_PC4;
+            data1 <= `ZERO_32BIT;
+            data2 <= `ZERO_32BIT;
+            funct7 <= `DEFAULT_FUNCT7;
+            funct3 <= `DEFAULT_FUNCT3;
+            rs2 <= `DEFAULT_REG;
+            rd <= `DEFAULT_REG;
+            csr_addr <= `DEFAULT_CSR_ADDR;
+            ir_type <= `DEFAULT_IR_TYPE;
+            imm <= `ZERO_32BIT;
+            z_ <= `DEFAULT_Z;
+            wr_reg_n <= `DEFAULT_WR_N;
+            wr_csr_n <= `DEFAULT_WR_N;
+            flush <= `DEFAULT_FLUSH;
         end else if (stall_or_interlock) begin
             // since interlock behaves just like stall
             pc <= pc;

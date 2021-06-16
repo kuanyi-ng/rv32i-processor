@@ -49,7 +49,7 @@ module mem_wb_regs (
             c <= `DEFAULT_C;
             d <= `DEFAULT_D;
             z_ <= `DEFAULT_Z;
-            rd <= `DEFAULT_RD;
+            rd <= `DEFAULT_REG;
             csr_addr <= `DEFAULT_CSR_ADDR;
             ir_type <= `DEFAULT_IR_TYPE;
             wr_reg_n <= `DEFAULT_WR_N;
