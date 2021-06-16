@@ -10,6 +10,7 @@ module id_ctrl (
     input [2:0] funct3,
     input [4:0] rs1,
     input [4:0] rd,
+    input flush,
     input is_mret,
     input is_ecall,
     input is_return_from_ecall,
@@ -33,8 +34,8 @@ module id_ctrl (
     );
     
     assign is_illegal_ir = illegal_ir_check(ir_type, funct3, funct7, is_mret, is_ecall);
-    assign wr_reg_n = wr_reg_n_ctrl(ir_type, rd, is_illegal_ir);
-    assign wr_csr_n = wr_csr_n_ctrl(ir_type, funct3, rs1, is_illegal_ir);
+    assign wr_reg_n = wr_reg_n_ctrl(ir_type, rd, flush ,is_illegal_ir);
+    assign wr_csr_n = wr_csr_n_ctrl(ir_type, funct3, rs1, flush, is_illegal_ir);
 
     //
     // Functions
@@ -65,12 +66,19 @@ module id_ctrl (
         end
    endfunction
 
-   function wr_reg_n_ctrl(input [3:0] ir_type, input [4:0] rd, input is_illegal_ir);
+   function wr_reg_n_ctrl(
+       input [3:0] ir_type,
+       input [4:0] rd,
+       input flush,
+       input is_illegal_ir
+    );
         // 0: write, 1: don't write
         begin
-            // Don't update when IR is illegal
-            // Don't allow write to x0 (always 0)
-            if (is_illegal_ir || (rd == 5'b00000)) begin
+            // Don't allow write when
+            // - this stage is flushed
+            // - IR is illegal
+            // - rd is x0 (x0 is always 0)
+            if (flush || is_illegal_ir || (rd == 5'b00000)) begin
                 wr_reg_n_ctrl = 1'b1;
             end else begin
                 case (ir_type)
@@ -89,14 +97,22 @@ module id_ctrl (
         end
     endfunction
 
-    function wr_csr_n_ctrl(input [3:0] ir_type, input [2:0] funct3, input [4:0] rs1, input is_illegal_ir);
+    function wr_csr_n_ctrl(
+        input [3:0] ir_type,
+        input [2:0] funct3,
+        input [4:0] rs1,
+        input flush,
+        input is_illegal_ir
+    );
         reg is_csr_ir;
 
         begin
             is_csr_ir = (ir_type == `CSR_IR);
 
-            // Don't update when IR is illegal
-            if (is_illegal_ir) wr_csr_n_ctrl = 1'b1;
+            // Don't allow write when
+            // - this stage is flushed
+            // - IR is illegal
+            if (flush || is_illegal_ir) wr_csr_n_ctrl = 1'b1;
             // CSR instructions share the same opcode with ecall, ebreak instructions
             // ecall and ebreak have funct3 of 000 while CSR instruction doesn't
             else if (is_csr_ir) begin

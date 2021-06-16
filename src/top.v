@@ -8,11 +8,9 @@
 `include "ex_stage.v"
 `include "exception_ctrl_u.v"
 `include "flush_u.v"
-// `include "id_data_picker.v"
 `include "id_ex_regs.v"
 `include "id_flush_picker.v"
 `include "id_stage.v"
-`include "id_wr_n_picker.v"
 `include "id_z_picker.v"
 `include "if_flush_picker.v"
 `include "if_id_regs.v"
@@ -82,8 +80,6 @@ module top (
     wire [31:0] imm_id;
     wire [31:0] z_csrs;
     wire [31:0] z_id;
-    wire wr_reg_n_id_stage;
-    wire wr_csr_n_id_stage;
     wire wr_reg_n_id;
     wire wr_csr_n_id;
     wire is_mret_id;
@@ -258,6 +254,7 @@ module top (
     id_stage id_stage_inst(
         .ir(ir_from_if),
         .ir_type(ir_type_from_if),
+        .flush(flush_id),
         .is_e_cause_eq_ecall(is_e_cause_eq_ecall),
         .rs1(rd1_addr),
         .rs2(rd2_addr),
@@ -266,8 +263,8 @@ module top (
         .funct7(funct7_id),
         .csr_addr(csr_addr_id),
         .imm(imm_id),
-        .wr_reg_n(wr_reg_n_id_stage),
-        .wr_csr_n(wr_csr_n_id_stage),
+        .wr_reg_n(wr_reg_n_id),
+        .wr_csr_n(wr_csr_n_id),
         .is_mret(is_mret_id),
         .is_ecall(is_ecall_id),
         .is_illegal_ir(is_illegal_ir_id)
@@ -277,18 +274,6 @@ module top (
         .flush_from_if(flush_from_if),
         .flush_from_flush_u(flush),
         .flush_out(flush_id)
-    );
-
-    id_wr_n_picker id_wr_reg_n_picker_inst(
-        .wr_n_in(wr_reg_n_id_stage),
-        .flush_id(flush_id),
-        .wr_n_out(wr_reg_n_id)
-    );
-
-    id_wr_n_picker id_wr_csr_n_picker_inst(
-        .wr_n_in(wr_csr_n_id_stage),
-        .flush_id(flush_id),
-        .wr_n_out(wr_csr_n_id)
     );
 
     id_z_picker id_z_picker_inst(

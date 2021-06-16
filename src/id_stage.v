@@ -5,6 +5,9 @@ module id_stage (
     input [31:0] ir,
     input [3:0] ir_type,
 
+    // inputs from ID stage
+    input flush,
+
     // inputs from CSRs
     input is_e_cause_eq_ecall,
 
@@ -59,6 +62,7 @@ module id_stage (
         .funct3(funct3),
         .rs1(rs1),
         .rd(rd),
+        .flush(flush),
         .is_mret(is_mret),
         .is_ecall(is_ecall),
         .is_return_from_ecall(is_return_from_ecall),
