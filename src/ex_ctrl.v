@@ -72,7 +72,7 @@ module ex_ctrl (
                     else alu_ins_ctrl = { z_, data1 };
                 end
 
-                default: alu_ins_ctrl = 64'bx;
+                default: alu_ins_ctrl = { data1, data2 };
             endcase
         end
     endfunction
@@ -96,6 +96,8 @@ module ex_ctrl (
 
                 `AUIPC_IR: alu_op_ctrl = `ADD;
 
+                `JAL_IR: alu_op_ctrl = `ADD;
+
                 `JALR_IR: alu_op_ctrl = `JALR;
 
                 `BRANCH_IR: alu_op_ctrl = `ADD;
@@ -112,7 +114,7 @@ module ex_ctrl (
                     if (funct3[1:0] == 2'b01) alu_op_ctrl = `CP_IN2;
                     else if (funct3[1:0] == 2'b10) alu_op_ctrl = `OR;
                     else if (funct3[1:0] == 2'b11) alu_op_ctrl = `CSRRC;
-                    else alu_op_ctrl = 4'bx;
+                    else alu_op_ctrl = `X_ALU_OP;
                 end
 
                 // mret
