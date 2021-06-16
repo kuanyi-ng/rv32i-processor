@@ -1,6 +1,6 @@
 `include "constants/ir_type.v"
 `include "constants/funct3.v"
-
+`include "constants/imm_type.v"
 `include "imm_extractor.v"
 
 module id_stage (
@@ -44,6 +44,9 @@ module id_stage (
     // Main
     //
 
+    assign is_mret = (ir == MRET_IR);
+    assign is_ecall = (ir == ECALL_IR);
+
     assign rs1 = ir[19:15];
     assign rs2 = ir[24:20];
     assign rd = ir[11:7];
@@ -51,27 +54,17 @@ module id_stage (
     assign funct7 = ir[31:25];
     assign csr_addr = ir[31:20];
 
-    wire [2:0] imm_type;
-    assign imm_type = imm_type_from(ir_type, funct3);
+    wire is_return_from_ecall = (is_mret && is_e_cause_eq_ecall);
+    wire [3:0] imm_type = imm_type_from(ir_type, funct3, is_return_from_ecall);
 
-    wire [31:0] temp_imm;
     imm_extractor imm_extractor_inst(
         .in(ir),
         .imm_type(imm_type),
-        .out(temp_imm)
+        .out(imm)
     );
-    // Calculation of Jump (return) address for MRET
-    // if it's returning from ecall: jump to mepc + 4
-    // else (other type of exception) jump to mepc
-    //
-    // When is_mret is true, temp_imm will be 32'h0
-    assign imm = (is_mret && is_e_cause_eq_ecall) ? 32'h4 : temp_imm;
 
     assign wr_reg_n = wr_reg_n_ctrl(ir_type, rd, is_illegal_ir);
     assign wr_csr_n = wr_csr_n_ctrl(ir_type, funct3, rs1, is_illegal_ir);
-
-    assign is_mret = (ir == MRET_IR);
-    assign is_ecall = (ir == ECALL_IR);
 
     assign is_illegal_ir = illegal_ir_check(ir_type, funct3, funct7, is_mret, is_ecall);
 
@@ -79,7 +72,7 @@ module id_stage (
     // Functions
     //
 
-    function [2:0] imm_type_from(input [3:0] ir_type, input [2:0] funct3);
+    function [3:0] imm_type_from(input [3:0] ir_type, input [2:0] funct3, input is_return_from_ecall);
         begin
             case (ir_type)
                 `LUI_IR: imm_type_from = `U_IMM;
@@ -98,7 +91,7 @@ module id_stage (
                     else imm_type_from = `I_IMM;
                 end
                 `CSR_IR: imm_type_from = `CSR_IMM;
-                `SYS_CALL_IR: imm_type_from = `CSR_IMM;
+                `SYS_CALL_IR: imm_type_from = (is_return_from_ecall) ? `RETURN_FROM_ECALL_IMM : `CSR_IMM;
                 default: imm_type_from = `DEFAULT_IMM;
             endcase
         end

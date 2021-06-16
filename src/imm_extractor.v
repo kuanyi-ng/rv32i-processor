@@ -2,7 +2,7 @@
 
 module imm_extractor (
     input [31:0] in,    // ir
-    input [2:0] imm_type,
+    input [3:0] imm_type,
     output [31:0] out
 );
 
@@ -16,7 +16,7 @@ module imm_extractor (
     // Functions
     //
 
-    function [31:0] imm(input [31:0] in, input [2:0] imm_type);
+    function [31:0] imm(input [31:0] in, input [3:0] imm_type);
        begin
         case (imm_type)
             // I-Type (include jalr)
@@ -39,6 +39,12 @@ module imm_extractor (
 
             // z_imm (csr)
             `CSR_IMM: imm = csr_imm(in);
+
+            // 4 (mret from ecall)
+            // Calculation of Jump (return) address for MRET
+            // if it's returning from ecall: jump to mepc + 4
+            // else (other type of exception) jump to mepc
+            `RETURN_FROM_ECALL_IMM: imm = 32'h4;
 
             // default: 0
             default: imm = 32'd0;

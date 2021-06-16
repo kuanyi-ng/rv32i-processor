@@ -1,8 +1,9 @@
-`define I_IMM 3'b000
-`define B_IMM 3'b001
-`define S_IMM 3'b010
-`define U_IMM 3'b011
-`define J_IMM 3'b100
-`define SHAMT_IMM 3'b101
-`define CSR_IMM 3'b110
-`define DEFAULT_IMM 3'b111
+`define I_IMM                   4'b0000
+`define B_IMM                   4'b0001
+`define S_IMM                   4'b0010
+`define U_IMM                   4'b0011
+`define J_IMM                   4'b0100
+`define SHAMT_IMM               4'b0101
+`define CSR_IMM                 4'b0110
+`define RETURN_FROM_ECALL_IMM   4'b0111
+`define DEFAULT_IMM             4'b1111
