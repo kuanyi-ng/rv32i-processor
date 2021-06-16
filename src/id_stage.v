@@ -136,19 +136,21 @@ module id_stage (
     endfunction
 
     function wr_csr_n_ctrl(input [3:0] ir_type, input [2:0] funct3, input [4:0] rs1, input is_illegal_ir);
-        reg is_csr_ir, is_csrr_ir;
+        reg is_csr_ir;
 
         begin
             is_csr_ir = (ir_type == `CSR_IR);
-            is_csrr_ir = (ir_type == `CSR_IR) && (funct3 == `CSRRS_FUNCT3) && (rs1 == 5'b00000);
 
             // Don't update when IR is illegal
             if (is_illegal_ir) wr_csr_n_ctrl = 1'b1;
-            // Don't update when it's CSRR (pseudo-instruction for CSRRS rd, csr, x0)
-            else if (is_csrr_ir) wr_csr_n_ctrl = 1'b1;
             // CSR instructions share the same opcode with ecall, ebreak instructions
             // ecall and ebreak have funct3 of 000 while CSR instruction doesn't
-            else if (is_csr_ir) wr_csr_n_ctrl = 1'b0;
+            else if (is_csr_ir) begin
+                // Don't update when it's CSRR (pseudo-instruction for CSRRS rd, csr, x0)
+                // is_csrr_ir = (ir_type == `CSR_IR) && (funct3 == `CSRRS_FUNCT3) && (rs1 == 5'b00000)
+                // CSRR doesn't update csr
+                wr_csr_n_ctrl = (funct3 == `CSRRS_FUNCT3) && (rs1 == 5'b00000) ? 1'b1 : 1'b0;
+            end
             else wr_csr_n_ctrl = 1'b1;
         end
     endfunction
