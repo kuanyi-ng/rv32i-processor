@@ -44,15 +44,18 @@ module id_stage (
     // Main
     //
 
-    wire [4:0] rs1 = ir[19:15];
-    wire [4:0] rs2 = ir[24:20];
-    wire [4:0] rd = ir[11:7];
-    wire [2:0] funct3 = ir[14:12];
-    wire [6:0] funct7 = ir[31:25];
-    wire [11:0] temp_csr_addr = ir[31:20];
+    assign rs1 = ir[19:15];
+    assign rs2 = ir[24:20];
+    assign rd = ir[11:7];
+    assign funct3 = ir[14:12];
+    assign funct7 = ir[31:25];
 
+    wire [11:0] temp_csr_addr = ir[31:20];
     // change csr_addr to mepc when is_mret is true
     // this will enable csr_forwarding value of mepc
+    //
+    // can simplify this
+    // by wiring ir[31:20] to mepc in CSRs
     assign csr_addr = (is_mret) ? MEPC_ADDR : temp_csr_addr;
 
     wire [2:0] imm_type;
@@ -71,7 +74,7 @@ module id_stage (
     // When is_mret is true, temp_imm will be 32'h0
     assign imm = (is_mret && is_e_cause_eq_ecall) ? 32'h4 : temp_imm;
 
-    assign wr_reg_n = wr_reg_n_ctrl(ir_type, rd, funct3, is_illegal_ir);
+    assign wr_reg_n = wr_reg_n_ctrl(ir_type, rd, is_illegal_ir);
     assign wr_csr_n = wr_csr_n_ctrl(ir_type, funct3, rs1, is_illegal_ir);
 
     assign is_mret = (ir == MRET_IR);
@@ -108,23 +111,24 @@ module id_stage (
         end
    endfunction
 
-   function wr_reg_n_ctrl(input [3:0] ir_type, input [4:0] rd, input [2:0] funct3, input is_illegal_ir);
+   function wr_reg_n_ctrl(input [3:0] ir_type, input [4:0] rd, input is_illegal_ir);
         // 0: write, 1: don't write
         begin
             // Don't update when IR is illegal
-            if (is_illegal_ir) wr_reg_n_ctrl = 1'b1;
-            // don't allow write to x0 (always 0)
-            else if (rd == 5'b00000) wr_reg_n_ctrl = 1'b1;
-            else begin
+            // Don't allow write to x0 (always 0)
+            if (is_illegal_ir || (rd == 5'b00000)) begin
+                wr_reg_n_ctrl = 1'b1;
+            end else begin
                 case (ir_type)
-                    `LUI_IR: wr_reg_n_ctrl = 1'b0;
-                    `AUIPC_IR: wr_reg_n_ctrl = 1'b0;
-                    `REG_IMM_IR: wr_reg_n_ctrl = 1'b0;
-                    `REG_REG_IR: wr_reg_n_ctrl = 1'b0;
-                    `LOAD_IR: wr_reg_n_ctrl = 1'b0;
-                    `JAL_IR: wr_reg_n_ctrl = 1'b0;
-                    `JALR_IR: wr_reg_n_ctrl = 1'b0;
+                    `LUI_IR,
+                    `AUIPC_IR,
+                    `REG_IMM_IR,
+                    `REG_REG_IR,
+                    `LOAD_IR,
+                    `JAL_IR,
+                    `JALR_IR,
                     `CSR_IR: wr_reg_n_ctrl = 1'b0;
+
                     default: wr_reg_n_ctrl = 1'b1;
                 endcase
             end
