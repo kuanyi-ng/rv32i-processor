@@ -117,7 +117,6 @@ module top (
     wire flush_from_ex;
 
     // MEM
-    wire [2:0] funct3_from_mem;
     wire [31:0] data_from_mem, data_to_mem;
     wire [31:0] d_mem;
 
@@ -412,8 +411,6 @@ module top (
         .d_out(d_from_mem),
         .z_in(z_from_ex),
         .z_out(z_from_mem),
-        .funct3_in(funct3_from_ex),
-        .funct3_out(funct3_from_mem),
         .rd_in(rd_from_ex),
         .rd_out(wr_addr),
         .csr_addr_in(csr_addr_from_ex),
