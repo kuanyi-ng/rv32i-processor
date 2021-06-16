@@ -66,10 +66,9 @@ module ex_ctrl (
                 `SYS_CALL_IR: alu_ins_ctrl = { z_, imm };
 
                 `CSR_IR: begin
-                    // csr with imm
-                    if (funct3[2] == 1'b1) alu_ins_ctrl = { z_, imm };
-                    // csr with register
-                    else alu_ins_ctrl = { z_, data1 };
+                    // if (funct3[2] == 1'b1) => csr with imm
+                    // else csr with register
+                    alu_ins_ctrl = (funct3[2] == 1'b1) ? { z_, imm } : { z_, data1 };
                 end
 
                 default: alu_ins_ctrl = { data1, data2 };
@@ -111,10 +110,12 @@ module ex_ctrl (
                 `REG_IMM_IR: alu_op_ctrl = reg_ir_alu_op_ctrl(1'b1, funct3, funct7);
 
                 `CSR_IR: begin
-                    if (funct3[1:0] == 2'b01) alu_op_ctrl = `CP_IN2;
-                    else if (funct3[1:0] == 2'b10) alu_op_ctrl = `OR;
-                    else if (funct3[1:0] == 2'b11) alu_op_ctrl = `CSRRC;
-                    else alu_op_ctrl = `X_ALU_OP;
+                    case (funct3[1:0])
+                        2'b01: alu_op_ctrl = `CP_IN2;
+                        2'b10: alu_op_ctrl = `OR;
+                        2'b11: alu_op_ctrl = `CSRRC;
+                        default: alu_op_ctrl = `X_ALU_OP;
+                    endcase
                 end
 
                 // mret
