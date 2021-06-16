@@ -8,7 +8,7 @@
 `include "ex_stage.v"
 `include "exception_ctrl_u.v"
 `include "flush_u.v"
-`include "id_data_picker.v"
+// `include "id_data_picker.v"
 `include "id_ex_regs.v"
 `include "id_flush_picker.v"
 `include "id_stage.v"
@@ -273,17 +273,6 @@ module top (
         .is_illegal_ir(is_illegal_ir_id)
     );
 
-    id_data_picker id_data_picker_inst(
-        .data1_from_regfile(data1_regfile),
-        .data2_from_regfile(data2_regfile),
-        .data_forwarded_from_ex(data_forwarded_from_ex),
-        .data_forwarded_from_mem(data_forwarded_from_mem),
-        .forward_data1(forward_data1),
-        .forward_data2(forward_data2),
-        .data1_id(data1_id),
-        .data2_id(data2_id)
-    );
-
     id_flush_picker id_flush_picker_inst(
         .flush_from_if(flush_from_if),
         .flush_from_flush_u(flush),
@@ -313,13 +302,19 @@ module top (
     post_id_stage post_id_stage_inst(
         .ir_type(ir_type_from_if),
         .funct3(funct3_id),
-        .data1(data1_id),
-        .data2(data2_id),
         .pc(pc_from_if),
         .imm(imm_id),
         .z_(z_id),
+        .data1_regfile(data1_regfile),
+        .data2_regfile(data2_regfile),
+        .data_forwarded_from_ex(data_forwarded_from_ex),
+        .data_forwarded_from_mem(data_forwarded_from_mem),
+        .forward_data1(forward_data1),
+        .forward_data2(forward_data2),
         .in1(in1_id),
-        .in2(in2_id)
+        .in2(in2_id),
+        .data1(data1_id),
+        .data2(data2_id)
     );
 
     // ID-EX
