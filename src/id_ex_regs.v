@@ -33,9 +33,6 @@ module id_ex_regs (
     input [3:0] ir_type_in,
     output [3:0] ir_type_out,
 
-    input [31:0] imm_in,
-    output [31:0] imm_out,
-
     input [31:0] z_in,
     output [31:0] z_out,
 
@@ -52,7 +49,13 @@ module id_ex_regs (
     output jump_prediction_out,
 
     input [31:0] addr_prediction_in,
-    output [31:0] addr_prediction_out
+    output [31:0] addr_prediction_out,
+
+    input [31:0] in1_in,
+    output [31:0] in1_out,
+
+    input [31:0] in2_in,
+    output [31:0] in2_out
 );
 
     reg [31:0] pc;
@@ -63,13 +66,13 @@ module id_ex_regs (
     reg [4:0] rs2, rd;
     reg [11:0] csr_addr;
     reg [3:0] ir_type;
-    reg [31:0] imm;
     reg [31:0] z_;
     reg wr_reg_n;
     reg wr_csr_n;
     reg flush;
     reg jump_prediction;
     reg [31:0] addr_prediction;
+    reg [31:0] in1, in2;
 
     wire stall_or_interlock = stall || interlock;
 
@@ -86,11 +89,14 @@ module id_ex_regs (
             rd <= `DEFAULT_REG;
             csr_addr <= `DEFAULT_CSR_ADDR;
             ir_type <= `DEFAULT_IR_TYPE;
-            imm <= `ZERO_32BIT;
             z_ <= `DEFAULT_Z;
             wr_reg_n <= `DEFAULT_WR_N;
             wr_csr_n <= `DEFAULT_WR_N;
             flush <= `DEFAULT_FLUSH;
+            jump_prediction <= 1'b0;
+            addr_prediction <= `DEFAULT_PC4;
+            in1 <= `ZERO_32BIT;
+            in2 <= `ZERO_32BIT;
         end else if (stall_or_interlock) begin
             // since interlock behaves just like stall
             pc <= pc;
@@ -103,7 +109,6 @@ module id_ex_regs (
             rd <= rd;
             csr_addr <= csr_addr;
             ir_type <= ir_type;
-            imm <= imm;
             z_ <= z_;
             // in order to prevent double detection of stall,
             // which will cause the pipeline to stall forever,
@@ -113,6 +118,8 @@ module id_ex_regs (
             flush <= flush;
             jump_prediction <= jump_prediction;
             addr_prediction <= addr_prediction;
+            in1 <= in1;
+            in2 <= in2;
         end else begin
             pc <= pc_in;
             pc4 <= pc4_in;
@@ -124,13 +131,14 @@ module id_ex_regs (
             rd <= rd_in;
             csr_addr <= csr_addr_in;
             ir_type <= ir_type_in;
-            imm <= imm_in;
             z_ <= z_in;
             wr_reg_n <= wr_reg_n_in;
             wr_csr_n <= wr_csr_n_in;
             flush <= flush_in;
             jump_prediction <= jump_prediction_in;
             addr_prediction <= addr_prediction_in;
+            in1 <= in1_in;
+            in2 <= in2_in;
         end
     end
 
@@ -144,12 +152,13 @@ module id_ex_regs (
     assign csr_addr_out = csr_addr;
     assign rd_out = rd;
     assign ir_type_out = ir_type;
-    assign imm_out = imm;
     assign z_out = z_;
     assign wr_reg_n_out = wr_reg_n;
     assign wr_csr_n_out = wr_csr_n;
     assign flush_out = flush;
     assign jump_prediction_out = jump_prediction;
     assign addr_prediction_out = addr_prediction;
+    assign in1_out = in1;
+    assign in2_out = in2;
     
 endmodule
