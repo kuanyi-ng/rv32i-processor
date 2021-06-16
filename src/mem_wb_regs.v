@@ -1,3 +1,5 @@
+`include "constants/pipeline_regs_default.v"
+
 module mem_wb_regs (
     input clk,
     input rst_n,
@@ -43,15 +45,15 @@ module mem_wb_regs (
 
     always @(posedge clk or negedge rst_n) begin
         if (!rst_n) begin
-            pc4 <= 32'bx;
-            c <= 32'bx;
-            d <= 32'bx;
-            z_ <= 32'bx;
-            rd <= 5'bx;
-            csr_addr <= 12'bx;
-            ir_type <= 4'bx;
-            wr_reg_n <= 1'b1; // default not to write
-            wr_csr_n <= 1'b1; // default not to write
+            pc4 <= `DEFAULT_PC4;
+            c <= `DEFAULT_C;
+            d <= `DEFAULT_D;
+            z_ <= `DEFAULT_Z;
+            rd <= `DEFAULT_RD;
+            csr_addr <= `DEFAULT_CSR_ADDR;
+            ir_type <= `DEFAULT_IR_TYPE;
+            wr_reg_n <= `DEFAULT_WR_N;
+            wr_csr_n <= `DEFAULT_WR_N;
         end else if (interlock) begin
             // holds the same value when interlock
             pc4 <= pc4;
