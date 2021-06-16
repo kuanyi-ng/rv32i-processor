@@ -88,7 +88,7 @@ module u_jump_predictor #(
     wire update_entry = is_u_jump_ir_in_ex && is_prediction_wrong;
     wire [1:0] next_state = next_state_ctrl(entries[write_entry_id][32], is_prediction_wrong);
 
-    always @(negedge clk) begin
+    always @(posedge clk) begin
         if (update_entry) begin
             entries[write_entry_id] <= { next_state, jump_addr_if_taken };
         end else begin
