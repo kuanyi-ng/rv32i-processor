@@ -154,11 +154,7 @@ module top (
     wire stall;
 
     // Pipeline Flush
-    wire flush;
-    // Pipelin Flush (IF)
-    wire flush_if;
-    // Pipeline Flush (ID)
-    wire flush_id;
+    wire flush_ex;
 
     // Pipeline Interlock
     wire interlock;
@@ -545,7 +541,7 @@ module top (
     // Pipeline Flush
     flush_u flush_u_inst(
         .jump(jump_ex),
-        .flush(flush)
+        .flush(flush_ex)
     );
 
     // Pipeline Interlock
