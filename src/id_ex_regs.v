@@ -33,9 +33,6 @@ module id_ex_regs (
     input [3:0] ir_type_in,
     output [3:0] ir_type_out,
 
-    input [31:0] z_in,
-    output [31:0] z_out,
-
     input wr_reg_n_in,
     output wr_reg_n_out,
 
@@ -66,7 +63,6 @@ module id_ex_regs (
     reg [4:0] rs2, rd;
     reg [11:0] csr_addr;
     reg [3:0] ir_type;
-    reg [31:0] z_;
     reg wr_reg_n;
     reg wr_csr_n;
     reg flush;
@@ -89,7 +85,6 @@ module id_ex_regs (
             rd <= `DEFAULT_REG;
             csr_addr <= `DEFAULT_CSR_ADDR;
             ir_type <= `DEFAULT_IR_TYPE;
-            z_ <= `DEFAULT_Z;
             wr_reg_n <= `DEFAULT_WR_N;
             wr_csr_n <= `DEFAULT_WR_N;
             flush <= `DEFAULT_FLUSH;
@@ -109,7 +104,6 @@ module id_ex_regs (
             rd <= rd;
             csr_addr <= csr_addr;
             ir_type <= ir_type;
-            z_ <= z_;
             // in order to prevent double detection of stall,
             // which will cause the pipeline to stall forever,
             // it is required to set wr signals to inactive.
@@ -131,7 +125,6 @@ module id_ex_regs (
             rd <= rd_in;
             csr_addr <= csr_addr_in;
             ir_type <= ir_type_in;
-            z_ <= z_in;
             wr_reg_n <= wr_reg_n_in;
             wr_csr_n <= wr_csr_n_in;
             flush <= flush_in;
@@ -152,7 +145,6 @@ module id_ex_regs (
     assign csr_addr_out = csr_addr;
     assign rd_out = rd;
     assign ir_type_out = ir_type;
-    assign z_out = z_;
     assign wr_reg_n_out = wr_reg_n;
     assign wr_csr_n_out = wr_csr_n;
     assign flush_out = flush;

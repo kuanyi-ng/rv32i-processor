@@ -95,7 +95,6 @@ module top (
     wire [2:0] funct3_from_id;
     wire [4:0] rs2_from_id, rd_from_id;
     wire [11:0] csr_addr_from_id;
-    wire [31:0] z_from_id;
     wire wr_reg_n_from_id;
     wire wr_csr_n_from_id;
     wire flush_from_id;
@@ -328,8 +327,6 @@ module top (
         .csr_addr_out(csr_addr_from_id),
         .ir_type_in(ir_type_from_if),
         .ir_type_out(ir_type_from_id),
-        .z_in(z_id),
-        .z_out(z_from_id),
         .wr_reg_n_in(wr_reg_n_id),
         .wr_reg_n_out(wr_reg_n_from_id),
         .wr_csr_n_in(wr_csr_n_id),
@@ -389,7 +386,7 @@ module top (
         .b_out(b_from_ex),
         .c_in(c_ex),
         .c_out(c_from_ex),
-        .z_in(z_from_id),
+        .z_in(data1_from_id), // data1 has z_ value if it's an CSR-type ir
         .z_out(z_from_ex),
         .funct3_in(funct3_from_id),
         .funct3_out(funct3_from_ex),
@@ -521,7 +518,7 @@ module top (
     data_forward_helper #(.IS_MEM_STAGE(0)) data_forward_helper_ex(
         .main_data(c_ex),
         .sub_data(pc4_from_id),
-        .csr_data(z_from_id),
+        .csr_data(data1_from_id), // has z_ value if current ir is CSR-type ir
         .ir_type(ir_type_from_id),
         .data_to_forward(data_forwarded_from_ex)
     );
