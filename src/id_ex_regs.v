@@ -5,6 +5,7 @@ module id_ex_regs (
     input rst_n,
     input stall,
     input interlock,
+    input pipeline_flush,
 
     input [31:0] pc_in,
     output [31:0] pc_out,
@@ -125,9 +126,9 @@ module id_ex_regs (
             rd <= rd_in;
             csr_addr <= csr_addr_in;
             ir_type <= ir_type_in;
-            wr_reg_n <= wr_reg_n_in;
-            wr_csr_n <= wr_csr_n_in;
-            flush <= flush_in;
+            wr_reg_n <= (pipeline_flush) ? 1'b1 : wr_reg_n_in;
+            wr_csr_n <= (pipeline_flush) ? 1'b1 : wr_csr_n_in;
+            flush <= pipeline_flush || flush_in;
             jump_prediction <= jump_prediction_in;
             addr_prediction <= addr_prediction_in;
             in1 <= in1_in;

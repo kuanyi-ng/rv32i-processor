@@ -5,6 +5,7 @@ module if_id_regs (
     input rst_n,
     input stall,
     input interlock,
+    input pipeline_flush,
 
     input [31:0] pc_in,
     output [31:0] pc_out,
@@ -68,7 +69,7 @@ module if_id_regs (
             pc4 <= pc4_in;
             ir <= ir_in;
             ir_type <= ir_type_in;
-            flush <= flush_in;
+            flush <= pipeline_flush || flush_in;
             i_addr_misaligned <= i_addr_misaligned_in;
             jump_prediction <= jump_prediction_in;
             addr_prediction <= addr_prediction_in;
