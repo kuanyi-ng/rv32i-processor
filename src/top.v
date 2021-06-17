@@ -215,18 +215,13 @@ module top (
         .ir_type(ir_type_if)
     );
 
-    if_flush_picker if_flush_picker_inst(
-        .e_raised(e_raised),
-        .flush_from_flush_u(flush),
-        .flush_out(flush_if)
-    );
-
     // IF-ID
     if_id_regs if_id_regs_inst(
         .clk(clk),
         .rst_n(rst_n),
         .stall(stall),
         .interlock(interlock),
+        .pipeline_flush(flush_ex),
         .pc_in(current_pc),
         .pc_out(pc_from_if),
         .pc4_in(pc4_if),
@@ -235,7 +230,7 @@ module top (
         .ir_out(ir_from_if),
         .ir_type_in(ir_type_if),
         .ir_type_out(ir_type_from_if),
-        .flush_in(flush_if),
+        .flush_in(e_raised),
         .flush_out(flush_from_if),
         .i_addr_misaligned_in(i_addr_misaligned_if),
         .i_addr_misaligned_out(i_addr_misaligned_from_if),
@@ -249,7 +244,7 @@ module top (
     id_stage id_stage_inst(
         .ir(ir_from_if),
         .ir_type(ir_type_from_if),
-        .flush(flush_id),
+        .flush(flush_from_if),
         .is_e_cause_eq_ecall(is_e_cause_eq_ecall),
         .rs1(rd1_addr),
         .rs2(rd2_addr),
@@ -263,12 +258,6 @@ module top (
         .is_mret(is_mret_id),
         .is_ecall(is_ecall_id),
         .is_illegal_ir(is_illegal_ir_id)
-    );
-
-    id_flush_picker id_flush_picker_inst(
-        .flush_from_if(flush_from_if),
-        .flush_from_flush_u(flush),
-        .flush_out(flush_id)
     );
 
     id_z_picker id_z_picker_inst(
@@ -303,6 +292,7 @@ module top (
         .rst_n(rst_n),
         .stall(stall),
         .interlock(interlock),
+        .pipeline_flush(flush_ex),
         .pc_in(pc_from_if),
         .pc_out(pc_from_id),
         .pc4_in(pc4_from_if),
@@ -327,7 +317,7 @@ module top (
         .wr_reg_n_out(wr_reg_n_from_id),
         .wr_csr_n_in(wr_csr_n_id),
         .wr_csr_n_out(wr_csr_n_from_id),
-        .flush_in(flush_id),
+        .flush_in(flush_from_if),
         .flush_out(flush_from_id),
         .jump_prediction_in(jump_prediction_from_if),
         .jump_prediction_out(jump_prediction_from_id),
@@ -559,7 +549,7 @@ module top (
         .is_illegal_ir(is_illegal_ir_id),
         .ir_in_id(ir_from_if),
         .is_ecall(is_ecall_id),
-        .flush(flush_id),
+        .flush(flush_from_if),
         .e_raised(e_raised),
         .e_cause(e_cause),
         .e_pc(e_pc),
