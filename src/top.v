@@ -199,7 +199,6 @@ module top (
         .e_raised(e_raised),
         .e_handling_addr(trap_vector_addr),
         .jump_addr(jump_address_ex),
-        .c(c_ex),
         .jump(jump_ex),
         .pc4(pc4_if),
         .next_pc(next_pc),

@@ -11,7 +11,6 @@ module if_stage (
     input [31:0] e_handling_addr,
     // Inputs from EX Stage
     input [31:0] jump_addr,
-    input [31:0] c,
     input jump,
 
     output [31:0] pc4,
@@ -31,7 +30,6 @@ module if_stage (
         .e_raised(e_raised),
         .e_handling_addr(e_handling_addr),
         .jump_addr(jump_addr),
-        .c(c),
         .jump(jump),
         .next_pc(next_pc)
     );

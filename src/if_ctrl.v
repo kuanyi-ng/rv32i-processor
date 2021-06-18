@@ -10,7 +10,6 @@ module if_ctrl (
 
     // Inputs from EX Stage
     input [31:0] jump_addr,
-    input [31:0] c,
     input jump,
 
     // Output to IF Stage
@@ -28,7 +27,6 @@ module if_ctrl (
         e_raised,
         e_handling_addr,
         jump_addr,
-        c,
         jump
     );
 
@@ -45,7 +43,6 @@ module if_ctrl (
         input [31:0] e_handling_addr,
 
         input [31:0] jump_addr,
-        input [31:0] c,
         input jump
     );
         begin
