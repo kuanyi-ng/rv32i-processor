@@ -21,9 +21,6 @@ elaborate rf32x32
 analyze -format verilog ./csr_reg.v
 elaborate csr_reg
 
-analyze -format verilog ./jump_predictor.v
-elaborate jump_predictor
-
 analyze -format verilog ./top.v
 elaborate top
 
@@ -42,8 +39,11 @@ set_max_area 0
 # NOTE: Google Image "fanout" for better idea
 set_max_fanout 64 [current_design]
 
+set_wire_load_model -name 16k
+set_wire_load_mode top
+
 # Create Clock
-create_clock -period 10.00 clk
+create_clock -period 5.00 clk
 set_clock_uncertainty -setup 0.0 [get_clock clk]
 set_clock_uncertainty -hold 0.0 [get_clock clk]
 set_input_delay 0.0 -clock clk [remove_from_collection [all_inputs] clk]
@@ -54,8 +54,8 @@ derive_clocks
 
 # Start Logical Synthesis
 compile
-# ungroup -all -flatten
-compile -incremental -map_effort high -area_effort high -incremental_mapping
+ungroup -all -flatten
+compile -map_effort high -area_effort high -incremental_mapping
 # compile -map_effort medium -area_effort high -incremental_mapping
 
 # Check Design
@@ -63,6 +63,7 @@ check_design
 
 # Show results
 report_timing -net
+report_timing -path end -net -max_path 100
 report_cell
 report_area
 report_power
