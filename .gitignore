@@ -5,3 +5,6 @@ __pycache__
 /env/
 
 *.dat
+
+doc/latex/out/*
+!doc/latex/out/main.pdf
