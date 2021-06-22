@@ -4,11 +4,46 @@
 
   設計したプロセッサがサポートしている命令の一覧は表 \ref{table:isa} に示している.
   この命令セットは, RISC-V 32I 命令セットの一部である.
-  % explain what instruction is not available and why
+  RISC-V 32I にあり、このプロセッサがサポートしていない命令は, 
+  \verb|fence, fence.i, sfence.vma, ebreak, uret, sret, wfi| である.
+  機能検証と性能評価のプログラムでは, フェンスを使うことがないので, 
+  \verb|fence, fence.i, sfence.vma| を実装しない.
+  また, 今回のプロセッサは, デバグ, ユーザモード, スーパーバイザモード, 外部割り込み
+  をサポートしていないため, \verb|ebreak, uret, sret, wfi| を実装しない.
 
-  \begin{table}
+  \begin{table}[]
     \centering
-    % TODO: add isa table
+    \begin{tabular}{lllllll}
+    \cline{1-3} \cline{5-7}
+    \multicolumn{1}{|l|}{命令} & \multicolumn{1}{l|}{内容}               & \multicolumn{1}{l|}{形式} & \multicolumn{1}{l|}{} & \multicolumn{1}{l|}{命令} & \multicolumn{1}{l|}{内容}      & \multicolumn{1}{l|}{形式} \\ \cline{1-3} \cline{5-7}
+    lui                      & load upper immediate                  & U                       &                       & add                     & add                          & R                       \\
+    auipc                    & add upper immediate to pc             & U                       &                       & sub                     & sub                          & R                       \\
+    jal                      & jump and link                         & J                       &                       & sll                     & shift left logical           & R                       \\
+    jalr                     & jump and link register                & J                       &                       & slt                     & set less than                & R                       \\
+    beq                      & branch equal                          & B                       &                       & sltu                    & set less than unsigned       & R                       \\
+    bne                      & branch not equal                      & B                       &                       & xor                     & exclusive or                 & R                       \\
+    blt                      & branch less than                      & B                       &                       & srl                     & shift right logical          & R                       \\
+    bge                      & branch greater than or equal          & B                       &                       & sra                     & shift right arithmetic       & R                       \\
+    bltu                     & branch less than unsigned             & B                       &                       & or                      & or                           & R                       \\
+    bgeu                     & branch greater than or equal unsigned & B                       &                       & and                     & and                          & R                       \\
+    lb                       & load byte                             & I                       &                       & ecall                   & environment call             & I                       \\
+    lh                       & load halfword                         & I                       &                       & csrrw                   & csr read and write           & I                       \\
+    lw                       & load word                             & I                       &                       & csrrs                   & csr read and set             & I                       \\
+    lbu                      & load byte unsigned                    & I                       &                       & csrrc                   & csr read and clear           & I                       \\
+    lhu                      & load halfword unsigned                & I                       &                       & csrrwi                  & csr read and write immediate & I                       \\
+    sb                       & store byte                            & S                       &                       & csrrsi                  & csr read and set immediate   & I                       \\
+    sh                       & store halfword                        & S                       &                       & csrrci                  & csr read and clear immediate & I                       \\
+    sw                       & store word                            & S                       &                       & mret                    & machine-mode exception return& R                       \\
+    addi                     & add immediate                         & I                       &                       &                         &                              &                         \\
+    slti                     & set less than immediate               & I                       &                       &                         &                              &                         \\
+    sltiu                    & set less than immediate unsigned      & I                       &                       &                         &                              &                         \\
+    xori                     & exclusive or immediate                & I                       &                       &                         &                              &                         \\
+    ori                      & or immediate                          & I                       &                       &                         &                              &                         \\
+    andi                     & and immediate                         & I                       &                       &                         &                              &                         \\
+    slli                     & shift left logical immediate          & I                       &                       &                         &                              &                         \\
+    srli                     & shift right logical immediate         & I                       &                       &                         &                              &                         \\
+    srai                     & shift right arithmetic immediate      & I                       &                       &                         &                              &
+    \end{tabular}
     \caption{命令セット}
     \label{table:isa}
   \end{table}
