@@ -1,5 +1,32 @@
 \documentclass[../main.tex]{subfiles}
 
 \begin{document}
-  機能検証の内容
+  今回設計したプロセッサの機能検証を以下のプログラムを用いて行った.
+
+  \begin{itemize}
+    \item アセンブリプログラム
+    \begin{itemize}
+      \item \verb|load|: ロード命令の動作検証
+      \item \verb|store|: ストア命令の動作検証
+      \item \verb|p2|: 演算と分岐命令の動作検証
+      \item \verb|trap|: \verb|ecall, mret| 命令の動作検証
+    \end{itemize}
+
+    \item C プログラム
+    \begin{itemize}
+      \item \verb|hello|: \verb|Hello World!| をコンソールに表示するプログラム
+      \item \verb|napier|: Napier's Constant の値を64桁の精度で計算するプログラム
+      \item \verb|pi|: pi の値を64桁の精度で計算するプログラム
+      \item \verb|prime|: 2を含め, 40個の素数を昇順に見つけるプログラム
+      \item \verb|bubblesort|: 100個の整数を Bubble Sort でソートするプログラム
+      \item \verb|insertsort|: 100個の整数を Insert Sort でソートするプログラム
+      \item \verb|quicksort|: 100個の整数を Quick Sort でソートするプログラム
+    \end{itemize}
+  \end{itemize}
+
+  機能検証は, Verilog-HDL で記述したプロセッサに対して, 
+  論理シミュレーター xmverilog と
+  波形ツール SimVision を用いて, シミュレーションを行った.
+  上記のプログラムが正しく実行され、正確な出力が得られたことを確認した.
+
 \end{document}
