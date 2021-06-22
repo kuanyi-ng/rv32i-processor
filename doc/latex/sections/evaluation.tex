@@ -1,5 +1,51 @@
 \documentclass[../main.tex]{subfiles}
 
 \begin{document}
-  性能評価と論理合成の内容
+  設計したプロセッサの性能を, プログラム実行のクロックサイクル数, 
+  最小動作クロック周期, 面積, と消費電力という面で評価する.
+
+  \subsection{評価方法}
+  MiBench ベンチマークプログラムを用いて, プログラム実行のクロックサイクル数を求めた.
+  MiBench の中に, \verb|stringsearch, bitcnts, dijkstra| といったプログラムが含まれている.
+  次に, 論理合成ツール Design Compiler を用いて, 
+  論理合成を行い, 最小動作クロック周期, 面積, と消費電力を測定した.
+
+  最小動作クロック周期の求め方について説明する.
+  \begin{enumerate}
+    \item タイミング制約を $10[ns]$ と設定して論理合成を行い, 
+    論理合成の結果にある slack (与えたタイミング制約と最大遅延時間との差) が正であることを確認する.
+    \item タイミング制約を $9[ns], 8[ns], \dots$ のように $1[ns]$ ずつ下げ, 
+    slack が負になるタイミング制約を見つける.
+  \end{enumerate}
+
+  例えば, タイミング制約を $5[ns]$ に設定した時に slack が負になったら, 
+  作成したプロセッサの最小動作クロック周期は $6[ns]$ になる.
+
+  \subsection{評価結果}
+  各ベンチマークのプログラムの実行に必要なクロックサイクル数を表 \ref{table:mibench-base} に示す.
+  また, プロセッサの最小動作クロック周期, 面積, と消費電力の測定結果を表 \ref{table:logic-synthesis-base} に示す.
+
+  \begin{table}[h]
+    \centering
+    \begin{tabular}{|l|r|}
+    \hline
+    ベンチマークプログラム  & クロックサイクル数 \\ \hline
+    stringsearch & 10594     \\
+    bitcnts      & 56040     \\
+    dijkstra     & 4079473   \\ \hline
+    \end{tabular}
+    \caption{ベンチマークプログラムの実行クロックサイクル数}
+    \label{table:mibench-base}
+  \end{table}
+
+  \begin{table}[h]
+    \centering
+    \begin{tabular}{|c|c|c|}
+    \hline
+    最小動作クロック周期 {[}$ns${]} & 面積 {[}$\mu m^2${]} & 消費電力 {[}$mW${]} \\ \hline
+    6                   & 357534.722794    & 7.5732        \\ \hline
+    \end{tabular}
+    \caption{論理合成の結果}
+    \label{table:logic-synthesis-base}
+  \end{table}
 \end{document}
