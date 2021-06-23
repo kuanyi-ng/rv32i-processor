@@ -1,17 +1,45 @@
-\documentclass[a4paper, 10pt]{jsarticle}
+\documentclass[a4paper, 10pt]{jarticle}
 
 \usepackage{amsmath}
-
 \usepackage{graphicx}
 \graphicspath{ {images/} }
-
+\usepackage{enumerate}
+\usepackage{latexsym}
+\usepackage{times}
+\usepackage[multi, deluxe]{otf}
 \usepackage{subfiles}
 
-\title{プロセッサ設計演習}
-\author{ウン クアン イー}
-\date{2021.06.22}
+\topmargin 0mm
+\oddsidemargin -0.4mm
+\evensidemargin -0.4mm
+\textwidth 160mm
+\textheight 237mm
+\columnsep 7mm
+\headheight 0mm
+\footskip 10mm
+\headsep 0mm
+\partopsep 0mm
+\textfloatsep 3mm
+\intextsep 3mm
 
-\begin{document}  
+\title{
+  \begin{flushright}
+    \normalsize{
+      九州大学 CPC Lab 研究会  \\
+      2021年度 第X回 研究会資料 TR20XX-001
+    }
+  \end{flushright}
+  \Large{\textbf{プロセッサ設計演習}}
+}
+\author{
+    ウン クアン イー\\
+    九州大学 工学部 電気情報工学科 4年
+}
+\date{2021年06月23日}
+
+\begin{document}
+  \begin{twocolumn}
+
   \maketitle
 
   \section{はじめに}
@@ -39,4 +67,5 @@
   \bibliography{reference.bib}
   \bibliographystyle{jplain}
 
+\end{twocolumn}
 \end{document}
