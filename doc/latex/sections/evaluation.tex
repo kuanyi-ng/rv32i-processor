@@ -25,27 +25,31 @@
   各ベンチマークのプログラムの実行に必要なクロックサイクル数を表 \ref{table:mibench-base} に示す.
   また, プロセッサの最小動作クロック周期, 面積, と消費電力の測定結果を表 \ref{table:logic-synthesis-base} に示す.
 
-  \begin{table*}[t]
+  \begin{table}[tbh]
     \centering
-    \begin{tabular}{|c|r|}
-    \hline
-    ベンチマークプログラム  & クロックサイクル数 \\ \hline
-    stringsearch & 10594     \\
-    bitcnts      & 56040     \\
-    dijkstra     & 4079473   \\ \hline
-    \end{tabular}
+    \resizebox{\columnwidth}{!}{
+      \begin{tabular}{|c|r|}
+        \hline
+        ベンチマークプログラム  & クロックサイクル数 \\ \hline
+        stringsearch & 10594     \\
+        bitcnts      & 56040     \\
+        dijkstra     & 4079473   \\ \hline
+      \end{tabular}
+    }
     \caption{ベンチマークプログラムの実行クロックサイクル数}
     \label{table:mibench-base}
-  \end{table*}
+  \end{table}
 
-  \begin{table*}[t]
+  \begin{table}[tbh]
     \centering
-    \begin{tabular}{|c|c|c|}
-    \hline
-    最小動作クロック周期 {[}$ns${]} & 面積 {[}$\mu m^2${]} & 消費電力 {[}$mW${]} \\ \hline
-    6                   & 357534.722794    & 7.5732        \\ \hline
-    \end{tabular}
+    \resizebox{\columnwidth}{!}{
+      \begin{tabular}{|c|c|c|}
+        \hline
+        最小動作クロック周期 {[}$ns${]} & 面積 {[}$\mu m^2${]} & 消費電力 {[}$mW${]} \\ \hline
+        6                   & 357534.722794    & 7.5732        \\ \hline
+      \end{tabular}
+    }
     \caption{論理合成の結果}
     \label{table:logic-synthesis-base}
-  \end{table*}
+  \end{table}
 \end{document}
