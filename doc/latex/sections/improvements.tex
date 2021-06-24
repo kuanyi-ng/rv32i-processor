@@ -15,8 +15,8 @@
     \end{aligned}
   \end{equation}
 
-  今回設計したプロセッサのプログラムの実行クロックサイクル数を減少させるために, 分岐予測を導入した.
-  分岐予測の詳細については, \ref{subsection:jump-prediction} 章で述べる.
+  今回設計したプロセッサのプログラムの実行クロックサイクル数を減少させるために, 動的分岐予測を導入した.
+  動的分岐予測の詳細については, \ref{subsection:jump-prediction} 章で述べる.
 
   分岐予測を実装した後, プログラムの実行クロックサイクル数を, 
   平均的に $0.794$ 倍で減らすことができたが, % TODO: need better explanation
@@ -27,12 +27,10 @@
   そこで, 論理合成の結果を元に, クリティカルパスの短縮を試みた.
   クリティカルパスの短縮方法については, \ref{subsection:critical-path} 章で述べる.
 
-  \subsection{分岐予測} \label{subsection:jump-prediction}
+  \subsection{動的分岐予測} \label{subsection:jump-prediction}
+  \subfile{improvements/jump_prediction.tex}
 
   \subsection{クリティカルパスの短縮} \label{subsection:critical-path}
   \subfile{improvements/critical_path.tex}
-
-  \subsection{性能改善後の性能と論理合成}
-  \subfile{improvements/improved_results.tex}
 
 \end{document}

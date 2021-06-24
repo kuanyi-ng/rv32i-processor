@@ -56,4 +56,24 @@
   改善によって得られたクロック周期は分岐予測導入前の $6[ns]$ よりも短くなったので, 
   分岐予測機能を今回のプロセッサの設計に導入してもいいと判断した.
 
+  \subsubsection{クリティカルパスの短縮後の論理合成}
+  クリティカルパスの短縮を行った後の性能評価の結果を表 \ref{table:logic-synthesis-improved} にまとめた.
+  クリティカルパスの短縮により, 分岐予測の実装によって $9[ns]$ までに増えたクロック周期を
+  $5[ns]$ へと減少させたことができた.
+
+  \begin{table*}[bp]
+    \centering
+    \begin{tabular}{|c|r|r|r|}
+    \hline
+    プロセッサ & \multicolumn{1}{c|}{最小動作クロック周期 {[}$ns${]}} & \multicolumn{1}{c|}{面積 {[}$\mu m^2${]}} & \multicolumn{1}{c|}{消費電力 {[}$mW${]}} \\ \hline
+    分岐予測実装前 & 6 & 357534.7228 & 7.5732 \\
+    分岐予測実装後 & 9 & 936675.8334 & 10.6318 \\
+    クリティカルパス短縮後 & 5 & 764805.1213 & 15.3567 \\ \hline
+    \end{tabular}
+    \caption{性能改善前後の論理合成の結果}
+    \label{table:logic-synthesis-improved}
+  \end{table*}
+
+  \subsubsection{更に改善できる点}
+
 \end{document}
