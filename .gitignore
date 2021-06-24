@@ -9,3 +9,4 @@ __pycache__
 doc/latex/out/*
 !doc/latex/out/main.pdf
 doc/latex/sections/out/*
+doc/latex/sections/improvements/out/*
