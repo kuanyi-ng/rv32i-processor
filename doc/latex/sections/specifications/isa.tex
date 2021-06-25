@@ -2,17 +2,6 @@
 
 \begin{document}
 
-  設計したプロセッサがサポートしている命令の一覧は表 \ref{table:isa} に示している.
-  この命令セットは, RISC-V 32I 命令セットの一部である.
-  RISC-V 32I にあり、このプロセッサがサポートしていない命令は, 
-  \verb|fence|, \verb|fence.i|, \verb|sfence.vma|, \verb|ebreak|, 
-  \verb|uret|, \verb|sret|, \verb|wfi| である.
-  機能検証と性能評価のプログラムでは, フェンスを使うことがないので, 
-  \verb|fence|, \verb|fence.i|, \verb|sfence.vma| を実装しない.
-  また, 今回のプロセッサは, デバグ, ユーザモード, スーパーバイザモード, 外部割り込み
-  をサポートしていないため, \verb|ebreak|, \verb|uret|, 
-  \verb|sret|, \verb|wfi| を実装しない.
-
   \begin{table*}[t]
     \begin{tabular}{|l|l|l|llll}
     \cline{1-3} \cline{5-7}
@@ -48,5 +37,16 @@
     \caption{命令セット}
     \label{table:isa}
   \end{table*}
+
+  設計したプロセッサがサポートしている命令の一覧は表 \ref{table:isa} に示している.
+  この命令セットは, RISC-V 32I 命令セットの一部である.
+  RISC-V 32I にあり、このプロセッサがサポートしていない命令は, 
+  \verb|fence|, \verb|fence.i|, \verb|sfence.vma|, \verb|ebreak|, 
+  \verb|uret|, \verb|sret|, \verb|wfi| である.
+  機能検証と性能評価のプログラムでは, フェンスを使うことがないので, 
+  \verb|fence|, \verb|fence.i|, \verb|sfence.vma| を実装しない.
+  また, 今回のプロセッサは, デバグ, ユーザモード, スーパーバイザモード, 外部割り込み
+  をサポートしていないため, \verb|ebreak|, \verb|uret|, 
+  \verb|sret|, \verb|wfi| を実装しない.
   
 \end{document}

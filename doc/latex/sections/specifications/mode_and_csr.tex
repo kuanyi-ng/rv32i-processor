@@ -1,0 +1,32 @@
+\documentclass[../specifications.tex]{subfiles}
+
+\begin{document}
+  このプロセッサはマーシンモードのみをサポートしている.
+  そのため, 例外処理から戻る \verb|mret|, \verb|sret|, と \verb|uret|
+  3つ命令のうち, \verb|mret| 命令だけをサポートする.
+  また, マーシンモードに合わせて使える CSR レジスタの一覧を表 \ref{table:csrs} にまとめる.
+
+  \begin{table}[h]
+    \begin{tabular}{|l|l|}
+    \hline
+    CSR レジスタ名 & 内容 \\ \hline
+    mvendorid & ベンダーID \\
+    marchid & アーキテクチャID \\
+    mimpid & 実装 ID \\
+    mhartid & ハードウェアスレッドID \\
+    mstatus & マシンステータスレジスタ \\
+    misa & ISA と拡張機能 \\
+    mie & マシン割り込み有効化 \\
+    mtvec & マシン・トラップ・ベクトル \\
+    mcounteren & マシンカウント有効化 \\
+    mscratch & マシン・スクラッチ \\
+    mepc & マシン例外PC \\
+    mcause & マシン例外原因 \\
+    mtval & マシン・トラップ値 \\
+    mip & マシン割込処理待ち \\ \hline
+    \end{tabular}
+    \caption{マシンモードのCSRレジスタ}
+    \label{table:csrs}
+  \end{table}
+  
+\end{document}
