@@ -21,6 +21,9 @@ elaborate rf32x32
 analyze -format verilog ./csr_reg.v
 elaborate csr_reg
 
+analyze -format verilog ./jump_predictor.v
+elaborate jump_predictor
+
 analyze -format verilog ./top.v
 elaborate top
 
@@ -56,14 +59,12 @@ derive_clocks
 compile
 ungroup -all -flatten
 compile -map_effort high -area_effort high -incremental_mapping
-# compile -map_effort medium -area_effort high -incremental_mapping
 
 # Check Design
 check_design
 
 # Show results
 report_timing -net
-report_timing -path end -net -max_path 100
 report_cell
 report_area
 report_power
