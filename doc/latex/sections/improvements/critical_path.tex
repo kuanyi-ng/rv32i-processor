@@ -6,53 +6,90 @@
   そのクリティカルパスは以下の通りである.
   \begin{displaymath}
     \begin{aligned}
-      &ID/EX パイプラインレジスタ \\
-      \rightarrow &ALU の入力の用意 \\
-      \rightarrow &ALU における演算 \\
-      \rightarrow &分岐の判断 \\
-      \rightarrow &パイプラインフラッシュの判断 \\
-      \rightarrow &ID/EX パイプラインレジスタ
+      &1. ID/EX パイプラインレジスタ \\
+      \rightarrow &2. ALU のオペランドと制御信号の生成 \\
+      \rightarrow &3. ALU における演算 \\
+      \rightarrow &4. 分岐予測の答え合わせと分岐の判断 \\
+      \rightarrow &5. ID ステージのフラッシュ \\
+      \rightarrow &6. ID/EX パイプラインレジスタ
     \end{aligned}
   \end{displaymath}
 
   上記のクリティカルパスを短縮するために, 以下のことを行った.
   \begin{enumerate}
-    \item ALU の入力の用意を ID ステージで行う (\ref{subsubsection:ex-to-id} 章)
-    \item パイプラインフラッシュのタイミングの後回し (\ref{subsubsection:rethink-flush} 章)
+    \item ALU のオペランドの生成を ID ステージで行う (\ref{subsubsection:ex-to-id} 章)
+    \item パイプラインフラッシュをパイプラインレジスタで行う (\ref{subsubsection:rethink-flush} 章)
   \end{enumerate}
 
-  \subsubsection{ALU の入力の用意を ID ステージで行う} \label{subsubsection:ex-to-id}
-  EX ステージで演算を行う前に, 以下の入力を用意する必要がある.
+  \subsubsection{ALU のオペランドの生成を ID ステージで行う} \label{subsubsection:ex-to-id}
+  EX ステージで演算を行う前に, 以下のオペランドと制御信号を用意する必要がある.
   \begin{enumerate}
-    \item ALU に対して演算の種類を指定する制御信号 \label{item:alu-op}
-    \item ALU の演算対象となる 2つの $32[bit]$ の信号 \label{item:alu-in}
-    \item 比較専用 ALU に対して比較の種類を指定する制御信号 \label{item:branch-alu-op}
-    \item 比較専用 ALU の比較対象となる 2つの $32[bit]$ の信号 \label{item:branch-alu-in}
+    \item オペランド
+      \begin{enumerate}
+        \item ALU の演算のオペランド \label{item:alu-in}
+        \item 比較専用 ALU の演算のオペランド \label{item:branch-alu-in}
+      \end{enumerate}
+    \item 制御信号
+      \begin{enumerate}
+        \item ALU に対して演算の種類を指定する制御信号 \label{item:alu-op}
+        \item 比較専用 ALU に対して比較の種類を指定する制御信号 \label{item:branch-alu-op}
+      \end{enumerate}
   \end{enumerate}
-  倫理合成の結果から, 信号が生成されるまでに必要な時間からみた時に,
-  信号\ref{item:alu-in} と 信号\ref{item:branch-alu-in} がボトルネックになっていた.
-  これを改善するために, 信号\ref{item:alu-in} と信号\ref{item:branch-alu-in} の生成回路を
-  ID ステージに移動させた.
-  その結果, プロセッサの最小動作クロック周期を $9[ns]$ から $8[ns]$ まで減らすことができた.
-  それでも, プログラムの実行時間の性能が, 分岐予測を導入する前のに劣っているため, 
-  次の改善を実施した.
+  倫理合成の結果から, 信号が生成されるまでに必要な時間から, 
+  演算のオペランド (\ref{item:alu-in} と \ref{item:branch-alu-in}) の生成がボトルネックになっていた.
+  これを改善するために, 演算のオペランドの生成回路を ID ステージに移動させた.
 
-  \subsubsection{パイプラインフラッシュのタイミングの後回し} \label{subsubsection:rethink-flush}
+  その結果, クリティカルパスの 2 である「ALU のオペランドと制御信号の生成」が「ALU の制御信号の生成」になり, 
+  プロセッサの最小動作クロック周期を $9[ns]$ から $8[ns]$ まで減らすことができた.
+  それでも, プログラムの実行時間が, まだ分岐予測を導入する前より長いため, 次の改善を実施した.
+
+  \subsubsection{パイプラインフラッシュをパイプラインレジスタで行う} \label{subsubsection:rethink-flush}
   実装していたパイプラインフラッシュの回路では, 
   プログラムの実行の中で分岐が起きた時に, 
-  パイプラインレジスタではなく, IF ステージと ID ステージのフラッシュをステージ内で行っていた.
+  パイプラインレジスタではなく, IF ステージと ID ステージのフラッシュをステージ内で行っていた (図 \ref{fig:critical-path-before}).
   これにより, EX ステージに分岐命令がある場合, 
   ID ステージの命令がデータメモリと汎用レジスタに対する書き込み信号の生成タイミングは
   分岐結果が出た後のタイミングになってしまう.
   分岐結果が分かるまでに ID ステージは待たないといけないため, 無駄な時間が生じてしまう.
 
-  これを改善するために, パイプラインのフラッシュをステージ内ではなく, パイプラインレジスタで行うようにした.
+  \begin{figure*}
+    \centering
+    \begin{subfigure}{\columnwidth}
+      \centering
+      \resizebox{0.9\columnwidth}{!}{
+        \includegraphics{../../images/critical_path_before.png}
+      }
+      \caption{改善前}
+      \label{fig:critical-path-before}
+    \end{subfigure}
+    \begin{subfigure}{\columnwidth}
+      \centering
+      \resizebox{0.9\columnwidth}{!}{
+        \includegraphics{../../images/critical_path_after.png}
+      }
+      \caption{改善後}
+      \label{fig:critical-path-after}
+    \end{subfigure}
+    \caption{パイプラインフラッシュ処理の回路とクリティカルパス}
+  \end{figure*}
+
+  これを改善するために, パイプラインのフラッシュをステージ内ではなく, 
+  パイプラインレジスタで行うようにした (図 \ref{fig:critical-path-after}).
   改善後の回路では, 例えば ID ステージで「データメモリに対して書き込む」信号が生成されても, 
-  EX ステージの分岐結果が「分岐する」となったら, 
-  その信号が ID と EX 間のパイプラインレジスタに保存される前に, 「データメモリに対して書き込まない」
-  と無効化される.
-  この改善によってクリティカルパスが短くなり, 
-  プロセッサの最小動作クロック周期を $8[ns]$ から $5[ns]$ まで減らすことができた.
+  EX ステージの分岐結果が「分岐する」なら, 
+  その信号が ID/EX パイプラインレジスタに保存される前に, 「データメモリに対して書き込まない」へと無効化される.
+
+  この改善によってクリティカルパスが以下のように短くなった. 
+  \begin{displaymath}
+    \begin{aligned}
+      &1. ID/EX パイプラインレジスタ \\
+      \rightarrow &2. ALU のオペランドと制御信号の生成 \\
+      \rightarrow &3. ALU における演算 \\
+      \rightarrow &4. 分岐予測の答え合わせと分岐の判断 \\
+      \rightarrow &5. EX/MEM パイプラインレジスタ
+    \end{aligned}
+  \end{displaymath}
+  そして, プロセッサの最小動作クロック周期を $8[ns]$ から $5[ns]$ まで減らすことができた.
   改善によって得られたクロック周期は分岐予測導入前の $6[ns]$ よりも短くなったので, 
   分岐予測機能を今回のプロセッサの設計に導入してもいいと判断した.
 
