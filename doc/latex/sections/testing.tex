@@ -1,31 +1,11 @@
 \documentclass[../main.tex]{subfiles}
 
 \begin{document}
-  用意されたプログラム (表\ref{table:test-program}) を用いてプロセッサの機能検証を行う.
+  用意されたプログラム(付録\ref{appendix:programs}の表\ref{table:test-program})
+  を用いてプロセッサの機能検証を行う.
   機能検証は Verilog-HDL で記述したプロセッサに対し, 
   論理シミュレーター xmverilog と
   波形ツール SimVision を用いてシミュレーションを行った.
   テストプログラムが正しく実行され、正確な出力が得られたことを確認した.
-
-  \begin{table*}[t]
-    \centering
-    \begin{tabular}{|c|c|l|}
-    \hline
-    テストプログラム & 言語 & プログラム内容 \\ \hline
-    load & アセンブリ & ロード命令の動作検証 \\
-    store & アセンブリ & ストア命令の動作検証 \\
-    p2 & アセンブリ & 演算と分岐命令の動作検証 \\
-    trap & アセンブリ & 命令の動作検証 \\
-    hello & C & Hello World! をコンソールに表示するプログラム \\
-    napier & C & Napier's Constant, $e$ の値を64桁の精度で計算するプログラム \\
-    pi & C & pi の値を64桁の精度で計算するプログラム \\
-    prime & C & 2を含め, 40個の素数を昇順に見つけるプログラム \\
-    bubblesort & C & 100個の整数を Bubble Sort でソートするプログラム \\
-    insertsort & C & 100個の整数を Insert Sort でソートするプログラム \\
-    quicksort & C & 100個の整数を Quick Sort でソートするプログラム \\ \hline
-    \end{tabular}
-    \caption{機能検証用プログラム}
-    \label{table:test-program}
-  \end{table*}
 
 \end{document}

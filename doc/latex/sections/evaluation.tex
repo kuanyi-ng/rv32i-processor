@@ -6,23 +6,10 @@
 
   \subsection{評価方法}
   MiBench ベンチマークプログラム \cite{mibench} の一部を用い, プログラム実行のクロックサイクル数を求めた.
-  今回の性能評価に使われたプログラムの一覧を表 \ref{table:mibench-program} にまとめる.
+  今回の性能評価に使われたプログラムの一覧を付録\ref{appendix:programs}の表\ref{table:mibench-program} にまとめる.
 
   次に, 論理合成ツール Design Compiler を用いて論理合成を行い, 
   最小動作クロック周期, 面積, と消費電力を測定した.
-
-  \begin{table*}[]
-    \centering
-    \begin{tabular}{|c|c|l|}
-    \hline
-    テストプログラム & 言語 & プログラム内容 \\ \hline
-    bitcnts & C & \begin{tabular}[c]{@{}l@{}}7つの方法で与えられた数字の\\ ビット数を求めるプログラム\end{tabular} \\
-    stringsearch & C & \begin{tabular}[c]{@{}l@{}}ケース・インセンシティブ方式で\\ 文字の検索するプログラム\end{tabular} \\
-    dijkstra & C & \begin{tabular}[c]{@{}l@{}}ダイクストラアルゴリズムで与えられた\\ グラフのノード間の最短距離を求めるプログラム\end{tabular} \\ \hline
-    \end{tabular}
-    \caption{性能評価用プログラム}
-    \label{table:mibench-program}
-  \end{table*}
 
   最小動作クロック周期の求め方について説明する.
   \begin{enumerate}

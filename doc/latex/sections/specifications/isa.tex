@@ -2,43 +2,7 @@
 
 \begin{document}
 
-  \begin{table*}[t]
-    \begin{tabular}{|l|l|l|llll}
-    \cline{1-3} \cline{5-7}
-    命令    & 内容                                    & 形式 & \multicolumn{1}{l|}{} & \multicolumn{1}{l|}{命令}     & \multicolumn{1}{l|}{内容}                            & \multicolumn{1}{l|}{形式} \\ \cline{1-3} \cline{5-7}
-    lui   & load upper immediate                  & U  & \multicolumn{1}{l|}{} & \multicolumn{1}{l|}{add}    & \multicolumn{1}{l|}{add}                           & \multicolumn{1}{l|}{R}  \\
-    auipc & add upper immediate to pc             & U  & \multicolumn{1}{l|}{} & \multicolumn{1}{l|}{sub}    & \multicolumn{1}{l|}{sub}                           & \multicolumn{1}{l|}{R}  \\
-    jal   & jump and link                         & J  & \multicolumn{1}{l|}{} & \multicolumn{1}{l|}{sll}    & \multicolumn{1}{l|}{shift left logical}            & \multicolumn{1}{l|}{R}  \\
-    jalr  & jump and link register                & J  & \multicolumn{1}{l|}{} & \multicolumn{1}{l|}{slt}    & \multicolumn{1}{l|}{set less than}                 & \multicolumn{1}{l|}{R}  \\
-    beq   & branch equal                          & B  & \multicolumn{1}{l|}{} & \multicolumn{1}{l|}{sltu}   & \multicolumn{1}{l|}{set less than unsigned}        & \multicolumn{1}{l|}{R}  \\
-    bne   & branch not equal                      & B  & \multicolumn{1}{l|}{} & \multicolumn{1}{l|}{xor}    & \multicolumn{1}{l|}{exclusive or}                  & \multicolumn{1}{l|}{R}  \\
-    blt   & branch less than                      & B  & \multicolumn{1}{l|}{} & \multicolumn{1}{l|}{srl}    & \multicolumn{1}{l|}{shift right logical}           & \multicolumn{1}{l|}{R}  \\
-    bge   & branch greater than or equal          & B  & \multicolumn{1}{l|}{} & \multicolumn{1}{l|}{sra}    & \multicolumn{1}{l|}{shift right arithmetic}        & \multicolumn{1}{l|}{R}  \\
-    bltu  & branch less than unsigned             & B  & \multicolumn{1}{l|}{} & \multicolumn{1}{l|}{or}     & \multicolumn{1}{l|}{or}                            & \multicolumn{1}{l|}{R}  \\
-    bgeu  & branch greater than or equal unsigned & B  & \multicolumn{1}{l|}{} & \multicolumn{1}{l|}{and}    & \multicolumn{1}{l|}{and}                           & \multicolumn{1}{l|}{R}  \\
-    lb    & load byte                             & I  & \multicolumn{1}{l|}{} & \multicolumn{1}{l|}{ecall}  & \multicolumn{1}{l|}{environment call}              & \multicolumn{1}{l|}{I}  \\
-    lh    & load halfword                         & I  & \multicolumn{1}{l|}{} & \multicolumn{1}{l|}{csrrw}  & \multicolumn{1}{l|}{csr read and write}            & \multicolumn{1}{l|}{I}  \\
-    lw    & load word                             & I  & \multicolumn{1}{l|}{} & \multicolumn{1}{l|}{csrrs}  & \multicolumn{1}{l|}{csr read and set}              & \multicolumn{1}{l|}{I}  \\
-    lbu   & load byte unsigned                    & I  & \multicolumn{1}{l|}{} & \multicolumn{1}{l|}{csrrc}  & \multicolumn{1}{l|}{csr read and clear}            & \multicolumn{1}{l|}{I}  \\
-    lhu   & load halfword unsigned                & I  & \multicolumn{1}{l|}{} & \multicolumn{1}{l|}{csrrwi} & \multicolumn{1}{l|}{csr read and write immediate}  & \multicolumn{1}{l|}{I}  \\
-    sb    & store byte                            & S  & \multicolumn{1}{l|}{} & \multicolumn{1}{l|}{csrrsi} & \multicolumn{1}{l|}{csr read and set immediate}    & \multicolumn{1}{l|}{I}  \\
-    sh    & store halfword                        & S  & \multicolumn{1}{l|}{} & \multicolumn{1}{l|}{csrrci} & \multicolumn{1}{l|}{csr read and clear immediate}  & \multicolumn{1}{l|}{I}  \\
-    sw    & store word                            & S  & \multicolumn{1}{l|}{} & \multicolumn{1}{l|}{mret}   & \multicolumn{1}{l|}{machine-mode exception return} & \multicolumn{1}{l|}{R}  \\ \cline{5-7}
-    addi  & add immediate                         & I  &                       &                             &                                                    &                         \\
-    slti  & set less than immediate               & I  &                       &                             &                                                    &                         \\
-    sltiu & set less than immediate unsigned      & I  &                       &                             &                                                    &                         \\
-    xori  & exclusive or immediate                & I  &                       &                             &                                                    &                         \\
-    ori   & or immediate                          & I  &                       &                             &                                                    &                         \\
-    andi  & and immediate                         & I  &                       &                             &                                                    &                         \\
-    slli  & shift left logical immediate          & I  &                       &                             &                                                    &                         \\
-    srli  & shift right logical immediate         & I  &                       &                             &                                                    &                         \\
-    srai  & shift right arithmetic immediate      & I  &                       &                             &                                                    &                         \\ \cline{1-3}
-    \end{tabular}
-    \caption{命令セット}
-    \label{table:isa}
-  \end{table*}
-
-  設計したプロセッサがサポートしている命令の一覧は表 \ref{table:isa} に示している.
+  設計したプロセッサがサポートしている命令の一覧は付録\ref{appendix:isa}の表\ref{table:isa} に示している.
   この命令セットは, RISC-V 32I 命令セットの一部である.
   RISC-V 32I にあり、このプロセッサがサポートしていない命令は, 
   \verb|fence|, \verb|fence.i|, \verb|sfence.vma|, \verb|ebreak|, 
