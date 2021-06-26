@@ -29,38 +29,38 @@
   \begin{flushright}
     \normalsize{
       九州大学 CPC Lab 研究会  \\
-      2021年度 第X回 研究会資料 TR20XX-001
+      2021年度 第13回 研究会資料 TR2021-013
     }
   \end{flushright}
-  \Large{\textbf{プロセッサ設計演習}}
+  \Large{\textbf{\\プロセッサ設計演習}}
 }
 \author{
     ウン クアン イー\\
     九州大学 工学部 電気情報工学科 4年
 }
-\date{2021年06月23日}
+\date{2021年07月05日}
 
 \begin{document}
   \begin{twocolumn}
 
   \maketitle
 
-  \section{はじめに}
+  \section{はじめに} \label{section:introduction}
   \subfile{sections/introduction.tex}
 
-  \section{プロセッサの仕様}
+  \section{プロセッサの仕様} \label{section:specifications}
   \subfile{sections/specifications.tex}
 
-  \section{プロセッサの機能検証}
+  \section{プロセッサの機能検証} \label{section:testing}
   \subfile{sections/testing.tex}
 
-  \section{プロセッサの性能評価と論理合成}
+  \section{プロセッサの性能評価と論理合成} \label{section:evaluation}
   \subfile{sections/evaluation.tex}
 
-  \section{プロセッサの性能改善方法と評価}
+  \section{プロセッサの性能改善方法と評価} \label{section:improvements}
   \subfile{sections/improvements.tex}
 
-  \section{まとめ}
+  \section{まとめ} \label{section:summary}
   \subfile{sections/summary.tex}
 
   \section*{謝辞}
@@ -72,12 +72,12 @@
 
   \onecolumn
   \clearpage
-  \begin{appendices}
-    \section{プロセッサのブロック図}
+  \begin{appendices} \label{section:appendix}
+    \section{プロセッサのブロック図} \label{section:block-diagram}
     \begin{figure}[h!]
       \centering
       \includegraphics[angle=90, origin=c, totalheight=0.9\textheight]{images/block_diagram.png}
-      \caption{as}
+      \caption{プロセッサのブロック図}
       \label{fig:block-diagram}
     \end{figure}
   \end{appendices}

@@ -5,11 +5,11 @@
   最小動作クロック周期, 面積, と消費電力という面で評価する.
 
   \subsection{評価方法}
-  MiBench ベンチマークプログラム \cite{mibench} の一部を用いて, プログラム実行のクロックサイクル数を求めた.
+  MiBench ベンチマークプログラム \cite{mibench} の一部を用い, プログラム実行のクロックサイクル数を求めた.
   今回の性能評価に使われたプログラムの一覧を表 \ref{table:mibench-program} にまとめる.
 
-  次に, 論理合成ツール Design Compiler を用いて, 
-  論理合成を行い, 最小動作クロック周期, 面積, と消費電力を測定した.
+  次に, 論理合成ツール Design Compiler を用いて論理合成を行い, 
+  最小動作クロック周期, 面積, と消費電力を測定した.
 
   \begin{table*}[]
     \centering
@@ -28,7 +28,7 @@
   \begin{enumerate}
     \item タイミング制約を $10[ns]$ と設定して論理合成を行い, 
     論理合成の結果にある slack (与えたタイミング制約と最大遅延時間との差) が正であることを確認する.
-    \item タイミング制約を $9[ns], 8[ns], \dots$ のように $1[ns]$ ずつ下げ, 
+    \item タイミング制約を $9[ns], 8[ns], \ldots$ のように $1[ns]$ ずつ下げ, 
     slack が負になるタイミング制約を見つける.
   \end{enumerate}
 
@@ -50,7 +50,7 @@
         dijkstra     & 4079473   \\ \hline
       \end{tabular}
     }
-    \caption{ベンチマークプログラムの実行クロックサイクル数}
+    \caption{ベンチマークプログラムの実行クロックサイクル数(改善前)}
     \label{table:mibench-base}
   \end{table}
 
@@ -60,10 +60,10 @@
       \begin{tabular}{|c|c|c|}
         \hline
         最小動作クロック周期 {[}$ns${]} & 面積 {[}$\mu m^2${]} & 消費電力 {[}$mW${]} \\ \hline
-        6                   & 357534.722794    & 7.5732        \\ \hline
+        6                   & 357534.7228    & 7.5732        \\ \hline
       \end{tabular}
     }
-    \caption{論理合成の結果}
+    \caption{論理合成の結果(改善前)}
     \label{table:logic-synthesis-base}
   \end{table}
 \end{document}

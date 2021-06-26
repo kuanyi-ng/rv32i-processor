@@ -1,11 +1,10 @@
 \documentclass[../main.tex]{subfiles}
 
 \begin{document}
-  今回設計したプロセッサの機能検証を行うために, 
-  表 \ref{table:test-program} にあるプログラムが用意された.
-  また, 機能検証は Verilog-HDL で記述したプロセッサに対して, 
+  用意されたプログラム (表\ref{table:test-program}) を用いてプロセッサの機能検証を行う.
+  機能検証は Verilog-HDL で記述したプロセッサに対し, 
   論理シミュレーター xmverilog と
-  波形ツール SimVision を用いて, シミュレーションを行った.
+  波形ツール SimVision を用いてシミュレーションを行った.
   テストプログラムが正しく実行され、正確な出力が得られたことを確認した.
 
   \begin{table*}[t]
@@ -25,7 +24,7 @@
     insertsort & C & 100個の整数を Insert Sort でソートするプログラム \\
     quicksort & C & 100個の整数を Quick Sort でソートするプログラム \\ \hline
     \end{tabular}
-    \caption{機能検証用テストプログラム}
+    \caption{機能検証用プログラム}
     \label{table:test-program}
   \end{table*}
 
