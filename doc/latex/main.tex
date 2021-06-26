@@ -9,6 +9,7 @@
 \usepackage{latexsym}
 \usepackage{times}
 \usepackage[multi, deluxe]{otf}
+\usepackage[title]{appendix}
 \usepackage{subfiles}
 
 \topmargin 0mm
@@ -68,6 +69,18 @@
   % won't be printed if nothing is cite
   \bibliography{reference.bib}
   \bibliographystyle{jplain}
+
+  \onecolumn
+  \clearpage
+  \begin{appendices}
+    \section{プロセッサのブロック図}
+    \begin{figure}[h!]
+      \centering
+      \includegraphics[angle=90, origin=c, totalheight=0.9\textheight]{images/block_diagram.png}
+      \caption{as}
+      \label{fig:block-diagram}
+    \end{figure}
+  \end{appendices}
 
 \end{twocolumn}
 \end{document}
