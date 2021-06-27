@@ -1,0 +1,36 @@
+\documentclass[../main.tex]{subfiles}
+
+\begin{document}
+  プロセッサの速度性能面を向上する方法の1つは, プログラムの実行時間を短くすること.
+  プログラムの実行時間は式 \ref{eq:execution-time} で求められる.
+  式 \ref{eq:execution-time} より, プログラムの実行クロックサイクル数, 
+  または, プログラムの動作クロック周期, 
+  または, 両方も減らしたら, プログラムの実行時間が短くなることが分かる.
+  \begin{equation}
+    \begin{aligned}
+      &プログラムの実行時間 \\
+      = &プログラムの実行クロックサイクル数 \\
+      &\times プロセッサの動作クロック周期
+      \label{eq:execution-time}
+    \end{aligned}
+  \end{equation}
+
+  今回設計したプロセッサのプログラムの実行クロックサイクル数を減少させるために, 動的分岐予測を導入した.
+  動的分岐予測の詳細については, \ref{subsection:jump-prediction} 章で述べる.
+
+  分岐予測を実装した後, プログラムの実行クロックサイクル数を, 
+  平均的に $20.59\%$ 倍で減らすことができたが, 
+  プロセッサの最小動作クロック周期が $6[ns]$ から $9[ns]$ までに増えてしまった.
+  分岐予測実装前と実装後のプロセッサを比較した時に, 
+  分岐予測を実装する前のプロセッサの方が, 
+  プログラムの実行時間が短いことが分かった.
+  そこで, 論理合成の結果を元に, クリティカルパスの短縮を試みた.
+  クリティカルパスの短縮方法については, \ref{subsection:critical-path} 章で述べる.
+
+  \subsection{動的分岐予測} \label{subsection:jump-prediction}
+  \subfile{improvements/jump_prediction.tex}
+
+  \subsection{クリティカルパスの短縮} \label{subsection:critical-path}
+  \subfile{improvements/critical_path.tex}
+
+\end{document}
