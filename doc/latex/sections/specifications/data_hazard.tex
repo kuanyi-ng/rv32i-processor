@@ -46,6 +46,8 @@
 
   \begin{table*}[t]
     \centering
+    \caption{RAW ハザードに関わる命令とその解決法}
+    \label{table:data-hazard}
     \begin{tabular}{ |c|c|c| }
       \hline
       レジスタ \verb|xn| を更新する命令 & レジスタ \verb|xn| を用いる命令 & 解決法  \\
@@ -59,8 +61,6 @@
       ロード命令     & ストア命令以外 & パイプラインストール  \\
       \hline
     \end{tabular}
-    \caption{RAW ハザードに関わる命令とその解決法}
-    \label{table:data-hazard}
   \end{table*}
 
 \end{document}

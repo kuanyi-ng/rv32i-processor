@@ -15,6 +15,8 @@
   \clearpage
   \section{サポートしている命令セット} \label{appendix:isa}
   \begin{table*}[h]
+    \caption{命令セット}
+    \label{table:isa}
     \begin{tabular}{|l|l|l|llll}
     \cline{1-3} \cline{5-7}
     命令    & 内容                                    & 形式 & \multicolumn{1}{l|}{} & \multicolumn{1}{l|}{命令}     & \multicolumn{1}{l|}{内容}                            & \multicolumn{1}{l|}{形式} \\ \cline{1-3} \cline{5-7}
@@ -46,14 +48,14 @@
     srli  & shift right logical immediate         & I  &                       &                             &                                                    &                         \\
     srai  & shift right arithmetic immediate      & I  &                       &                             &                                                    &                         \\ \cline{1-3}
     \end{tabular}
-    \caption{命令セット}
-    \label{table:isa}
   \end{table*}  
 
   \clearpage
   \section{機能検証と性能評価用プログラム} \label{appendix:programs}
   \begin{table*}[tbh]
     \centering
+    \caption{機能検証用プログラム}
+    \label{table:test-program}
     \begin{tabular}{|c|c|l|}
     \hline
     テストプログラム & 言語 & プログラム内容 \\ \hline
@@ -69,12 +71,12 @@
     insertsort & C & 100個の整数を Insert Sort でソートするプログラム \\
     quicksort & C & 100個の整数を Quick Sort でソートするプログラム \\ \hline
     \end{tabular}
-    \caption{機能検証用プログラム}
-    \label{table:test-program}
   \end{table*}
 
   \begin{table*}[thb]
     \centering
+    \caption{性能評価用プログラム}
+    \label{table:mibench-program}
     \begin{tabular}{|c|c|l|}
     \hline
     テストプログラム & 言語 & プログラム内容 \\ \hline
@@ -82,8 +84,6 @@
     stringsearch & C & \begin{tabular}[c]{@{}l@{}}ケース・インセンシティブ方式で\\ 文字の検索するプログラム\end{tabular} \\
     dijkstra & C & \begin{tabular}[c]{@{}l@{}}ダイクストラアルゴリズムで与えられた\\ グラフのノード間の最短距離を求めるプログラム\end{tabular} \\ \hline
     \end{tabular}
-    \caption{性能評価用プログラム}
-    \label{table:mibench-program}
   \end{table*}
   
 \end{document}

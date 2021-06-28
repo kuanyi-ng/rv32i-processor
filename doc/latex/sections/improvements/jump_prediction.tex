@@ -30,6 +30,8 @@
 
   \begin{table}[h!]
     \centering
+    \caption{予測器の状態信号と分岐方向の予測}
+    \label{table:predictor-state}
     \begin{tabular}{|l|l|}
     \hline
     状態信号 & 分岐方向の予測 \\ \hline
@@ -38,8 +40,6 @@
     10 (WEAK\_TAKE) & 分岐する \\
     11 (STRONG\_TAKE) & 分岐する \\ \hline
     \end{tabular}
-    \caption{予測器の状態信号と分岐方向の予測}
-    \label{table:predictor-state}
   \end{table}
 
   命令メモリからフェッチした命令が予測の対象命令である時に, 
@@ -72,6 +72,8 @@
 
   \begin{table*}[bp]
     \centering
+    \caption{分岐予測実装前後のプログラム実行クロックサイクル数}
+    \label{table:mibench-improved}
     \begin{tabular}{|c|r|r|}
       \hline
       ベンチマークプログラム & \multicolumn{1}{c|}{\begin{tabular}[c]{@{}c@{}}クロックサイクル数\\ (分岐予測実装前)\end{tabular}} & \multicolumn{1}{c|}{\begin{tabular}[c]{@{}c@{}}クロックサイクル数\\ (分岐予測実装後)\end{tabular}} \\ \hline
@@ -79,12 +81,12 @@
       bitcnts & 56040 & 44680 \\
       dijkstra & 4079473 & 3048011 \\ \hline
     \end{tabular}
-    \caption{分岐予測実装前後のプログラム実行クロックサイクル数}
-    \label{table:mibench-improved}
   \end{table*}
 
   \begin{table*}[]
     \centering
+    \caption{分岐予測の予測失敗率}
+    \label{table:miss-rate}
     \begin{tabular}{|c|r|r|r|}
     \hline
     ベンチマークプログラム & \multicolumn{1}{c|}{分岐予測対象命令数} & \multicolumn{1}{c|}{予測失敗命令数} & \multicolumn{1}{c|}{予測失敗率 {[}\%{]}} \\ \hline
@@ -92,8 +94,6 @@
     bitcnts & 9930 & 690 & 6.95 \\
     dijkstra & 869932 & 12886 & 1.48 \\ \hline
     \end{tabular}
-    \caption{分岐予測の予測失敗率}
-    \label{table:miss-rate}
   \end{table*}
 
   参照テーブルのエントリー数を 1 から 4096 まで変化させて同じ項目で評価を行ったところ, 
