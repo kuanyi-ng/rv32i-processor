@@ -18,10 +18,10 @@
   図 \ref{fig:external-interface} にあるそれぞれの信号線の説明は以下の通りである.
   \begin{itemize}
     \item IAD (Instruction ADdress Bus)
-    \newline 命令メモリへの $32[bit]$ のアクセスアドレスパス.
+    \newline 命令メモリへの $32bit$ のアクセスアドレスパス.
 
     \item IDT (Instruction DaTa Bus)
-    \newline 命令メモリからの $32[bit]$ のデータパス.
+    \newline 命令メモリからの $32bit$ のデータパス.
 
     \item ACKI\# (ACKnowledge from Instruction memory)
     \newline 命令メモリへのアクセスに対するアクノリッジ信号.
@@ -42,10 +42,10 @@
     \newline クロック信号
 
     \item DAD (Data ADdress bus)
-    \newline データメモリへの $32[bit]$ のアクセスアドレスパス.
+    \newline データメモリへの $32bit$ のアクセスアドレスパス.
 
     \item DDT (Data DaTa bu)
-    \newline データメモリからの $32[bit]$ のデータパス.
+    \newline データメモリからの $32bit$ のデータパス.
 
     \item MREQ
     \newline データメモリに対するアクセス (読み出し・書き込み) をリクエストするための信号.
@@ -73,8 +73,8 @@
   命令メモリとデータメモリはシミュレーション環境で用意されているため, 
   プロセッサの中に実装しない.
   メモリはリトルエンディアン方式を採用する.
-  メモリのアドレスは $1[byte]$ ごとに振り分けられ, 
-  1つのアドレスに $32[bit]$ のデータを保持することができる.
+  メモリのアドレスは $1byte$ ごとに振り分けられ, 
+  1つのアドレスに $32bit$ のデータを保持することができる.
 
   また, シミュレーション環境において, 外部からの割り込みが発生しないため, 
   OINT 入力信号の処理と, IACK 出力信号の生成を行わない.
