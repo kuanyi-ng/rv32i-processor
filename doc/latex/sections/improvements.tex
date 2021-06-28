@@ -1,11 +1,8 @@
 \documentclass[../main.tex]{subfiles}
 
 \begin{document}
-  プロセッサの速度性能面を向上する方法の1つは, プログラムの実行時間を短くすること.
-  プログラムの実行時間は式 \ref{eq:execution-time} で求められる.
-  式 \ref{eq:execution-time} より, プログラムの実行クロックサイクル数, 
-  または, プログラムの動作クロック周期, 
-  または, 両方も減らしたら, プログラムの実行時間が短くなることが分かる.
+  プロセッサの速度性能面を向上する方法の1つは, プログラムの実行時間を短くすることである.
+  プログラムの実行時間は式 (\ref{eq:execution-time}) で求められる.
   \begin{equation}
     \begin{aligned}
       &プログラムの実行時間 \\
@@ -14,9 +11,12 @@
       \label{eq:execution-time}
     \end{aligned}
   \end{equation}
+  式 (\ref{eq:execution-time}) より, プログラムの実行クロックサイクル数, 
+  または, プログラムの動作クロック周期, 
+  または, 両方も小さくすると, プログラムの実行時間が短くなることが分かる.
 
   今回設計したプロセッサのプログラムの実行クロックサイクル数を減少させるために, 動的分岐予測を導入した.
-  動的分岐予測の詳細については, \ref{subsection:jump-prediction} 節で述べる.
+  動的分岐予測の詳細は, \ref{subsection:jump-prediction} 節で述べる.
 
   分岐予測を実装した後, プログラムの実行クロックサイクル数を, 
   平均的に $20.59\%$ 倍で減らすことができたが, 

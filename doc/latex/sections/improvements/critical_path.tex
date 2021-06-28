@@ -17,11 +17,11 @@
 
   上記のクリティカルパスを短縮するために, 以下のことを行った.
   \begin{enumerate}
-    \item ALU のオペランドの生成を ID ステージで行う (\ref{subsubsection:ex-to-id} 節)
-    \item パイプラインフラッシュをパイプラインレジスタで行う (\ref{subsubsection:rethink-flush} 節)
+    \item ID ステージでの ALU のオペランドの生成 (\ref{subsubsection:ex-to-id} 節)
+    \item パイプラインレジスタでのパイプラインフラッシュ (\ref{subsubsection:rethink-flush} 節)
   \end{enumerate}
 
-  \subsubsection{ALU のオペランドの生成を ID ステージで行う} \label{subsubsection:ex-to-id}
+  \subsubsection{ID ステージでの ALU のオペランドの生成} \label{subsubsection:ex-to-id}
   EX ステージで演算を行う前に, 以下のオペランドと制御信号を用意する必要がある.
   \begin{enumerate}
     \item オペランド
@@ -35,15 +35,15 @@
         \item 比較専用 ALU に対して比較の種類を指定する制御信号 \label{item:branch-alu-op}
       \end{enumerate}
   \end{enumerate}
-  倫理合成の結果から, 信号が生成されるまでに必要な時間から, 
-  演算のオペランド (\ref{item:alu-in} と \ref{item:branch-alu-in}) の生成がボトルネックになっていた.
+  論理合成の結果から, 演算のオペランド (\ref{item:alu-in} と \ref{item:branch-alu-in}) の生成に必要な時間が, 
+  クリティカルパスの大きい割合を占めることがわかった.
   これを改善するために, 演算のオペランドの生成回路を ID ステージに移動させた.
 
   その結果, クリティカルパスの 2 である「ALU のオペランドと制御信号の生成」が「ALU の制御信号の生成」になり, 
   プロセッサの最小動作クロック周期を $9ns$ から $8ns$ まで減らすことができた.
-  それでも, プログラムの実行時間が, まだ分岐予測を導入する前より長いため, 次の改善を実施した.
+  それでも, プログラムの実行時間がまだ分岐予測を導入する前より長いため, 次の改善を実施した.
 
-  \subsubsection{パイプラインフラッシュをパイプラインレジスタで行う} \label{subsubsection:rethink-flush}
+  \subsubsection{パイプラインレジスタでのパイプラインフラッシュ} \label{subsubsection:rethink-flush}
   実装していたパイプラインフラッシュの回路では, 
   プログラムの実行の中で分岐が起きた時に, 
   パイプラインレジスタではなく, IF ステージと ID ステージのフラッシュをステージ内で行っていた (図 \ref{fig:critical-path-before}).
@@ -89,8 +89,8 @@
     \end{aligned}
   \end{displaymath}
   そして, プロセッサの最小動作クロック周期を $8ns$ から $5ns$ まで減らすことができた.
-  改善によって得られたクロック周期は分岐予測導入前の $6ns$ よりも短くなったので, 
-  分岐予測機能を今回のプロセッサの設計に導入してもいいと判断した.
+  改善によって得られたクロック周期は分岐予測導入前の $6ns$ よりも短くなったため, 
+  分岐予測機能を今回のプロセッサに導入することにした.
 
   \subsubsection{クリティカルパスの短縮後の論理合成}
   クリティカルパスの短縮を行った後の性能評価の結果を表 \ref{table:logic-synthesis-improved} に示す.
