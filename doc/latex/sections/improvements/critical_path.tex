@@ -3,27 +3,35 @@
 \begin{document}
 
   論理合成の結果から, クリティカルパスが EX ステージにあることが分かった.
-  そのクリティカルパスは以下の通りである.
-  % クリティカルパスの書き方がちょっとわかりにくいかな。
-  % ぱっと見たときに、クリティカルパスが複数あるのかと思ってしまう。
-  % 図にするのがいいかもしれない。
+  そのクリティカルパスは図\ref{fig:critical-path-before}で示す.
 
-  \begin{displaymath}
-    \begin{aligned}
-      &1. ID/EX パイプラインレジスタ \\
-      \rightarrow &2. ALU のオペランドと制御信号の生成 \\
-      \rightarrow &3. ALU における演算 \\
-      \rightarrow &4. 分岐予測の答え合わせと分岐の判断 \\
-      \rightarrow &5. ID ステージのフラッシュ \\
-      \rightarrow &6. ID/EX パイプラインレジスタ
-    \end{aligned}
-  \end{displaymath}
+  \begin{figure*}
+    \centering
+    \begin{subfigure}{\columnwidth}
+      \centering
+      \resizebox{0.5\columnwidth}{!}{
+        \includegraphics{../../images/critical_path_before.png}
+      }
+      \caption{改善前}
+      \label{fig:critical-path-before}
+    \end{subfigure}
+    \begin{subfigure}{\columnwidth}
+      \centering
+      \resizebox{0.5\columnwidth}{!}{
+        \includegraphics{../../images/critical_path_after.png}
+      }
+      \caption{改善後}
+      \label{fig:critical-path-after}
+    \end{subfigure}
+    \caption{改善前後のクリティカルパス}
+  \end{figure*}
 
   上記のクリティカルパスを短縮するために, 以下のことを行った.
   \begin{enumerate}
     \item ID ステージでの ALU のオペランドの生成 (\ref{subsubsection:ex-to-id} 小節)
     \item パイプラインレジスタでのパイプラインフラッシュ (\ref{subsubsection:rethink-flush} 小節)
   \end{enumerate}
+  この2つの方法により, クリティカルパスが\ref{fig:critical-path-after} のように短くなった.
 
   \subsubsection{ID ステージでの ALU のオペランドの生成} \label{subsubsection:ex-to-id}
   EX ステージで演算を行う前に, 以下のオペランドと制御信号を用意する必要がある.
@@ -50,7 +58,7 @@
   \subsubsection{パイプラインレジスタでのパイプラインフラッシュ} \label{subsubsection:rethink-flush}
   実装していたパイプラインフラッシュの回路では, 
   プログラムの実行の中で分岐が起きた時に, 
-  パイプラインレジスタではなく, IF ステージと ID ステージのフラッシュをステージ内で行っていた (図 \ref{fig:critical-path-before}).
+  パイプラインレジスタではなく, IF ステージと ID ステージのフラッシュをステージ内で行っていた (図 \ref{fig:flush-and-critical-path-before}).
   これにより, ID ステージの命令がデータメモリと汎用レジスタに対する書き込み信号の生成タイミングは
   分岐結果が出た後のタイミングになってしまう.
   分岐結果が分かるまでに ID ステージは待たないといけないため, 無駄な時間が生じてしまう.
@@ -60,39 +68,29 @@
     \begin{subfigure}{\columnwidth}
       \centering
       \resizebox{0.9\columnwidth}{!}{
-        \includegraphics{../../images/critical_path_before.png}
+        \includegraphics{../../images/flush_and_critical_path_before.png}
       }
       \caption{改善前}
-      \label{fig:critical-path-before}
+      \label{fig:flush-and-critical-path-before}
     \end{subfigure}
     \begin{subfigure}{\columnwidth}
       \centering
       \resizebox{0.9\columnwidth}{!}{
-        \includegraphics{../../images/critical_path_after.png}
+        \includegraphics{../../images/flush_and_critical_path_after.png}
       }
       \caption{改善後}
-      \label{fig:critical-path-after}
+      \label{fig:flush-and-critical-path-after}
     \end{subfigure}
     \caption{パイプラインフラッシュ処理の回路とクリティカルパス}
   \end{figure*}
 
   これを改善するために, パイプラインのフラッシュをステージ内ではなく, 
-  パイプラインレジスタで行うようにした (図 \ref{fig:critical-path-after}).
+  パイプラインレジスタで行うようにした (図 \ref{fig:flush-and-critical-path-after}).
   改善後の回路では, たとえば ID ステージで「データメモリに対して書き込む」信号が生成されても, 
   EX ステージの分岐結果が「分岐する」なら, 
   その信号が ID/EX パイプラインレジスタに保存される前に, 「データメモリに対して書き込まない」へと無効化される.
 
-  この改善によってクリティカルパスが以下のように短くなった. 
-  \begin{displaymath}
-    \begin{aligned}
-      &1. ID/EX パイプラインレジスタ \\
-      \rightarrow &2. ALU のオペランドと制御信号の生成 \\
-      \rightarrow &3. ALU における演算 \\
-      \rightarrow &4. 分岐予測の答え合わせと分岐の判断 \\
-      \rightarrow &5. EX/MEM パイプラインレジスタ
-    \end{aligned}
-  \end{displaymath}
-  そして, プロセッサの最小動作クロック周期を $8\unit{ns}$ から $5\unit{ns}$ まで減らすことができた.
+  この改善によってプロセッサの最小動作クロック周期を $8\unit{ns}$ から $5\unit{ns}$ まで減らすことができた.
   改善によって得られたクロック周期は分岐予測導入前の $6\unit{ns}$ よりも短くなったため, 
   分岐予測機能を今回のプロセッサに導入することにした.
 
