@@ -17,7 +17,7 @@
   実装では, エントリー数が 32 の参照テーブル (図 \ref{fig:predictor-table}) を用意した.
   命令のアドレスの下位2ビットは常に \verb|00| であるため, 
   参照テーブルのエントリーは, 対象命令のアドレスの 6ビット目から 2ビット目までの値で指定する.
-  そして, 1つのエントリーに $2bit$ の状態信号と $32bit$ の分岐先アドレスを保持する.
+  そして, 1つのエントリーに $2\unit{\bit}$ の状態信号と $32\unit{\bit}$ の分岐先アドレスを保持する.
   状態信号の値と分岐方向の予測を表 \ref{table:predictor-state} に示す.
 
   \begin{figure}
@@ -59,7 +59,7 @@
     \resizebox{1.5\columnwidth}{!}{
       \includegraphics{../../images/predictor-state-transition.png}
     }
-    \caption{$2bit$ 予測器: 状態遷移図}
+    \caption{$2\unit{\bit}$ 予測器: 状態遷移図}
     \label{fig:predictor-state-transition}
   \end{figure*}
 
@@ -107,7 +107,7 @@
   シミュレーション上でしか, 正確な結果, または, 報告した通りの性能向上が出せない可能性がある.
   シミュレーションの環境において, あるエントリーの状態信号が初期化されていない時, 
   その信号は \verb|00|, \verb|01|, \verb|10|, \verb|11| のどれでもなく, \verb|xx| である.
-  ここで, Verilog-HDL で $2bit$ の条件文をもつ \verb|case| 分を使えば, 
+  ここで, Verilog-HDL で $2\unit{\bit}$ の条件文をもつ \verb|case| 分を使えば, 
   \verb|default| で \verb|xx| の信号に対する処理ができる.
   今回の実装において, 状態信号が \verb|xx| の場合, 
   予測を \verb|WEAK_NOT_TAKEN| と出力するように記述している.
