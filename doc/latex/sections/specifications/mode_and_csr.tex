@@ -1,14 +1,16 @@
 \documentclass[../specifications.tex]{subfiles}
 
 \begin{document}
-  このプロセッサはマーシンモードのみをサポートしている.
+  このプロセッサはマシンモードのみをサポートしている.
   そのため, 例外処理から戻る \verb|mret|, \verb|sret|, と \verb|uret|, 
   3つ命令のうち, \verb|mret| 命令だけをサポートする.
   また, マーシンモードに合わせて使える CSR レジスタの一覧
   \cite{riscv-reader} \cite{riscv-priviledged}
-  を表 \ref{table:csrs} にまとめる.
+  を表 \ref{table:csrs} に示す.
 
   \begin{table}[h]
+    \caption{マシンモードのCSRレジスタ}
+    \label{table:csrs}
     \begin{tabular}{|l|l|}
     \hline
     CSR レジスタ名 & 内容 \\ \hline
@@ -27,8 +29,6 @@
     mtval & マシン・トラップ値 \\
     mip & マシン割込処理待ち \\ \hline
     \end{tabular}
-    \caption{マシンモードのCSRレジスタ}
-    \label{table:csrs}
   \end{table}
   
 \end{document}

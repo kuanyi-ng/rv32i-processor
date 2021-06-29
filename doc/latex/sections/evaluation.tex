@@ -1,33 +1,47 @@
 \documentclass[../main.tex]{subfiles}
 
 \begin{document}
-  設計したプロセッサの性能を, プログラム実行のクロックサイクル数, 
-  最小動作クロック周期, 面積, と消費電力という面で評価する.
 
-  \subsection{評価方法}
-  MiBench ベンチマークプログラム \cite{mibench} の一部を用い, プログラム実行のクロックサイクル数を求めた.
-  今回の性能評価に使われたプログラムの一覧を付録\ref{appendix:programs}の表\ref{table:mibench-program} にまとめる.
+  \subsection{機能検証方法}
+  用意されたプログラム(付録\ref{appendix:programs}の表\ref{table:test-program})
+  を用いてプロセッサの機能検証を行う.
+  機能検証は Verilog-HDL で記述したプロセッサに対し, 
+  論理シミュレーター xmverilog と
+  波形ツール SimVision を用いてシミュレーションを行った.
+  テストプログラムが正しく実行され、正確な出力が得られたことを確認した.
+
+  \subsection{性能評価方法}
+  設計したプロセッサの性能を, プログラム実行のクロックサイクル数, 
+  最小動作クロック周期, 面積, ならびに, 消費電力で評価する.
+
+  ベンチマークプログラム MiBench \cite{mibench} の一部を用い, 
+  コンパイラの最適化レベルをレベル3とした時のプログラム実行のクロックサイクル数を求めた.
+  なお, ベンチマークプログラムが扱うデータのサイズが \verb|large|, \verb|small|, \verb|test| の3種類があるが, 
+  評価に用いたのは \verb|test| サイズのプログラムである.
+  今回の性能評価に使われたプログラムの一覧を付録\ref{appendix:programs}の表\ref{table:mibench-program} に示す.
 
   次に, 論理合成ツール Design Compiler を用いて論理合成を行い, 
-  最小動作クロック周期, 面積, と消費電力を測定した.
+  最小動作クロック周期, 面積, ならびに, 消費電力を測定した.
 
   最小動作クロック周期の求め方について説明する.
   \begin{enumerate}
-    \item タイミング制約を $10[ns]$ と設定して論理合成を行い, 
+    \item タイミング制約を $10.00\unit{ns}$ と設定して論理合成を行い, 
     論理合成の結果にある slack (与えたタイミング制約と最大遅延時間との差) が正であることを確認する.
-    \item タイミング制約を $9[ns], 8[ns], \ldots$ のように $1[ns]$ ずつ下げ, 
+    \item タイミング制約を $9.00\unit{ns}, 8.00\unit{ns}, \ldots$ のように $1.00\unit{ns}$ ずつ下げ, 
     slack が負になるタイミング制約を見つける.
   \end{enumerate}
 
-  例えば, タイミング制約を $5[ns]$ に設定した時に slack が負になったら, 
-  作成したプロセッサの最小動作クロック周期は $6[ns]$ になる.
+  たとえば, タイミング制約を $5.00\unit{ns}$ に設定した時に slack が負になったら, 
+  作成したプロセッサの最小動作クロック周期は $6.00\unit{ns}$ になる.
 
-  \subsection{評価結果}
+  \subsection{性能評価結果}
   各ベンチマークのプログラムの実行に必要なクロックサイクル数を表 \ref{table:mibench-base} に示す.
-  また, プロセッサの最小動作クロック周期, 面積, と消費電力の測定結果を表 \ref{table:logic-synthesis-base} に示す.
+  また, プロセッサの最小動作クロック周期, 面積, ならびに, 消費電力の測定結果を表 \ref{table:logic-synthesis-base} に示す.
 
-  \begin{table}[tbh]
+  \begin{table}[t]
     \centering
+    \caption{ベンチマークプログラムの実行クロックサイクル数(改善前)}
+    \label{table:mibench-base}
     \resizebox{\columnwidth}{!}{
       \begin{tabular}{|c|r|}
         \hline
@@ -37,20 +51,18 @@
         dijkstra     & 4079473   \\ \hline
       \end{tabular}
     }
-    \caption{ベンチマークプログラムの実行クロックサイクル数(改善前)}
-    \label{table:mibench-base}
   \end{table}
 
-  \begin{table}[tbh]
+  \begin{table}[t]
     \centering
+    \caption{論理合成の結果(改善前)}
+    \label{table:logic-synthesis-base}
     \resizebox{\columnwidth}{!}{
       \begin{tabular}{|c|c|c|}
         \hline
-        最小動作クロック周期 {[}$ns${]} & 面積 {[}$\mu m^2${]} & 消費電力 {[}$mW${]} \\ \hline
-        6                   & 357534.7228    & 7.5732        \\ \hline
+        最小動作クロック周期 {[}\unit{ns}{]} & 面積 {[}$\unit{\um}^2${]} & 消費電力 {[}\unit{\mW}{]} \\ \hline
+        6.00 & 357534.7228 & 7.5732 \\ \hline
       \end{tabular}
     }
-    \caption{論理合成の結果(改善前)}
-    \label{table:logic-synthesis-base}
   \end{table}
 \end{document}
