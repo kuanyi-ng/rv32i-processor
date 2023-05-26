@@ -3,7 +3,7 @@
 `include "top.v"
 
 module top_test;
-   
+
    //*** parameter declarations ***//
    parameter CYCLE       = 10;
    parameter HALF_CYCLE  =  5;
@@ -14,7 +14,7 @@ module top_test;
    parameter IMEM_LATENCY = 1;  // instruction memory latency
    parameter DMEM_LATENCY = 1;  // data memory latency
    parameter IMEM_START = 32'h0000_0000;
-   parameter DMEM_START = 32'h8000_0000;
+   parameter DMEM_START = 32'h0800_0000;
    parameter IMEM_SIZE = 8000000;  // instruction memory size
    parameter DMEM_SIZE = 8000000;  // data memory size
    parameter STDOUT_ADDR = 32'hf0000000;
@@ -42,24 +42,24 @@ module top_test;
    integer              Max_Daddr;  // integer for remenbering maximum accessed addr of data memory
    reg [BIT_WIDTH-1:0]  Daddr, Iaddr;
 
-   reg [BYTE_SIZE-1:0]   DATA_Imem[IMEM_START:IMEM_START + IMEM_SIZE];   // use in readmemh  (Instruction mem)       
+   reg [BYTE_SIZE-1:0]   DATA_Imem[IMEM_START:IMEM_START + IMEM_SIZE];   // use in readmemh  (Instruction mem)
    reg [BYTE_SIZE-1:0]   DATA_Dmem[DMEM_START:DMEM_START + DMEM_SIZE];   // use in readmemh (Data mem)
 
    //*** module instantations ***//
    top u_top_1(//Inputs
                .clk(clk), .rst(rst),
-               .ACKD_n(ACKD_n), .ACKI_n(ACKI_n), 
+               .ACKD_n(ACKD_n), .ACKI_n(ACKI_n),
                .IDT(IDT), .OINT_n(OINT_n),
-      
+
                //Outputs
-               .IAD(IAD), .DAD(DAD), 
-               .MREQ(MREQ), .WRITE(WRITE), 
-               .SIZE(SIZE), .IACK_n(IACK_n), 
-      
+               .IAD(IAD), .DAD(DAD),
+               .MREQ(MREQ), .WRITE(WRITE),
+               .SIZE(SIZE), .IACK_n(IACK_n),
+
                //Inout
                .DDT(DDT)
                );
-   
+
      //*** clock generation ***//
      always begin
         clk = 1'b1;
@@ -95,13 +95,13 @@ module top_test;
         for (i = 0; i < `IN_TOTAL; i =i +1)
           begin
 
-             Iaddr = u_top_1.IAD;            
+             Iaddr = u_top_1.IAD;
              fetch_task1;
 
              Daddr = u_top_1.DAD;
              load_task1;
              store_task1;
-             
+
              // #(STB);
              #CYCLE;
              release DDT;
@@ -118,8 +118,10 @@ module top_test;
    //*** description for wave form ***//
    initial begin
       //$monitor($stime," PC=%h INST=%h", IAD, IDT);
-      $dumpfile("top_test.vcd");
+      //ここから2行はIcarus Verilog用(手元で動かすときに使ってください)
+	  $dumpfile("top_test.vcd");
       $dumpvars(0, u_top_1);
+	  //ここから2行はNC-Verilog用(woodblockで動かすときに使ってください)
       //$shm_open("waves.shm");
       //$shm_probe("AS");
    end
@@ -143,7 +145,7 @@ module top_test;
            end // else: !if(CIL == IMEM_LATENCY)
       end
    endtask // fetch_task1
-   
+
    task load_task1;
       begin
          if(u_top_1.MREQ && !u_top_1.WRITE)
@@ -165,7 +167,7 @@ module top_test;
                      end
                    else if(SIZE == 2'b01)
                      begin
-                        force DDT[BIT_WIDTH-1:0] = {{16{1'b0}}, DATA_Dmem[{Daddr[BIT_WIDTH-1:2],2'b10} - Daddr[1:0]], 
+                        force DDT[BIT_WIDTH-1:0] = {{16{1'b0}}, DATA_Dmem[{Daddr[BIT_WIDTH-1:2],2'b10} - Daddr[1:0]],
 													DATA_Dmem[{Daddr[BIT_WIDTH-1:2],2'b10} - Daddr[1:0] + 1]};
                      end
                    else
@@ -184,7 +186,7 @@ module top_test;
            end // if (u_top_1.MREQ && !u_top_1.WRITE)
       end
    endtask // load_task1
-   
+
    task store_task1;
       begin
          if(u_top_1.MREQ && u_top_1.WRITE)
@@ -232,7 +234,7 @@ module top_test;
                              DATA_Dmem[{Daddr[BIT_WIDTH-1:2],2'b11} - Daddr[1:0]] = DDT[BIT_WIDTH-25:BIT_WIDTH-32];
                           end
                      end // else: !if(SIZE == 2'b01)
-                   
+
                    ACKD_n = 1'b0;
                    CDSL = 0;
 
@@ -241,7 +243,7 @@ module top_test;
                 begin
                    ACKD_n = 1'b1;
                 end // else: !if(CDSL == DMEM_LATENCY)
-           end // if (u_top_1.MREQ && u_top_1.WRITE)             
+           end // if (u_top_1.MREQ && u_top_1.WRITE)
       end
    endtask // store_task1
 
