@@ -1,3 +1,5 @@
+.global main
+
 	.text
 main:
     # x16 is used to determine

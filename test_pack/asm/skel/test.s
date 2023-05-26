@@ -1,3 +1,5 @@
+.global main
+
 	.text    # text section
 main:
     # main program

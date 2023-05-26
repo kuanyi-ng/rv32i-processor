@@ -1,3 +1,5 @@
+.global main
+
 	.text
 main:
 	add	x21, x0, x0

@@ -1,3 +1,5 @@
+.global main
+
 .text
 main:
 	li s1, 0xf0000000

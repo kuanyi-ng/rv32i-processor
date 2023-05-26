@@ -1,3 +1,5 @@
+.global main
+
 	.text
 main:
 	andi	$16,	$16,	0
