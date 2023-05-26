@@ -67,8 +67,8 @@ COPY ./env/*_makefile ${RISCV}/
 
 # 8. Copy source files of processors and test programs
 WORKDIR /home/
-RUN mkdir sandbox
-WORKDIR /home/sandbox/
+RUN mkdir rv32i-processor
+WORKDIR /home/rv32i-processor/
 
 COPY ./script ./script/
 COPY ./src ./src/
