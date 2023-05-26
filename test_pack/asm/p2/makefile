@@ -1,2 +1,2 @@
 TARGET = p2
-include /opt/riscv/default_s_makefile
+include /opt/riscv-tools/makefiles/default_s_makefile

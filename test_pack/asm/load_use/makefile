@@ -1,2 +1,2 @@
 TARGET = load_use
-include /opt/riscv/default_s_makefile
+include /opt/riscv-tools/makefiles/default_s_makefile
