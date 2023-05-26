@@ -1,7 +1,9 @@
-# shell
+#!/bin/usr/env bash
 
-cd logic_synthesis_ground/
+ROOT_DIR=$(pwd)
+
+cd logic_synthesis_ground/ || exit
 
 dc_shell-t -f logic_synthesis.tcl | tee log
 
-cd ~/sandbox
+cd "$ROOT_DIR" || exit

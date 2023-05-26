@@ -16,7 +16,7 @@ module top_test;
    parameter IMEM_LATENCY = 1;  // instruction memory latency
    parameter DMEM_LATENCY = 1;  // data memory latency
    parameter IMEM_START = 32'h0000_0000;
-   parameter DMEM_START = 32'h8000_0000;
+   parameter DMEM_START = 32'h0800_0000;
    parameter IMEM_SIZE = 8000000;  // instruction memory size
    parameter DMEM_SIZE = 8000000;  // data memory size
    parameter STDOUT_ADDR = 32'hf0000000;
@@ -142,8 +142,10 @@ module top_test;
    //*** description for wave form ***//
    initial begin
       //$monitor($stime," PC=%h INST=%h", IAD, IDT);
+      //ここから2行はIcarus Verilog用(手元で動かすときに使ってください)
       //$dumpfile("top_test.vcd");
       //$dumpvars(0, u_top_1);
+	  //ここから2行はNC-Verilog用(woodblockで動かすときに使ってください)
       //$shm_open("waves.shm");
       //$shm_probe("AS");
    end

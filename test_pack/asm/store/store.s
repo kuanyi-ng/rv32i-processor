@@ -1,3 +1,5 @@
+.global main
+
 	.text
 main:
 	li	x16,	0x80010000
